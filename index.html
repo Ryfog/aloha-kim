@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aloha Kim</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Stitch a caché des lettres pour toi sur la plage.">
+<meta name="theme-color" content="#5B4B9A">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Aloha Kim 💙">
+<meta property="og:description" content="Stitch a caché des lettres pour toi sur la plage…">
+<meta property="og:url" content="https://ryfog.github.io/aloha-kim/">
+<meta property="og:image" content="https://ryfog.github.io/aloha-kim/img/apercu.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 29'%3E%3Cpath fill='%234F7CC5' d='M16 29C6 21 0 15.5 0 8.8 0 3.9 3.9 0 8.8 0c3 0 5.7 1.5 7.2 3.8C17.5 1.5 20.2 0 23.2 0 28.1 0 32 3.9 32 8.8 32 15.5 26 21 16 29z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chewy&family=Gochi+Hand&family=Quicksand:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+
+<!-- Formes réutilisées : cœur, hibiscus, feuille de palmier -->
+<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="coeur" viewBox="0 0 32 29">
+      <path d="M16 29C6 21 0 15.5 0 8.8 0 3.9 3.9 0 8.8 0c3 0 5.7 1.5 7.2 3.8C17.5 1.5 20.2 0 23.2 0 28.1 0 32 3.9 32 8.8 32 15.5 26 21 16 29z"/>
+    </symbol>
+    <symbol id="hibiscus" viewBox="-50 -50 100 100">
+      <g fill="currentColor">
+        <path id="petale" d="M0 -5C-17 -17 -21 -45 0 -47 21 -45 17 -17 0 -5z"/>
+        <use href="#petale" transform="rotate(72)"/>
+        <use href="#petale" transform="rotate(144)"/>
+        <use href="#petale" transform="rotate(216)"/>
+        <use href="#petale" transform="rotate(288)"/>
+      </g>
+      <circle r="9" fill="#C2185B" opacity=".45"/>
+      <path d="M0 0 21 -29" stroke="#FFD166" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="21" cy="-29" r="4.5" fill="#FFD166"/>
+    </symbol>
+    <path id="feuille" d="M112 120C140 88 186 86 216 118 196 106 176 104 160 108 146 112 128 118 112 120z"/>
+  </defs>
+</svg>
+
+<header class="scene" id="haut">
+  <div class="etoiles" id="etoiles" aria-hidden="true"></div>
+  <div class="nuage n1" aria-hidden="true"></div>
+  <div class="nuage n2" aria-hidden="true"></div>
+  <div class="nuage n3" aria-hidden="true"></div>
+  <div class="soleil" aria-hidden="true"></div>
+
+  <svg class="palmier gauche" viewBox="0 0 220 420" aria-hidden="true" focusable="false">
+    <path class="tronc" d="M128 420C120 330 96 232 112 122"/>
+    <path class="anneaux" d="M128 420C120 330 96 232 112 122"/>
+    <g class="feuilles">
+      <use href="#feuille" transform="rotate(8 112 120)"/>
+      <use href="#feuille" transform="rotate(-28 112 120)"/>
+      <use href="#feuille" transform="rotate(-62 112 120)"/>
+      <use href="#feuille" transform="rotate(42 112 120)"/>
+      <use href="#feuille" transform="rotate(-8 112 120) translate(224 0) scale(-1 1)"/>
+      <use href="#feuille" transform="rotate(28 112 120) translate(224 0) scale(-1 1)"/>
+      <use href="#feuille" transform="rotate(62 112 120) translate(224 0) scale(-1 1)"/>
+      <use href="#feuille" transform="rotate(-42 112 120) translate(224 0) scale(-1 1)"/>
+      <circle cx="104" cy="131" r="8"/><circle cx="119" cy="133" r="8"/><circle cx="111" cy="142" r="7"/>
+    </g>
+  </svg>
+  <svg class="palmier droite" viewBox="0 0 220 420" aria-hidden="true" focusable="false">
+    <path class="tronc" d="M128 420C120 330 96 232 112 122"/>
+    <path class="anneaux" d="M128 420C120 330 96 232 112 122"/>
+    <g class="feuilles">
+      <use href="#feuille" transform="rotate(8 112 120)"/>
+      <use href="#feuille" transform="rotate(-28 112 120)"/>
+      <use href="#feuille" transform="rotate(-62 112 120)"/>
+      <use href="#feuille" transform="rotate(42 112 120)"/>
+      <use href="#feuille" transform="rotate(-8 112 120) translate(224 0) scale(-1 1)"/>
+      <use href="#feuille" transform="rotate(28 112 120) translate(224 0) scale(-1 1)"/>
+      <use href="#feuille" transform="rotate(62 112 120) translate(224 0) scale(-1 1)"/>
+      <use href="#feuille" transform="rotate(-42 112 120) translate(224 0) scale(-1 1)"/>
+      <circle cx="104" cy="131" r="8"/><circle cx="119" cy="133" r="8"/><circle cx="111" cy="142" r="7"/>
+    </g>
+  </svg>
+
+  <div class="titre-bloc">
+    <p class="aloha">Aloha,</p>
+    <h1 class="prenom" aria-label="Kim"><span aria-hidden="true">K</span><span aria-hidden="true">i</span><span aria-hidden="true">m</span></h1>
+    <p class="ipo"><span lang="haw">kuʻu ipo</span> · « ma chérie », en hawaïen</p>
+  </div>
+
+  <div class="mer" aria-hidden="true">
+    <div class="reflet"><i></i><i></i><i></i><i></i><i></i></div>
+    <svg class="vague v1" viewBox="0 0 1200 40" preserveAspectRatio="none"><path d="M0 20Q25 4 50 20T100 20T150 20T200 20T250 20T300 20T350 20T400 20T450 20T500 20T550 20T600 20T650 20T700 20T750 20T800 20T850 20T900 20T950 20T1000 20T1050 20T1100 20T1150 20T1200 20V40H0z"/></svg>
+    <svg class="vague v2" viewBox="0 0 1200 40" preserveAspectRatio="none"><path d="M0 20Q25 4 50 20T100 20T150 20T200 20T250 20T300 20T350 20T400 20T450 20T500 20T550 20T600 20T650 20T700 20T750 20T800 20T850 20T900 20T950 20T1000 20T1050 20T1100 20T1150 20T1200 20V40H0z"/></svg>
+    <div class="surfeur"><img src="img/surf.webp" alt="" width="520" height="369"></div>
+    <svg class="vague v3" viewBox="0 0 1200 40" preserveAspectRatio="none"><path d="M0 20Q25 4 50 20T100 20T150 20T200 20T250 20T300 20T350 20T400 20T450 20T500 20T550 20T600 20T650 20T700 20T750 20T800 20T850 20T900 20T950 20T1000 20T1050 20T1100 20T1150 20T1200 20V40H0z"/></svg>
+  </div>
+
+  <div class="plage" aria-hidden="true">
+    <svg class="fleur f1"><use href="#hibiscus"/></svg>
+    <svg class="fleur f2"><use href="#hibiscus"/></svg>
+    <svg class="fleur f3"><use href="#hibiscus"/></svg>
+  </div>
+
+  <button class="couple" id="couple" type="button" aria-label="Faire coucou à Stitch et Angel">
+    <img src="img/bisou.webp" alt="Stitch et Angel qui se font un bisou" width="900" height="616">
+  </button>
+  <p class="bulle" id="bulle" aria-live="polite"></p>
+
+  <a class="indice" href="#lettres">Tes lettres t’attendent sur la plage ↓</a>
+</header>
+
+<main class="lettres" id="lettres">
+  <div class="flotteurs" id="flotteurs" aria-hidden="true"></div>
+
+  <div class="lettres-tete">
+    <h2>Les lettres de Stitch</h2>
+    <p>Il en a caché neuf dans le sable. Touche une enveloppe pour l’ouvrir, dans l’ordre que tu veux. La dernière est fermée à clé…</p>
+    <div class="progres">
+      <span class="progres-coeurs" id="progres-coeurs"></span>
+      <span class="progres-txt" id="progres-txt" aria-live="polite">Aucune lettre ouverte</span>
+    </div>
+  </div>
+
+  <ul class="grille" id="grille"></ul>
+
+  <img class="coucou" src="img/coucou.webp" alt="" width="360" height="435" loading="lazy">
+</main>
+
+<footer class="pied">
+  <p class="pied-mot">Mahalo, Kim</p>
+  <p class="pied-signe">« Merci », en hawaïen. Merci d’être toi.<br>Fait avec beaucoup d’amour (et l’aide d’un petit extraterrestre bleu) par Enzo.</p>
+  <button type="button" class="reset" id="reset">Refermer toutes les lettres</button>
+</footer>
+
+<!-- La lettre ouverte -->
+<div class="voile" id="voile" hidden>
+  <div class="grande-env" id="grande-env" aria-hidden="true" hidden>
+    <span class="env-dos"></span>
+    <span class="env-papier"></span>
+    <span class="env-poche"></span>
+    <span class="env-rabat"></span>
+    <span class="env-sceau"><svg viewBox="0 0 32 29"><use href="#coeur"/></svg></span>
+  </div>
+
+  <article class="lettre" id="lettre" role="dialog" aria-modal="true" aria-labelledby="l-titre" tabindex="-1" hidden>
+    <button class="fermer" id="fermer" type="button" aria-label="Refermer la lettre">×</button>
+    <img class="lettre-illu" id="l-illu" src="img/bras-ouverts.webp" alt="">
+    <p class="lettre-num" id="l-num"></p>
+    <h2 class="lettre-titre" id="l-titre"></h2>
+    <div class="lettre-texte" id="l-texte"></div>
+    <div class="lettre-bonus" id="l-bonus"></div>
+    <p class="lettre-signe" id="l-signe"></p>
+    <div class="lettre-nav">
+      <button type="button" class="btn-doux" id="refermer">Refermer</button>
+      <button type="button" class="btn-plein" id="suivante">Lettre suivante →</button>
+    </div>
+  </article>
+</div>
+
+<div class="toast" id="toast" role="status" hidden>
+  <img src="img/oups.webp" alt="" width="260" height="420">
+  <p id="toast-txt"></p>
+</div>
+<div class="fete" id="fete" aria-hidden="true"></div>
+
+<script src="script.js?v=1"></script>
+</body>
+</html>
