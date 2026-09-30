@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Un livre pour Kim</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Le petit extraterrestre qui cherchait sa famille, une histoire racontée pour Kim.">
+<meta name="theme-color" content="#0B1030">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Un livre pour toi, Kim 📖">
+<meta property="og:description" content="Notre histoire, racontée par Stitch.">
+<meta property="og:url" content="https://ryfog.github.io/aloha-kim/livre/">
+<meta property="og:image" content="https://ryfog.github.io/aloha-kim/livre/img/apercu.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='3' width='24' height='26' rx='4' fill='%231B2C5E'/%3E%3Crect x='7' y='6' width='18' height='20' rx='2' fill='none' stroke='%23E8C478' stroke-width='1.5'/%3E%3Cpath fill='%23E8C478' d='M16 21c-3-2.3-4.8-3.9-4.8-5.9 0-1.4 1.1-2.5 2.5-2.5.9 0 1.7.5 2.3 1.2.6-.7 1.4-1.2 2.3-1.2 1.4 0 2.5 1.1 2.5 2.5 0 2-1.8 3.6-4.8 5.9z'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Kalam:wght@400;700&family=Nunito+Sans:wght@600;700&display=swap">
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body data-ambiance="nuit">
+
+<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="coeur" viewBox="0 0 32 29">
+      <path d="M16 29C6 21 0 15.5 0 8.8 0 3.9 3.9 0 8.8 0c3 0 5.7 1.5 7.2 3.8C17.5 1.5 20.2 0 23.2 0 28.1 0 32 3.9 32 8.8 32 15.5 26 21 16 29z"/>
+    </symbol>
+    <symbol id="hibiscus" viewBox="-50 -50 100 100">
+      <g fill="currentColor">
+        <path id="petale" d="M0 -5C-17 -17 -21 -45 0 -47 21 -45 17 -17 0 -5z"/>
+        <use href="#petale" transform="rotate(72)"/>
+        <use href="#petale" transform="rotate(144)"/>
+        <use href="#petale" transform="rotate(216)"/>
+        <use href="#petale" transform="rotate(288)"/>
+      </g>
+      <circle r="9" fill="#C2185B" opacity=".45"/>
+      <path d="M0 0 21 -29" stroke="#FFD166" stroke-width="3.5" stroke-linecap="round"/>
+      <circle cx="21" cy="-29" r="4.5" fill="#FFD166"/>
+    </symbol>
+  </defs>
+</svg>
+
+<canvas class="ciel-fond" id="ciel-fond" aria-hidden="true"></canvas>
+
+<button type="button" class="son" id="son" aria-pressed="true" aria-label="Couper la musique" hidden>
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path class="note" d="M9 18.5a3 3 0 1 1-2-2.83V5l11-2v11.5a3 3 0 1 1-2-2.83V6.3L9 7.6z"/><path class="barre" d="M3 3l18 18" stroke-width="2.4" stroke-linecap="round"/></svg>
+</button>
+
+<main class="table">
+  <div class="livre" id="livre" role="region" aria-label="Le livre de Stitch"></div>
+
+  <nav class="nav" aria-label="Pages">
+    <button type="button" class="fleche" id="prec" aria-label="Page précédente" disabled>‹</button>
+    <div class="points" id="points"></div>
+    <button type="button" class="fleche" id="suiv" aria-label="Page suivante">›</button>
+  </nav>
+  <p class="aide" id="aide">Touche la page ou fais-la glisser pour la tourner</p>
+</main>
+
+<!-- ========== Les décors des pages ========== -->
+<template id="s-espace">
+  <div class="decor decor-espace">
+    <div class="etoiles-a"></div><div class="etoiles-b"></div>
+    <div class="nebuleuse"></div>
+    <div class="planete"></div>
+  </div>
+</template>
+
+<template id="s-chute">
+  <div class="decor decor-chute">
+    <div class="etoiles-a"></div><div class="etoiles-b"></div>
+    <div class="trainee"></div>
+    <div class="ocean"></div>
+    <svg class="ile" viewBox="0 0 200 80" aria-hidden="true">
+      <path d="M8 74C40 52 150 46 196 74z" fill="#10213F"/>
+      <path d="M112 60C108 44 104 30 116 16" fill="none" stroke="#10213F" stroke-width="5" stroke-linecap="round"/>
+      <g fill="#10213F">
+        <path d="M116 16C126 8 142 8 152 18 140 14 128 15 116 16z"/>
+        <path d="M116 16C108 6 92 4 82 12 94 10 106 12 116 16z"/>
+        <path d="M116 16C124 18 134 26 136 38 128 28 122 22 116 16z"/>
+        <path d="M116 16C108 20 100 28 98 38 104 28 110 22 116 16z"/>
+      </g>
+    </svg>
+    <div class="eclabousse"></div>
+  </div>
+</template>
+
+<template id="s-pluie">
+  <div class="decor decor-pluie">
+    <div class="nuages-pluie"></div>
+    <div class="pluie"></div>
+    <div class="flaque"><i></i><i></i><i></i></div>
+  </div>
+</template>
+
+<template id="s-aube">
+  <div class="decor decor-aube">
+    <div class="rayons"></div>
+    <div class="soleil-aube"></div>
+    <div class="lucioles"></div>
+  </div>
+</template>
+
+<template id="s-ohana">
+  <div class="decor decor-ohana">
+    <div class="nuage-o o1"></div><div class="nuage-o o2"></div>
+    <div class="petales"></div>
+  </div>
+</template>
+
+<template id="s-happn">
+  <div class="decor decor-happn">
+    <div class="plan"></div>
+    <svg class="chemins" viewBox="0 0 100 80" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <path class="chemin-lui" pathLength="1" d="M-5 70C15 78 30 30 50 40"/>
+      <path class="chemin-elle" pathLength="1" d="M105 64C85 74 68 30 50 40"/>
+      <path class="chemin-nous" pathLength="1" d="M50 40C58 44 70 14 105 12"/>
+    </svg>
+    <svg class="coeur-croise" viewBox="0 0 32 29" aria-hidden="true"><use href="#coeur"/></svg>
+    <div class="telephone">
+      <div class="ecran">
+        <p>Vous vous êtes croisés</p>
+        <div class="avatars"><span>E</span><svg viewBox="0 0 32 29" aria-hidden="true"><use href="#coeur"/></svg><span>K</span></div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<template id="s-date">
+  <div class="decor decor-date">
+    <div class="etoiles-a"></div>
+    <p class="grande-date"><span class="jour">26</span><span class="mois">septembre</span></p>
+    <div class="etincelles"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="coeurs-pop"></div>
+  </div>
+</template>
+
+<template id="s-soiree">
+  <div class="decor decor-soiree">
+    <div class="fenetre"><div class="lune-f"></div></div>
+    <div class="lampe"></div>
+    <svg class="guirlande" viewBox="0 0 100 20" preserveAspectRatio="none" aria-hidden="true">
+      <path d="M-2 4Q50 22 102 4" fill="none" stroke="#6A4050" stroke-width=".7"/>
+    </svg>
+    <div class="ampoules"></div>
+    <div class="canape"></div>
+  </div>
+</template>
+
+<template id="s-magasins">
+  <div class="decor decor-magasins">
+    <div class="boutique"><div class="store"></div><div class="vitrine"></div></div>
+    <div class="etincelles"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="sac s1"></div>
+    <div class="sac s2"></div>
+    <div class="sac s3"></div>
+  </div>
+</template>
+
+<template id="s-futur">
+  <div class="decor decor-futur">
+    <div class="soleil-futur"></div>
+    <div class="route"><i></i></div>
+    <div class="coeurs-montants"></div>
+  </div>
+</template>
+
+<script src="script.js?v=1"></script>
+</body>
+</html>
