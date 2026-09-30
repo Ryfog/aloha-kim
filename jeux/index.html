@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>L’île aux jeux</title>
+  <meta name="description" content="Des jeux à deux avec Stitch : tu préfères, qui de nous deux, dessin, mime, quiz… chacun sur son téléphone.">
+  <meta name="theme-color" content="#1C7FC4">
+  <meta name="robots" content="noindex">
+  <meta property="og:title" content="L’île aux jeux 🌺">
+  <meta property="og:description" content="Des jeux à deux avec Stitch. Crée une partie, envoie le code, et c’est parti !">
+  <meta property="og:image" content="https://ryfog.github.io/aloha-kim/jeux/img/apercu.jpg">
+  <meta property="og:url" content="https://ryfog.github.io/aloha-kim/jeux/">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="img/stitch.webp" type="image/webp">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chewy&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+  <div class="decor" aria-hidden="true">
+    <div class="soleil"></div>
+    <svg class="vagues" viewBox="0 0 1200 160" preserveAspectRatio="none">
+      <path class="v1" d="M0 70 C150 30 300 110 450 70 S750 30 900 70 S1100 110 1200 70 V160 H0Z"/>
+      <path class="v2" d="M0 100 C200 60 350 140 550 100 S850 60 1000 100 S1150 130 1200 100 V160 H0Z"/>
+    </svg>
+  </div>
+
+  <header class="barre" id="barre" hidden></header>
+  <main id="app" tabindex="-1">
+    <noscript><p class="carte">Ce site a besoin de JavaScript pour jouer.</p></noscript>
+  </main>
+  <div id="annonce" class="lecteur-seul" aria-live="polite"></div>
+  <div id="toasts" aria-live="polite"></div>
+
+  <script src="contenu.js?v=1"></script>
+  <script src="regles.js?v=1"></script>
+  <script src="reseau.js?v=1"></script>
+  <script src="app.js?v=1"></script>
+</body>
+</html>

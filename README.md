@@ -9,6 +9,11 @@ Une petite plage au coucher du soleil où Stitch a caché neuf lettres pour Kim.
 - Les lettres déjà ouvertes restent ouvertes d'une visite à l'autre sur le même téléphone.
   « Refermer toutes les lettres », en bas de page, remet tout à zéro.
 
+## Aussi sur ce site
+
+- [`livre/`](https://ryfog.github.io/aloha-kim/livre/) : un livre d'images à feuilleter, votre histoire racontée par Stitch.
+- [`jeux/`](https://ryfog.github.io/aloha-kim/jeux/) : l'île aux jeux, des jeux à deux sur deux téléphones (voir `jeux/README.md`).
+
 ## Changer un texte
 
 Tout est au début de `script.js`, dans `LETTRES` : un paragraphe par ligne du tableau `texte`,
