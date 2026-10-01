@@ -103,9 +103,9 @@
   });
   JEUX.quiz.taillePartie = QUIZ_PARTIE;
 
-  //  Coco, Palme, Pince : la noix de coco casse la pince, la palme couvre la coco,
-  //  la pince coupe la palme. Premier à 3.
-  const BAT = { coco: 'pince', palme: 'coco', pince: 'palme' };
+  //  Poêle, Affiche, Ciseaux : la poêle écrase les ciseaux, l'affiche enveloppe la poêle,
+  //  les ciseaux découpent l'affiche. Premier à 3.
+  const BAT = { poele: 'ciseaux', affiche: 'poele', ciseaux: 'affiche' };
   JEUX.chifoumi = vote({
     question(etat, jeu) { if (!jeu.points || jeu.fin) { jeu.points = { a: 0, b: 0 }; jeu.fin = null; } jeu.gagne = null; },
     valide: v => v in BAT,
@@ -202,24 +202,7 @@
     attendus: () => []
   };
 
-  /* ---------- Action ou vérité ---------- */
-  JEUX.av = {
-    init: () => ({ n: 1, tour: 'b', phase: 'choix', type: null, q: null, jokers: { a: 3, b: 3 } }),
-    agir(etat, jeu, act) {
-      const liste = t => (t === 'action' ? C().actions : C().verites);
-      if (act.type === 'choisir' && act.n === jeu.n && jeu.phase === 'choix' && (act.choix === 'action' || act.choix === 'verite')) {
-        jeu.type = act.choix; jeu.q = tirer(etat, act.choix, liste(act.choix).length); jeu.phase = 'carte';
-      } else if (act.type === 'joker' && act.n === jeu.n && jeu.phase === 'carte' && jeu.jokers[jeu.tour] > 0) {
-        jeu.jokers[jeu.tour]--; jeu.q = tirer(etat, jeu.type, liste(jeu.type).length);
-      } else if (act.type === 'fait' && act.n === jeu.n && jeu.phase === 'carte') {
-        score(etat, 'av', () => ({ a: 0, b: 0 }))[jeu.tour]++;
-        jeu.n++; jeu.tour = autre(jeu.tour); jeu.phase = 'choix'; jeu.type = null; jeu.q = null;
-      }
-    },
-    attendus: (etat, jeu) => [jeu.tour]
-  };
-
-  /* ---------- Stitch dessine : l'un dessine, l'autre devine ---------- */
+  /* ---------- Le pinceau magique : l'un dessine, l'autre devine ---------- */
   const DUREE_DESSIN = 90;
   const normaliser = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/[’']/g, ' ').replace(/\b(le|la|les|un|une|des|du|de|l|d)\b/g, ' ').replace(/[^a-z0-9]+/g, ' ').trim()
@@ -297,8 +280,8 @@
   };
 
   /* ---------- Memory : 8 paires d'images Stitch ---------- */
-  const IMAGES_MEMORY = ['stitch', 'angel', 'lilo', 'hula', 'glace', 'ananas', 'nounours', 'coccinelle', 'grenouille',
-    'musique', 'pasteque', 'elvis', 'cosmos', 'cuistot', 'pudge', 'souillon'];
+  const IMAGES_MEMORY = ['av-raiponce', 'av-flynn', 'av-pascal', 'av-maximus', 'av-fleurs', 'av-eugene', 'av-peinture',
+    'av-pascal-calin', 'av-couronne', 'av-guitare', 'av-lanterne', 'av-poele', 'av-espiegle', 'av-brune', 'av-hiver', 'av-pascal-rire'];
   JEUX.memory = {
     init(etat) { const jeu = { n: 0, premier: 'a' }; JEUX.memory.donne(jeu); return jeu; },
     donne(jeu) {
@@ -449,6 +432,289 @@
     attendus: () => []
   };
 
+  /* ---------- Deux vérités, un mensonge ---------- */
+  JEUX.mensonge = {
+    secret: true,
+    init(etat) { const jeu = { n: 0 }; JEUX.mensonge.manche(etat, jeu); return jeu; },
+    manche(etat, jeu) {
+      jeu.n++;
+      jeu.auteur = jeu.n % 2 ? 'b' : 'a';
+      jeu.theme = tirer(etat, 'mensonge', C().mensonge.length);
+      jeu.phrases = null; jeu.faux = null; jeu.choix = null; jeu.phase = 'ecrire';
+    },
+    agir(etat, jeu, act, de) {
+      if (act.type === 'ecrire' && act.n === jeu.n && jeu.phase === 'ecrire' && de === jeu.auteur) {
+        const p = Array.isArray(act.phrases) ? act.phrases.map(t => String(t || '').trim().slice(0, 120)) : [];
+        if (p.length !== 3 || p.some(t => !t) || !Number.isInteger(act.faux) || act.faux < 0 || act.faux > 2) return;
+        //  l'ordre est mélangé : le mensonge n'est jamais au même endroit
+        const o = melanger(3);
+        jeu.phrases = o.map(i => p[i]);
+        jeu.faux = o.indexOf(act.faux);
+        jeu.phase = 'deviner';
+      } else if (act.type === 'deviner' && act.n === jeu.n && jeu.phase === 'deviner' && de !== jeu.auteur
+          && Number.isInteger(act.i) && act.i >= 0 && act.i < 3) {
+        jeu.choix = act.i; jeu.phase = 'revele';
+        const s = score(etat, 'mensonge', () => ({ a: 0, b: 0, manches: 0 }));
+        s.manches++;
+        s[act.i === jeu.faux ? autre(jeu.auteur) : jeu.auteur]++;
+      } else if (act.type === 'suivant' && act.n === jeu.n && jeu.phase === 'revele') {
+        JEUX.mensonge.manche(etat, jeu);
+      }
+    },
+    attendus: (etat, jeu) => (jeu.phase === 'ecrire' ? [jeu.auteur] : jeu.phase === 'deviner' ? [autre(jeu.auteur)] : [])
+  };
+
+  /* ---------- Mots jumeaux : le même mot sans se concerter ---------- */
+  JEUX.jumeaux = {
+    secret: true,
+    init(etat) { const jeu = { n: 0 }; JEUX.jumeaux.manche(etat, jeu); return jeu; },
+    manche(etat, jeu) {
+      jeu.n++;
+      jeu.q = tirer(etat, 'jumeaux', C().jumeaux.length);
+      jeu.rep = vide(); jeu.phase = 'choix'; jeu.pareil = false; jeu.accorde = false;
+    },
+    agir(etat, jeu, act, de) {
+      if (act.type === 'ecrire' && act.n === jeu.n && jeu.phase === 'choix' && jeu.rep[de] === null) {
+        const t = String(act.texte || '').trim().slice(0, 40);
+        if (!t) return;
+        jeu.rep[de] = t;
+        if (tousLa(jeu.rep)) {
+          jeu.phase = 'revele';
+          const x = normaliser(jeu.rep.a), y = normaliser(jeu.rep.b);
+          jeu.pareil = !!x && x === y;
+          const s = score(etat, 'jumeaux', () => ({ manches: 0, pareils: 0 }));
+          s.manches++; if (jeu.pareil) s.pareils++;
+        }
+      } else if (act.type === 'compter' && act.n === jeu.n && jeu.phase === 'revele' && !jeu.pareil) {
+        //  « fraise » et « fraises des bois » : on peut décider que ça compte
+        jeu.pareil = true; jeu.accorde = true;
+        score(etat, 'jumeaux', () => ({ manches: 0, pareils: 0 })).pareils++;
+      } else if (act.type === 'suivant' && act.n === jeu.n && jeu.phase === 'revele') {
+        JEUX.jumeaux.manche(etat, jeu);
+      }
+    },
+    attendus: (etat, jeu) => (jeu.phase === 'choix' ? DEUX.filter(j => jeu.rep[j] === null) : [])
+  };
+
+  /* ---------- L'histoire à quatre mains : une phrase chacun ---------- */
+  const PHRASES_HISTOIRE = 8;
+  JEUX.histoire = {
+    init(etat) { const jeu = { n: 0 }; JEUX.histoire.nouvelle(etat, jeu); return jeu; },
+    nouvelle(etat, jeu) {
+      jeu.n++;
+      jeu.debut = tirer(etat, 'histoires', C().histoires.length);
+      jeu.phrases = []; jeu.tour = jeu.n % 2 ? 'b' : 'a'; jeu.phase = 'ecrire'; jeu.max = PHRASES_HISTOIRE;
+    },
+    agir(etat, jeu, act, de) {
+      if (act.type === 'ajouter' && act.n === jeu.n && jeu.phase === 'ecrire' && de === jeu.tour && act.k === jeu.phrases.length) {
+        const t = String(act.texte || '').trim().slice(0, 160);
+        if (!t) return;
+        jeu.phrases.push({ de, t });
+        jeu.tour = autre(jeu.tour);
+        if (jeu.phrases.length >= jeu.max) JEUX.histoire.finir(etat, jeu);
+      } else if (act.type === 'finir' && act.n === jeu.n && jeu.phase === 'ecrire' && jeu.phrases.length >= 2) {
+        JEUX.histoire.finir(etat, jeu);
+      } else if (act.type === 'nouvelle' && act.n === jeu.n && jeu.phase === 'fin') {
+        JEUX.histoire.nouvelle(etat, jeu);
+      }
+    },
+    finir(etat, jeu) {
+      jeu.phase = 'fin';
+      const s = score(etat, 'histoire', () => ({ histoires: 0, recueil: [] }));
+      s.histoires++;
+      s.recueil.unshift({ debut: jeu.debut, phrases: jeu.phrases.map(p => [p.de, p.t]) });
+      s.recueil = s.recueil.slice(0, 5);
+    },
+    attendus: (etat, jeu) => (jeu.phase === 'ecrire' ? [jeu.tour] : [])
+  };
+
+  /* ---------- Le mot mystère : sept lanternes, une s'éteint à chaque erreur ---------- */
+  const lettresDe = mot => String(mot).toUpperCase().replace(/Œ/g, 'OE').replace(/Æ/g, 'AE').normalize('NFD').replace(/[̀-ͯ]/g, '');
+  JEUX.pendu = {
+    secret: true,
+    init() { const jeu = { n: 0 }; JEUX.pendu.manche(jeu); return jeu; },
+    manche(jeu) {
+      jeu.n++;
+      jeu.poseur = jeu.n % 2 ? 'a' : 'b';
+      jeu.phase = 'choix'; jeu.mot = null; jeu.lettres = []; jeu.erreurs = 0; jeu.max = 7; jeu.gagne = null; jeu.perso = false;
+    },
+    agir(etat, jeu, act, de) {
+      if (act.type === 'choisir' && act.n === jeu.n && jeu.phase === 'choix' && de === jeu.poseur) {
+        let mot = act.mot ? String(act.mot).replace(/[^A-Za-zÀ-ÖØ-öø-ÿŒœ \-]/g, '').replace(/\s+/g, ' ').trim().slice(0, 24) : '';
+        if (lettresDe(mot).replace(/[^A-Z]/g, '').length < 2) mot = '';
+        jeu.perso = !!mot;
+        jeu.mot = mot || C().pendu[tirer(etat, 'pendu', C().pendu.length)];
+        jeu.phase = 'jeu';
+      } else if (act.type === 'lettre' && act.n === jeu.n && jeu.phase === 'jeu' && de !== jeu.poseur) {
+        const l = String(act.l || '').toUpperCase();
+        if (!/^[A-Z]$/.test(l) || jeu.lettres.includes(l)) return;
+        jeu.lettres.push(l);
+        const lettres = lettresDe(jeu.mot).replace(/[^A-Z]/g, '');
+        if (!lettres.includes(l)) jeu.erreurs++;
+        if ([...lettres].every(x => jeu.lettres.includes(x))) JEUX.pendu.finir(etat, jeu, autre(jeu.poseur));
+        else if (jeu.erreurs >= jeu.max) JEUX.pendu.finir(etat, jeu, jeu.poseur);
+      } else if (act.type === 'suivant' && act.n === jeu.n && jeu.phase === 'fin') {
+        JEUX.pendu.manche(jeu);
+      }
+    },
+    finir(etat, jeu, g) {
+      jeu.phase = 'fin'; jeu.gagne = g;
+      score(etat, 'pendu', () => ({ a: 0, b: 0 }))[g]++;
+    },
+    attendus: (etat, jeu) => (jeu.phase === 'choix' ? [jeu.poseur] : jeu.phase === 'jeu' ? [autre(jeu.poseur)] : [])
+  };
+  JEUX.pendu.lettresDe = lettresDe;
+
+  /* ---------- Quatre à la suite ---------- */
+  const COLS = 7, LIGS = 6;
+  function alignes(cases, r, c, j) {
+    for (const [dr, dc] of [[0, 1], [1, 0], [1, 1], [1, -1]]) {
+      const l = [r * COLS + c];
+      for (const s of [1, -1]) {
+        let rr = r + dr * s, cc = c + dc * s;
+        while (rr >= 0 && rr < LIGS && cc >= 0 && cc < COLS && cases[rr * COLS + cc] === j) { l.push(rr * COLS + cc); rr += dr * s; cc += dc * s; }
+      }
+      if (l.length >= 4) return l;
+    }
+    return null;
+  }
+  JEUX.puissance = {
+    init() { const jeu = { n: 0, premier: 'a' }; JEUX.puissance.grille(jeu); return jeu; },
+    grille(jeu) {
+      jeu.n++;
+      jeu.premier = jeu.n === 1 ? 'b' : autre(jeu.premier);
+      jeu.cases = Array(COLS * LIGS).fill(null); jeu.tour = jeu.premier; jeu.gagnant = null; jeu.ligne = null; jeu.dernier = null;
+    },
+    agir(etat, jeu, act, de) {
+      if (act.type === 'jouer' && act.n === jeu.n && !jeu.gagnant && de === jeu.tour && Number.isInteger(act.c) && act.c >= 0 && act.c < COLS) {
+        let r = LIGS - 1;
+        while (r >= 0 && jeu.cases[r * COLS + act.c]) r--;
+        if (r < 0) return;
+        const i = r * COLS + act.c;
+        jeu.cases[i] = de; jeu.dernier = i;
+        const l = alignes(jeu.cases, r, act.c, de);
+        const s = () => score(etat, 'puissance', () => ({ a: 0, b: 0, nuls: 0 }));
+        if (l) { jeu.gagnant = de; jeu.ligne = l; s()[de]++; }
+        else if (jeu.cases.every(Boolean)) { jeu.gagnant = 'nul'; s().nuls++; }
+        else jeu.tour = autre(de);
+      } else if (act.type === 'rejouer' && act.n === jeu.n && jeu.gagnant) {
+        JEUX.puissance.grille(jeu);
+      }
+    },
+    attendus: (etat, jeu) => (jeu.gagnant ? [] : [jeu.tour])
+  };
+  JEUX.puissance.cols = COLS; JEUX.puissance.ligs = LIGS;
+
+  /* ---------- Les petits carrés : celui qui ferme une case rejoue ---------- */
+  const CT = 4;
+  JEUX.carres = {
+    init() { const jeu = { n: 0, premier: 'a' }; JEUX.carres.grille(jeu); return jeu; },
+    grille(jeu) {
+      jeu.n++;
+      jeu.premier = jeu.n === 1 ? 'b' : autre(jeu.premier);
+      jeu.h = Array((CT + 1) * CT).fill(null);
+      jeu.v = Array(CT * (CT + 1)).fill(null);
+      jeu.boites = Array(CT * CT).fill(null);
+      jeu.tour = jeu.premier; jeu.points = { a: 0, b: 0 }; jeu.phase = 'jeu'; jeu.dernier = null;
+    },
+    agir(etat, jeu, act, de) {
+      if (act.type === 'trait' && act.n === jeu.n && jeu.phase === 'jeu' && de === jeu.tour && (act.t === 'h' || act.t === 'v') && Number.isInteger(act.i)) {
+        const tab = jeu[act.t];
+        if (act.i < 0 || act.i >= tab.length || tab[act.i]) return;
+        tab[act.i] = de; jeu.dernier = act.t + act.i;
+        let ferme = 0;
+        for (let r = 0; r < CT; r++) for (let c = 0; c < CT; c++) {
+          const b = r * CT + c;
+          if (!jeu.boites[b] && jeu.h[r * CT + c] && jeu.h[(r + 1) * CT + c] && jeu.v[r * (CT + 1) + c] && jeu.v[r * (CT + 1) + c + 1]) {
+            jeu.boites[b] = de; jeu.points[de]++; ferme++;
+          }
+        }
+        if (jeu.boites.every(Boolean)) {
+          jeu.phase = 'fin';
+          const s = score(etat, 'carres', () => ({ a: 0, b: 0, nuls: 0 }));
+          if (jeu.points.a === jeu.points.b) s.nuls++; else s[jeu.points.a > jeu.points.b ? 'a' : 'b']++;
+        } else if (!ferme) jeu.tour = autre(de);
+      } else if (act.type === 'rejouer' && act.n === jeu.n && jeu.phase === 'fin') {
+        JEUX.carres.grille(jeu);
+      }
+    },
+    attendus: (etat, jeu) => (jeu.phase === 'jeu' ? [jeu.tour] : [])
+  };
+  JEUX.carres.taille = CT;
+
+  /* ---------- Dans le même ordre : classer quatre choses chacun de son côté ---------- */
+  JEUX.ordre = vote({
+    question: (etat, jeu) => { jeu.q = tirer(etat, 'ordre', C().ordre.length); jeu.communs = 0; },
+    valide: v => Array.isArray(v) && v.length === 4 && v.every(x => Number.isInteger(x)) && [0, 1, 2, 3].every(k => v.includes(k)),
+    revele(etat, jeu) {
+      jeu.communs = jeu.rep.a.filter((x, i) => jeu.rep.b[i] === x).length;
+      const s = score(etat, 'ordre', () => ({ manches: 0, points: 0, parfaits: 0 }));
+      s.manches++; s.points += jeu.communs; if (jeu.communs === 4) s.parfaits++;
+    }
+  });
+
+  /* ---------- Plus ou moins : le nombre secret, en duel ---------- */
+  JEUX.nombre = {
+    secret: true,
+    init() { const jeu = { n: 0, duel: vide() }; JEUX.nombre.manche(jeu); return jeu; },
+    manche(jeu) {
+      jeu.n++;
+      jeu.poseur = jeu.n % 2 ? 'a' : 'b';
+      jeu.phase = 'choix'; jeu.secret = null; jeu.essais = []; jeu.perso = false;
+      if (jeu.duel.a !== null && jeu.duel.b !== null) jeu.duel = vide();
+    },
+    agir(etat, jeu, act, de) {
+      if (act.type === 'choisir' && act.n === jeu.n && jeu.phase === 'choix' && de === jeu.poseur) {
+        const v = Number(act.v);
+        jeu.perso = Number.isInteger(v) && v >= 1 && v <= 100;
+        jeu.secret = jeu.perso ? v : 1 + hasard(100);
+        jeu.phase = 'jeu';
+      } else if (act.type === 'deviner' && act.n === jeu.n && jeu.phase === 'jeu' && de !== jeu.poseur && act.k === jeu.essais.length) {
+        const v = Number(act.v);
+        if (!Number.isInteger(v) || v < 1 || v > 100) return;
+        const sens = v < jeu.secret ? 'plus' : v > jeu.secret ? 'moins' : 'ok';
+        jeu.essais.push({ v, sens });
+        if (sens === 'ok') {
+          jeu.phase = 'fin';
+          const devin = autre(jeu.poseur);
+          jeu.duel[devin] = jeu.essais.length;
+          const s = score(etat, 'nombre', () => ({ a: 0, b: 0, record: { a: null, b: null } }));
+          if (s.record[devin] === null || jeu.essais.length < s.record[devin]) s.record[devin] = jeu.essais.length;
+          if (jeu.duel.a !== null && jeu.duel.b !== null && jeu.duel.a !== jeu.duel.b) s[jeu.duel.a < jeu.duel.b ? 'a' : 'b']++;
+        }
+      } else if (act.type === 'suivant' && act.n === jeu.n && jeu.phase === 'fin') {
+        JEUX.nombre.manche(jeu);
+      }
+    },
+    attendus: (etat, jeu) => (jeu.phase === 'choix' ? [jeu.poseur] : jeu.phase === 'jeu' ? [autre(jeu.poseur)] : [])
+  };
+
+  /* ---------- quand une manche est-elle finie ? (pour le grand mélange) ---------- */
+  const FINI = {
+    preferes: j => j.phase !== 'choix', qui: j => j.phase !== 'choix', jamais: j => j.phase !== 'choix',
+    quiz: j => j.phase !== 'choix', chifoumi: j => j.phase !== 'choix', ordre: j => j.phase !== 'choix',
+    connais: j => j.phase === 'juge', onde: j => j.phase === 'revele', coeur: () => true,
+    jumeaux: j => j.phase === 'revele', mensonge: j => j.phase === 'revele', histoire: j => j.phase === 'fin',
+    morpion: j => !!j.gagnant, puissance: j => !!j.gagnant, memory: j => j.phase === 'fin', carres: j => j.phase === 'fin',
+    reflexes: j => j.phase === 'resultat', cinq: j => j.phase === 'fin', mime: j => j.phase === 'fin',
+    dessin: j => j.phase === 'fin', roue: j => j.phase === 'resultat', pendu: j => j.phase === 'fin',
+    nombre: j => j.phase === 'fin', sortie: j => !!j.tirage
+  };
+  for (const [id, f] of Object.entries(FINI)) if (JEUX[id]) JEUX[id].fini = f;
+
+  /* ---------- le grand mélange : des manches de jeux tirés au hasard ---------- */
+  const MELANGE = ['preferes', 'qui', 'jamais', 'connais', 'onde', 'coeur', 'jumeaux', 'ordre', 'mensonge', 'quiz', 'chifoumi',
+    'morpion', 'reflexes', 'cinq', 'mime', 'dessin', 'roue', 'pendu', 'nombre', 'puissance'];
+  function lancerMelange(etat) {
+    const avant = etat.jeu ? etat.jeu.id : null;
+    let id = MELANGE[tirer(etat, 'melange', MELANGE.length)];
+    if (id === avant) id = MELANGE[tirer(etat, 'melange', MELANGE.length)];
+    etat.jeu = JEUX[id].init(etat, {});
+    etat.jeu.id = id;
+    etat.melange.manche++;
+    score(etat, 'melange', () => ({ manches: 0 })).manches++;
+  }
+
   /* ---------- la partie ---------- */
   function creer({ code, local, a, b }) {
     return {
@@ -480,9 +746,13 @@
       const j = etat.joueurs[de];
       if (j) { if (act.nom) j.nom = String(act.nom).slice(0, 20); if (act.avatar) j.avatar = String(act.avatar); }
     } else if (act.type === 'choisirJeu') {
-      if (JEUX[act.jeu] && etat.joueurs.b) { etat.jeu = JEUX[act.jeu].init(etat, act.options || {}); etat.jeu.id = act.jeu; }
+      if (JEUX[act.jeu] && etat.joueurs.b) { etat.jeu = JEUX[act.jeu].init(etat, act.options || {}); etat.jeu.id = act.jeu; etat.melange = null; }
+    } else if (act.type === 'melange') {
+      if (etat.joueurs.b) { etat.melange = { manche: 0 }; lancerMelange(etat); }
+    } else if (act.type === 'melangeSuivant') {
+      if (etat.melange && act.m === etat.melange.manche) lancerMelange(etat);
     } else if (act.type === 'quitterJeu') {
-      etat.jeu = null;
+      etat.jeu = null; etat.melange = null;
     } else if (etat.jeu && JEUX[etat.jeu.id]) {
       JEUX[etat.jeu.id].agir(etat, etat.jeu, act, de, maintenant);
     }
@@ -493,5 +763,5 @@
   const attendus = etat => (etat.jeu && JEUX[etat.jeu.id] ? JEUX[etat.jeu.id].attendus(etat, etat.jeu) : []);
   const echeances = etat => (etat.jeu && JEUX[etat.jeu.id] && JEUX[etat.jeu.id].echeances ? JEUX[etat.jeu.id].echeances(etat.jeu) : []);
 
-  globalThis.Regles = { JEUX, creer, appliquer, attendus, echeances, autre, normaliser, melanger };
+  globalThis.Regles = { JEUX, creer, appliquer, attendus, echeances, autre, normaliser, melanger, MELANGE };
 })();

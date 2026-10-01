@@ -12,7 +12,7 @@ Une petite plage au coucher du soleil où Stitch a caché neuf lettres pour Kim.
 ## Aussi sur ce site
 
 - [`livre/`](https://ryfog.github.io/aloha-kim/livre/) : un livre d'images à feuilleter, votre histoire racontée par Stitch.
-- [`jeux/`](https://ryfog.github.io/aloha-kim/jeux/) : l'île aux jeux, des jeux à deux sur deux téléphones (voir `jeux/README.md`).
+- [`jeux/`](https://ryfog.github.io/aloha-kim/jeux/) : la tour aux jeux, 24 jeux à deux sous les lanternes, chacun sur son téléphone (voir `jeux/README.md`).
 
 ## Changer un texte
 

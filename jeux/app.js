@@ -1,5 +1,5 @@
 /* ============================================================
-   L'île aux jeux : les écrans, la partie à deux téléphones
+   La tour aux jeux : les écrans, la partie à deux téléphones
    (ou sur un seul), et l'affichage de chaque jeu.
    ============================================================ */
 (() => {
@@ -25,37 +25,46 @@
 
   /* ---------- personnages et jeux ---------- */
   const AVATARS = [
-    ['stitch', 'Stitch'], ['angel', 'Angel'], ['lilo', 'Lilo'], ['hula', 'Stitch hula'], ['glace', 'Stitch glace'],
-    ['ananas', 'Stitch ananas'], ['nounours', 'Stitch nounours'], ['coccinelle', 'Stitch coccinelle'],
-    ['grenouille', 'Stitch et la grenouille'], ['musique', 'Stitch musique'], ['pasteque', 'Stitch pastèque'],
-    ['elvis', 'Stitch Elvis'], ['cosmos', 'Stitch cosmonaute'], ['cuistot', 'Stitch cuistot'], ['pudge', 'Lilo et Pudge'],
-    ['souillon', 'Stitch et Souillon']
+    ['raiponce', 'Raiponce'], ['flynn', 'Flynn'], ['pascal', 'Pascal'], ['maximus', 'Maximus'], ['fleurs', 'Raiponce et ses fleurs'],
+    ['eugene', 'Eugene'], ['peinture', 'Raiponce qui peint'], ['pascal-calin', 'Raiponce et Pascal'], ['couronne', 'Raiponce couronnée'],
+    ['guitare', 'Raiponce à la guitare'], ['lanterne', 'Raiponce et la lanterne'], ['poele', 'Raiponce et sa poêle'],
+    ['espiegle', 'Raiponce espiègle'], ['brune', 'Raiponce aux cheveux courts'], ['hiver', 'Raiponce en hiver'], ['pascal-rire', 'Pascal qui rit']
   ];
+  //  un personnage inconnu (ancienne version du site) devient Raiponce ou Flynn
+  const avatarDe = (v, j) => (AVATARS.some(x => x[0] === v) ? v : j === 'b' ? 'flynn' : 'raiponce');
   const INFOS = {
-    preferes: { titre: 'Tu préfères…', img: 'bof', c: '#4C7BE0', desc: 'Deux choix, un seul possible', cat: 'decouvrir', regle: 'Chacun choisit en secret, puis on révèle en même temps : êtes-vous d’accord ?' },
-    qui: { titre: 'Qui de nous deux ?', img: 'main-dans-la-main', c: '#FF8DC7', desc: 'Désignez-vous en secret', cat: 'decouvrir', regle: 'Chacun désigne celui ou celle qui correspond le mieux, sans voir la réponse de l’autre.' },
-    jamais: { titre: 'Je n’ai jamais…', img: 'oups', c: '#FFCB47', desc: 'Avoue… ou pas', cat: 'decouvrir', regle: 'Pour chaque phrase, réponds « Moi si ! » ou « Jamais ». Les deux réponses s’affichent ensemble.' },
-    connais: { titre: 'Tu me connais ?', img: 'timide', c: '#2FB67B', desc: 'L’un répond, l’autre devine', cat: 'decouvrir', regle: 'À tour de rôle, l’un écrit sa vraie réponse et l’autre ce qu’il imagine. Celui qui a répondu juge : juste (+2), presque (+1) ou raté.' },
-    onde: { titre: 'Même longueur d’onde', img: 'surf', c: '#3FC1D9', desc: 'Un curseur de 0 à 10', cat: 'decouvrir', regle: 'L’un place le curseur pour lui-même, l’autre essaie de le mettre au même endroit. Pile dessus : 3 points pour vous deux !' },
-    coeur: { titre: 'À cœur ouvert', img: 'coeur', c: '#FF5A7A', desc: 'Des questions pour se raconter', cat: 'decouvrir', regle: 'Tirez une carte et répondez chacun votre tour. Trois niveaux : léger, doux, profond.' },
-    av: { titre: 'Action ou vérité', img: 'eclate', c: '#9B6CE8', desc: 'Version toute mignonne', cat: 'decouvrir', regle: 'Chacun son tour choisit action ou vérité. Trois jokers chacun pour changer de carte.' },
-    dessin: { titre: 'Stitch dessine', img: 'dessine', c: '#4C7BE0', desc: 'Dessine, l’autre devine', cat: 'jouer', regle: 'L’un dessine le mot secret, l’autre voit le dessin apparaître sur son téléphone et devine. 90 secondes !' },
-    mime: { titre: 'Le mime de Stitch', img: 'hula', c: '#2FB67B', desc: 'Un max de mots en 60 s', cat: 'jouer', regle: 'L’un mime les mots qui s’affichent sur son téléphone, l’autre devine à voix haute. Trouvé ou passer : le plus possible en 60 secondes.' },
-    cinq: { titre: '5 secondes chrono', img: 'jongle', c: '#FFCB47', desc: 'Trois réponses, vite !', cat: 'jouer', regle: 'Une consigne s’affiche : cite trois réponses avant la fin des 5 secondes. L’autre juge.' },
-    quiz: { titre: 'Quiz Stitch', img: 'lecture', c: '#FF8DC7', desc: 'Lilo & Stitch et Hawaï', cat: 'jouer', regle: 'Dix questions sur Lilo & Stitch et Hawaï. Chacun répond en secret : un point par bonne réponse.' },
-    roue: { titre: 'La roue des câlins', img: 'calin', c: '#FF5A7A', desc: 'Des gages tout doux', cat: 'jouer', regle: 'Chacun son tour fait tourner la roue… et fait le gage. On peut changer les gages quand on veut.' },
-    sortie: { titre: 'Idée de sortie', img: 'fusee', c: '#3FC1D9', desc: 'Trois dés pour un rendez-vous', cat: 'jouer', regle: 'Lancez les dés : un lieu, une activité, un petit plus. Gardez les idées qui vous plaisent.' },
-    memory: { titre: 'Memory', img: 'souillon', c: '#4C7BE0', desc: '8 paires de Stitch', cat: 'defis', regle: 'Retournez deux cartes : une paire, c’est un point et on rejoue. Sinon, c’est au tour de l’autre.' },
-    morpion: { titre: 'Morpion', img: 'amoureux', c: '#FF8DC7', desc: 'Ton personnage contre le sien', cat: 'defis', regle: 'Alignez trois fois votre personnage. Chacun commence une partie sur deux.' },
-    chifoumi: { titre: 'Coco, Palme, Pince', img: 'rire', c: '#FFCB47', desc: 'Le chifoumi des îles', cat: 'defis', regle: 'La coco casse la pince, la palme couvre la coco, la pince coupe la palme. Premier à 3 !' },
-    reflexes: { titre: 'Duel de réflexes', img: 'combinaison', c: '#2FB67B', desc: 'Le plus rapide gagne', cat: 'defis', regle: 'Quand Stitch surgit, touche l’écran le plus vite possible. Trop tôt, c’est perdu ! Premier à 3.' }
+    preferes: { titre: 'Tu préfères…', img: 'preferes', c: '#7B52C7', desc: 'Deux choix, un seul possible', cat: 'decouvrir', regle: 'Chacun choisit en secret, puis on révèle en même temps : êtes-vous d’accord ?' },
+    qui: { titre: 'Qui de nous deux ?', img: 'eugene-maximus', c: '#E26FA8', desc: 'Désignez-vous en secret', cat: 'decouvrir', regle: 'Chacun désigne celui ou celle qui correspond le mieux, sans voir la réponse de l’autre.' },
+    jamais: { titre: 'Je n’ai jamais…', img: 'emmelee', c: '#F4B942', desc: 'Avoue… ou pas', cat: 'decouvrir', regle: 'Pour chaque phrase, réponds « Moi si ! » ou « Jamais ». Les deux réponses s’affichent ensemble.' },
+    connais: { titre: 'Tu me connais ?', img: 'livre', c: '#5DB85B', desc: 'L’un répond, l’autre devine', cat: 'decouvrir', regle: 'À tour de rôle, l’un écrit sa vraie réponse et l’autre ce qu’il imagine. Celui qui a répondu juge : juste (+2), presque (+1) ou raté.' },
+    onde: { titre: 'Même longueur d’onde', img: 'telescope', c: '#B79AD8', desc: 'Un curseur de 0 à 10', cat: 'decouvrir', regle: 'L’un place le curseur pour lui-même, l’autre essaie de le mettre au même endroit. Pile dessus : 3 points pour vous deux !' },
+    coeur: { titre: 'À cœur ouvert', img: 'tendresse', c: '#E0566F', desc: 'Des questions pour se raconter', cat: 'decouvrir', regle: 'Tirez une carte et répondez chacun votre tour. Trois niveaux : léger, doux, profond.' },
+    mensonge: { titre: 'Deux vérités, un mensonge', img: 'flynn-pomme', c: '#F28C38', desc: 'Démasque le faux', cat: 'decouvrir', regle: 'L’un écrit trois phrases sur lui : deux vraies, une fausse. L’autre doit trouver le mensonge. Démasqué : un point pour le détective. Raté : un point pour le menteur.' },
+    jumeaux: { titre: 'Mots jumeaux', img: 'the', c: '#7B52C7', desc: 'Pensez au même mot', cat: 'decouvrir', regle: 'Un thème s’affiche, chacun écrit le premier mot qui lui vient, sans se parler. Le même mot ? Vous êtes des âmes jumelles !' },
+    ordre: { titre: 'Dans le même ordre', img: 'reine', c: '#E26FA8', desc: 'Classez pareil !', cat: 'decouvrir', regle: 'Chacun classe quatre choses de la préférée à la moins aimée, en secret. Un point par place en commun.' },
+    dessin: { titre: 'Le pinceau magique', img: 'toile', c: '#7B52C7', desc: 'Dessine, l’autre devine', cat: 'jouer', regle: 'L’un dessine le mot secret, l’autre voit le dessin apparaître sur son téléphone et devine. 90 secondes !' },
+    mime: { titre: 'Le grand mime', img: 'danse', c: '#5DB85B', desc: 'Un max de mots en 60 s', cat: 'jouer', regle: 'L’un mime les mots qui s’affichent sur son téléphone, l’autre devine à voix haute. Trouvé ou passer : le plus possible en 60 secondes.' },
+    cinq: { titre: '5 secondes chrono', img: 'galop', c: '#F4B942', desc: 'Trois réponses, vite !', cat: 'jouer', regle: 'Une consigne s’affiche : cite trois réponses avant la fin des 5 secondes. L’autre juge.' },
+    histoire: { titre: 'L’histoire à quatre mains', img: 'rondin', c: '#B79AD8', desc: 'Une phrase chacun', cat: 'jouer', regle: 'Un début d’histoire s’affiche. Chacun son tour ajoute une phrase, huit en tout. À la fin, on relit tout !' },
+    pendu: { titre: 'Le mot mystère', img: 'une-lanterne', c: '#F28C38', desc: 'Avant que les lanternes s’éteignent', cat: 'jouer', regle: 'L’un choisit un mot (ou un mot au hasard), l’autre propose des lettres. Chaque erreur éteint une lanterne : sept erreurs et c’est perdu.' },
+    quiz: { titre: 'Le quiz', img: 'pascal-pense', c: '#E26FA8', desc: 'Lilo & Stitch et Hawaï', cat: 'jouer', regle: 'Dix questions sur Lilo & Stitch et Hawaï. Chacun répond en secret : un point par bonne réponse.' },
+    roue: { titre: 'La roue des câlins', img: 'calin', c: '#E0566F', desc: 'Des gages tout doux', cat: 'jouer', regle: 'Chacun son tour fait tourner la roue… et fait le gage. On peut changer les gages quand on veut.' },
+    sortie: { titre: 'Idée de sortie', img: 'barque', c: '#B79AD8', desc: 'Trois dés pour un rendez-vous', cat: 'jouer', regle: 'Lancez les dés : un lieu, une activité, un petit plus. Gardez les idées qui vous plaisent.' },
+    memory: { titre: 'Memory', img: 'pascal-bras', c: '#7B52C7', desc: '8 paires de personnages', cat: 'defis', regle: 'Retournez deux cartes : une paire, c’est un point et on rejoue. Sinon, c’est au tour de l’autre.' },
+    morpion: { titre: 'Morpion', img: 'flynn-attrape', c: '#E26FA8', desc: 'Ton personnage contre le sien', cat: 'defis', regle: 'Alignez trois fois votre personnage. Chacun commence une partie sur deux.' },
+    puissance: { titre: 'Quatre à la suite', img: 'neige', c: '#F4B942', desc: 'Le puissance 4 à deux', cat: 'defis', regle: 'Chacun son tour, laisse tomber un jeton dans une colonne. Le premier qui en aligne quatre gagne : en ligne, en colonne ou en diagonale.' },
+    carres: { titre: 'Les petits carrés', img: 'peinture-ciel', c: '#5DB85B', desc: 'Ferme les cases', cat: 'defis', regle: 'Chacun son tour trace un trait. Celui qui ferme une case la gagne et rejoue. À la fin, le plus de cases gagne.' },
+    chifoumi: { titre: 'Poêle, Affiche, Ciseaux', img: 'poele-entiere', c: '#F28C38', desc: 'Le chifoumi du royaume', cat: 'defis', regle: 'La poêle écrase les ciseaux, l’affiche enveloppe la poêle, les ciseaux découpent l’affiche. Premier à 3 !' },
+    reflexes: { titre: 'Duel de réflexes', img: 'maximus-entier', c: '#B79AD8', desc: 'Le plus rapide gagne', cat: 'defis', regle: 'Quand Pascal surgit, touche l’écran le plus vite possible. Trop tôt, c’est perdu ! Premier à 3.' },
+    nombre: { titre: 'Plus ou moins', img: 'pascal-entier', c: '#7B52C7', desc: 'Devine le nombre secret', cat: 'defis', regle: 'L’un choisit un nombre entre 1 et 100, l’autre le devine : « c’est plus », « c’est moins ». Puis on échange : le moins d’essais gagne le duel.' }
   };
-  const CATS = [['decouvrir', 'Se découvrir 💬'], ['jouer', 'Jouer ensemble 🎉'], ['defis', 'Petits défis ⚡']];
-  const MOTS_CODE = ['ALOHA', 'OHANA', 'MAHALO', 'HULA', 'LILO', 'STITCH', 'ANGEL', 'SURF', 'COCO', 'MANGUE', 'ANANAS', 'LAGON',
-    'PLAGE', 'VAGUE', 'TIKI', 'KAUAI', 'BISOU', 'CALIN', 'COEUR', 'ETOILE', 'SOLEIL', 'PAPAYE', 'VANILLE', 'CORAIL', 'TORTUE',
-    'PALMIER', 'UKULELE', 'HIBISCUS', 'PUDGE', 'LEI'];
+  const CATS = [['decouvrir', 'Se découvrir 💜'], ['jouer', 'Jouer ensemble ✨'], ['defis', 'Petits défis 🍳']];
+  const MOTS_CODE = ['LANTERNE', 'PASCAL', 'MAXIMUS', 'CORONA', 'TOUR', 'POELE', 'SOLEIL', 'ETOILE', 'FLEUR', 'TRESSE',
+    'PINCEAU', 'REVE', 'LUMIERE', 'COURONNE', 'DIADEME', 'CAMELEON', 'FORET', 'BARQUE', 'BISOU', 'CALIN', 'COEUR', 'MAGIE',
+    'ROYAUME', 'PEINTURE', 'GUITARE', 'CHATEAU', 'BALADE', 'LUNE', 'DORE', 'PRINCESSE'];
   //  les phases où chacun répond en secret (sur un seul téléphone, on se le passe)
-  const PHASE_SECRETE = { preferes: 'choix', qui: 'choix', jamais: 'choix', quiz: 'choix', chifoumi: 'choix', connais: 'ecrire', onde: 'choix', reflexes: 'attente' };
+  const PHASE_SECRETE = { preferes: 'choix', qui: 'choix', jamais: 'choix', quiz: 'choix', chifoumi: 'choix', connais: 'ecrire', onde: 'choix', reflexes: 'attente',
+    mensonge: 'ecrire', jumeaux: 'choix', ordre: 'choix', pendu: 'choix', nombre: 'choix' };
 
   /* ---------- l'état ---------- */
   let etat = null;          // la partie partagée
@@ -64,13 +73,15 @@
   let decalage = 0;         // écart entre l'horloge de l'hôte et la nôtre
   let vuAutre = 0;          // dernière nouvelle de l'autre téléphone
   let enAttente = [];       // actions envoyées par l'invité, pas encore appliquées par l'hôte
-  let profil = mem.get('profil', { nom: '', avatar: 'stitch' });
+  let profil = mem.get('profil', { nom: '', avatar: 'raiponce' });
+  profil.avatar = avatarDe(profil.avatar, 'a');
   const ui = { ecran: 'accueil', main: null, vueCle: '', section: '', anime: false, opt: null, erreur: '', code: '', rotation: 0, rouePour: '', reflexe: null };
 
   const maintenant = () => Date.now() + (role === 'b' || role === 'joindre' ? decalage : 0);
-  const joueur = j => (etat && etat.joueurs[j]) || { nom: j === 'a' ? 'Joueur 1' : 'Joueur 2', avatar: j === 'a' ? 'stitch' : 'angel' };
+  const joueur = j => (etat && etat.joueurs[j]) || { nom: j === 'a' ? 'Joueur 1' : 'Joueur 2', avatar: j === 'a' ? 'raiponce' : 'flynn' };
   const nomDe = j => esc(joueur(j).nom);
-  const imgAv = (j, cls = '') => `<img class="avatar ${j} ${cls}" src="img/${esc(joueur(j).avatar)}.webp" alt="" draggable="false">`;
+  const srcAv = j => `img/av-${avatarDe(joueur(j).avatar, j)}.webp`;
+  const imgAv = (j, cls = '') => `<img class="avatar ${j} ${cls}" src="${srcAv(j)}" alt="" draggable="false">`;
   const puce = j => `<span class="puce">${imgAv(j)}<span>${nomDe(j)}</span></span>`;
   const moi = () => {
     if (role === 'a' || role === 'b') return role;
@@ -106,7 +117,7 @@
     }
   };
   const vibrer = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch {} };
-  function pluie(liste = ['💙', '💗', '🌺', '✨', '⭐', '🌴']) {
+  function pluie(liste = ['💜', '💛', '✨', '🌟', '🌸', '🌼']) {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     for (let i = 0; i < 28; i++) {
       const s = document.createElement('span');
@@ -178,7 +189,7 @@
       if (b && b.appareil === appareil) {
         role = 'b'; ui.erreur = ''; ui.ecran = 'ile';
         mem.set('partie', { code: e.code, role: 'b', date: Date.now() });
-        toast('Te voilà sur l’île ! 🌴');
+        toast('Te voilà dans la tour ! ✨');
         Son.jouer('ok');
       } else if (b && b.appareil !== appareil && enAttente.length === 0) {
         ui.erreur = 'Cette partie a déjà deux joueurs 😿';
@@ -205,7 +216,7 @@
     const avant = structuredClone(etat);
     if (!R.appliquer(etat, act, maintenant())) return false;
     if (act.type === 'rejoindre' && etat.joueurs.b && etat.joueurs.b.appareil === act.appareil && !(avant.joueurs.b && avant.joueurs.b.appareil === act.appareil)) {
-      toast(esc(etat.joueurs.b.nom) + ' est sur l’île ! 💙');
+      toast(etat.joueurs.b.nom + ' est arrivé(e) dans la tour ! 💜');
       Son.jouer('fanfare'); pluie();
     }
     sauver();
@@ -276,8 +287,8 @@
     const nom2 = champ ? champ.value.trim().slice(0, 20) : '';
     if (!profil.nom) { toast('Il manque ton prénom 🙂'); ui.ecran = 'accueil'; rendre(); return; }
     if (!nom2) { toast('Écris le prénom de l’autre joueur 🙂'); champ && champ.focus(); return; }
-    mem.set('profil2', { nom: nom2, avatar: ui.avatar2 || 'angel' });
-    etat = R.creer({ code: 'LOCAL', local: true, a: { nom: profil.nom, avatar: profil.avatar }, b: { nom: nom2, avatar: ui.avatar2 || 'angel' } });
+    mem.set('profil2', { nom: nom2, avatar: ui.avatar2 || 'flynn' });
+    etat = R.creer({ code: 'LOCAL', local: true, a: { nom: profil.nom, avatar: profil.avatar }, b: { nom: nom2, avatar: ui.avatar2 || 'flynn' } });
     etat.pid = rid();
     role = 'local';
     sauver();
@@ -321,8 +332,8 @@
   function partager() {
     if (!etat) return;
     const url = location.origin + location.pathname + '#' + etat.code.replace('-', '');
-    const texte = 'Viens jouer avec moi sur l’île aux jeux 🌺 Code : ' + etat.code;
-    if (navigator.share) navigator.share({ title: 'L’île aux jeux', text: texte, url }).catch(() => {});
+    const texte = 'Viens jouer avec moi à la tour aux jeux ✨ Code : ' + etat.code;
+    if (navigator.share) navigator.share({ title: 'La tour aux jeux', text: texte, url }).catch(() => {});
     else {
       const copie = texte + ' — ' + url;
       (navigator.clipboard ? navigator.clipboard.writeText(copie) : Promise.reject()).then(() => toast('Lien copié ! Colle-le dans ta conversation 💌'), () => toast(copie, 6000));
@@ -339,7 +350,7 @@
     if (!a) { Son.jouer('pop'); return; }
     //  c'est à moi : une petite vibration
     const attAvant = R.attendus(avant), attApres = R.attendus(apres);
-    if (m && attApres.includes(m) && !attAvant.includes(m) && ['memory', 'morpion', 'av', 'dessin', 'mime', 'cinq', 'roue'].includes(j.id)) vibrer(30);
+    if (m && attApres.includes(m) && !attAvant.includes(m) && ['memory', 'morpion', 'dessin', 'mime', 'cinq', 'roue', 'mensonge', 'pendu', 'puissance', 'carres', 'nombre', 'histoire'].includes(j.id)) vibrer(30);
     if (m && attApres.length < attAvant.length && a.phase === j.phase && a.n === j.n) Son.jouer('tic');
     const devient = ph => a.phase !== ph && j.phase === ph;
     switch (j.id) {
@@ -357,13 +368,13 @@
         if (devient('revele')) { if (j.fin) { Son.jouer('fanfare'); pluie(); } else Son.jouer(!j.gagne ? 'pop' : role === 'local' || j.gagne === m ? 'ok' : 'ko'); }
         break;
       case 'connais':
-        if (devient('juge')) { if (j.verdict === 'oui') { Son.jouer('ok'); pluie(['💚', '✨', '🌺']); } else Son.jouer(j.verdict === 'non' ? 'ko' : 'pop'); }
+        if (devient('juge')) { if (j.verdict === 'oui') { Son.jouer('ok'); pluie(['💛', '✨', '🌸']); } else Son.jouer(j.verdict === 'non' ? 'ko' : 'pop'); }
         break;
       case 'onde':
-        if (devient('revele')) { if (j.gain === 3) { Son.jouer('fanfare'); pluie(['🔮', '💙', '💗', '✨']); } else Son.jouer(j.gain ? 'ok' : 'ko'); }
+        if (devient('revele')) { if (j.gain === 3) { Son.jouer('fanfare'); pluie(['🔮', '💜', '💛', '✨']); } else Son.jouer(j.gain ? 'ok' : 'ko'); }
         break;
       case 'dessin':
-        if (devient('fin')) { if (j.trouve) { Son.jouer('fanfare'); pluie(['🎨', '✨', '💙']); } else Son.jouer('ko'); }
+        if (devient('fin')) { if (j.trouve) { Son.jouer('fanfare'); pluie(['🎨', '✨', '💜']); } else Son.jouer('ko'); }
         break;
       case 'mime':
         if (devient('fin')) Son.jouer('fanfare');
@@ -387,10 +398,40 @@
         if (devient('resultat')) { if (j.fin) { Son.jouer('fanfare'); pluie(['⚡', '🏆', '✨']); } else Son.jouer(role === 'local' || j.gagne === m ? 'ok' : 'ko'); }
         break;
       case 'roue':
-        if (devient('resultat')) { Son.jouer('fanfare'); pluie(['🤗', '💗', '💙']); }
+        if (devient('resultat')) { Son.jouer('fanfare'); pluie(['🤗', '💜', '💛']); }
         break;
       case 'sortie':
         if (j.n !== a.n) Son.jouer('pop');
+        break;
+      case 'mensonge':
+        if (devient('revele')) { if (j.choix === j.faux) { Son.jouer('fanfare'); pluie(['🕵️', '✨', '💛']); } else Son.jouer('ko'); }
+        break;
+      case 'jumeaux':
+        if (devient('revele') || (j.pareil && !a.pareil)) { if (j.pareil) { Son.jouer('fanfare'); pluie(['💞', '✨', '💛', '💜']); } else Son.jouer('ko'); }
+        break;
+      case 'histoire':
+        if (devient('fin')) { Son.jouer('fanfare'); pluie(['📖', '✨', '💜', '🌟']); }
+        else if (j.phrases.length > a.phrases.length) Son.jouer('pop');
+        break;
+      case 'pendu':
+        if (devient('fin')) { if (j.gagne !== j.poseur) { Son.jouer('fanfare'); pluie(['🌟', '✨', '💛']); } else Son.jouer('ko'); }
+        else if (j.lettres.length > a.lettres.length) Son.jouer(j.erreurs > a.erreurs ? 'ko' : 'ok');
+        break;
+      case 'puissance':
+        if (j.gagnant && !a.gagnant) { if (j.gagnant === 'nul') Son.jouer('pop'); else { Son.jouer('fanfare'); pluie(); } }
+        else if (j.dernier !== a.dernier) Son.jouer('pop');
+        break;
+      case 'carres':
+        if (devient('fin')) { Son.jouer('fanfare'); pluie(); }
+        else if (j.points.a + j.points.b > a.points.a + a.points.b) Son.jouer('ok');
+        else if (j.dernier !== a.dernier) Son.jouer('pop');
+        break;
+      case 'ordre':
+        if (devient('revele')) { if (j.communs === 4) { Son.jouer('fanfare'); pluie(); } else Son.jouer(j.communs >= 2 ? 'ok' : 'ko'); }
+        break;
+      case 'nombre':
+        if (devient('fin')) { Son.jouer('fanfare'); pluie(['🎯', '✨', '💛']); }
+        else if (j.essais.length > a.essais.length) Son.jouer('tic');
         break;
     }
   }
@@ -402,7 +443,7 @@
     const nouvellePage = section.split(':').slice(0, 2).join(':') !== ui.section.split(':').slice(0, 2).join(':');
     ui.section = section;
     let v;
-    try { v = vue(); } catch (err) { console.error(err); v = { cle: 'erreur', html: `<div class="carte centre pile"><p>Oups, Stitch a tout cassé 🙈</p><button class="bouton" data-u="ile">Retour à l’île</button></div>` }; }
+    try { v = vue(); } catch (err) { console.error(err); v = { cle: 'erreur', html: `<div class="carte centre pile"><p>Oups, Pascal a tout renversé 🙈</p><button class="bouton" data-u="ile">Retour à la tour</button></div>` }; }
     if (v.cle !== ui.vueCle) {
       app.innerHTML = v.html;
       ui.vueCle = v.cle;
@@ -422,7 +463,7 @@
     if (ui.ecran === 'scores') return vueScores();
     if (ui.ecran === 'profil') return vueProfil();
     if (!etat.joueurs.b) return vueAttente();
-    if (etat.jeu) return vueJeu();
+    if (etat.jeu && VUES[etat.jeu.id]) return vueJeu();
     return vueIle();
   }
 
@@ -438,7 +479,7 @@
     else if (!enLigne()) { point = 'orange'; texte = 'hors ligne'; }
     const b = etat.joueurs.b;
     const html = `
-      <button class="rond" data-u="${ailleurs ? 'retour' : enJeu ? 'quitterJeu' : 'scores'}" aria-label="${ailleurs ? 'Retour' : enJeu ? 'Retour à l’île' : 'Nos scores'}">${ailleurs ? '←' : enJeu ? '🏝️' : '🏆'}</button>
+      <button class="rond" data-u="${ailleurs ? 'retour' : enJeu ? 'quitterJeu' : 'scores'}" aria-label="${ailleurs ? 'Retour' : enJeu ? 'Retour à la tour' : 'Nos scores'}">${ailleurs ? '←' : enJeu ? '🏰' : '🏆'}</button>
       <div class="barre-fond">
         <div class="duo">${imgAv('a', 'mini')}<span class="nom-court">${nomDe('a')}</span>${b ? `<span class="coeur-mini">♥</span><span class="nom-court">${nomDe('b')}</span>${imgAv('b', 'mini')}` : ''}</div>
         <span class="etat-connexion"><i class="point ${point}"></i>${texte}</span>
@@ -477,7 +518,7 @@
         <input id="${id}" class="champ" maxlength="20" autocomplete="off" placeholder="Ton prénom" value="${esc(valeurNom)}"></div>
       <div><p class="etiquette-champ">Ton personnage</p>
         <div class="choix-avatars" role="group" aria-label="Choisir un personnage">
-          ${AVATARS.map(([a, n]) => `<button type="button" class="choix-avatar" data-u="avatar" data-cle="${cleAvatar}" data-v="${a}" aria-pressed="${a === avatarChoisi}" aria-label="${esc(n)}"><img src="img/${a}.webp" alt="" loading="lazy"></button>`).join('')}
+          ${AVATARS.map(([a, n]) => `<button type="button" class="choix-avatar" data-u="avatar" data-cle="${cleAvatar}" data-v="${a}" aria-pressed="${a === avatarChoisi}" aria-label="${esc(n)}"><img src="img/av-${a}.webp" alt="" loading="lazy"></button>`).join('')}
         </div></div>
     </div>`;
   }
@@ -487,15 +528,15 @@
       cle: 'accueil' + (p ? p.code : ''),
       html: `<section class="pile entree">
         <div class="accueil-haut">
-          <img class="heros" src="img/duo-danse.webp" alt="Stitch et Angel qui dansent">
-          <h1 class="grand-titre">L’île aux jeux</h1>
-          <p class="sous-titre">Des jeux à deux, chacun sur son téléphone 🌺</p>
+          <img class="heros" src="img/lanternes.webp" alt="Raiponce et Eugene dans la barque, sous les lanternes">
+          <h1 class="grand-titre"><img class="soleil-titre" src="img/soleil.svg" alt="">La tour aux jeux</h1>
+          <p class="sous-titre">Des jeux à deux, chacun sur son téléphone ✨</p>
         </div>
         ${p ? `<div class="carte reprendre"><div class="texte"><b>Une partie en cours</b><p class="petit">${p.role === 'local' ? 'Sur ce téléphone' : 'Code ' + esc(p.code)}</p></div>
           <button class="bouton vert petit-bouton" data-u="reprendre">Reprendre</button></div>` : ''}
         <div class="carte">${blocProfil('prenom', profil.nom, profil.avatar, 'profil', 'Ton prénom')}</div>
         <div class="pile">
-          <button class="bouton rose large" data-u="creer"><span class="emoji">🌺</span> Créer une partie</button>
+          <button class="bouton rose large" data-u="creer"><span class="emoji">✨</span> Créer une partie</button>
           <button class="bouton large" data-u="versRejoindre"><span class="emoji">🔑</span> Rejoindre avec un code</button>
           <p class="centre"><button class="lien" data-u="versLocal">📱 Jouer à deux sur un seul téléphone</button></p>
         </div>
@@ -507,13 +548,13 @@
     return {
       cle: 'rejoindre',
       html: `<section class="pile entree">
-        <div class="accueil-haut"><img class="heros" src="img/coucou.webp" alt="Stitch qui fait coucou" style="width:140px"><h1 class="grand-titre" style="font-size:42px">Rejoindre</h1></div>
+        <div class="accueil-haut"><img class="heros" src="img/coucou.webp" alt="Raiponce qui fait coucou" style="width:150px"><h1 class="grand-titre" style="font-size:42px">Rejoindre</h1></div>
         <div class="carte pile">
           <div><label class="etiquette-champ" for="code">Le code de la partie</label>
             <input id="code" class="champ code" maxlength="14" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="OHANA-42" value="${esc(ui.code)}"></div>
         </div>
         <div class="carte">${blocProfil('prenom', profil.nom, profil.avatar, 'profil', 'Ton prénom')}</div>
-        <button class="bouton rose large" data-u="rejoindre"><span class="emoji">🌴</span> Rejoindre la partie</button>
+        <button class="bouton rose large" data-u="rejoindre"><span class="emoji">🏰</span> Rejoindre la partie</button>
         <p class="centre"><button class="lien" data-u="accueil">← Retour</button></p>
       </section>`,
       monter: m => {
@@ -525,17 +566,17 @@
     };
   }
   function vueLocal() {
-    const p2 = mem.get('profil2', { nom: '', avatar: 'angel' });
-    if (!ui.avatar2) ui.avatar2 = p2.avatar;
+    const p2 = mem.get('profil2', { nom: '', avatar: 'flynn' });
+    if (!ui.avatar2) ui.avatar2 = avatarDe(p2.avatar, 'b');
     return {
       cle: 'local',
       html: `<section class="pile entree">
-        <div class="accueil-haut"><img class="heros" src="img/duo.webp" alt="" style="width:170px"><h1 class="grand-titre" style="font-size:40px">Sur un seul téléphone</h1>
+        <div class="accueil-haut"><img class="heros" src="img/calin.webp" alt="" style="width:170px"><h1 class="grand-titre" style="font-size:40px">Sur un seul téléphone</h1>
           <p class="sous-titre">Vous vous passerez le téléphone quand il faut répondre en secret.</p></div>
         <div class="carte pile"><p class="titre" style="font-size:22px">${esc(profil.nom) || 'Toi'}</p>
           <p class="petit">C’est toi (tu peux changer ton prénom sur l’accueil).</p></div>
         <div class="carte">${blocProfil('prenom2', p2.nom, ui.avatar2, 'avatar2', 'Le prénom de l’autre joueur')}</div>
-        <button class="bouton rose large" data-u="demarrerLocal"><span class="emoji">🌺</span> C’est parti !</button>
+        <button class="bouton rose large" data-u="demarrerLocal"><span class="emoji">✨</span> C’est parti !</button>
         <p class="centre"><button class="lien" data-u="accueil">← Retour</button></p>
       </section>`
     };
@@ -546,10 +587,10 @@
       cle: 'connexion' + ui.erreur + trouve,
       html: `<section class="pile entree centre">
         <div class="carte pile">
-          <img class="attente-stitch" src="img/${ui.erreur ? 'inquiet' : 'coucou'}.webp" alt="">
+          <img class="attente-perso" src="img/${ui.erreur ? 'pascal-boude' : 'coucou'}.webp" alt="">
           <p class="titre">${ui.erreur ? 'Hmm…' : trouve ? 'Partie trouvée !' : 'Recherche de la partie'}</p>
           <p class="code-geant" style="font-size:34px">${esc(ui.code)}</p>
-          <p class="sous-titre">${ui.erreur ? esc(ui.erreur) : trouve ? 'On t’installe sur l’île<span class="points-attente"></span>' : 'Connexion aux relais<span class="points-attente"></span>'}</p>
+          <p class="sous-titre">${ui.erreur ? esc(ui.erreur) : trouve ? 'On t’installe dans la tour<span class="points-attente"></span>' : 'Connexion aux relais<span class="points-attente"></span>'}</p>
           ${ui.erreur ? '<p class="petit">On continue de chercher en attendant.</p>' : ''}
         </div>
         <button class="bouton blanc large" data-u="annulerJoindre">Annuler</button>
@@ -562,12 +603,12 @@
       html: `<section class="pile entree centre">
         <div class="carte pile">
           <p class="titre">Ta partie est prête !</p>
-          <p class="sous-titre">Donne ce code à ta moitié 💙</p>
+          <p class="sous-titre">Donne ce code à ta moitié 💜</p>
           <p><span class="code-geant">${esc(etat.code)}</span></p>
           <button class="bouton rose large" data-u="partager"><span class="emoji">💌</span> Envoyer le lien</button>
         </div>
         <div class="carte pile">
-          <img class="attente-stitch" src="img/coucou.webp" alt="">
+          <img class="attente-perso" src="img/coucou.webp" alt="">
           <p><b>En attente de l’autre joueur<span class="points-attente"></span></b></p>
           <p class="petit">Sur son téléphone : ouvrir ce site, « Rejoindre avec un code », taper <b>${esc(etat.code)}</b>. Gardez tous les deux la page ouverte pendant la partie.</p>
         </div>
@@ -576,12 +617,12 @@
     };
   }
 
-  /* ---------- l'île : choisir un jeu ---------- */
+  /* ---------- la tour : choisir un jeu ---------- */
   function vueIle() {
     const s = etat.scores;
     const joue = id => {
       const x = s[id]; if (!x) return 0;
-      return x.manches || x.cartes || x.parties || x.gages || x.essais || x.total || (x.a || 0) + (x.b || 0) + (x.nuls || 0) || 0;
+      return x.manches || x.cartes || x.parties || x.gages || x.essais || x.total || x.histoires || (x.a || 0) + (x.b || 0) + (x.nuls || 0) || 0;
     };
     const hors = role !== 'local' && etat.joueurs.b && !enLigne();
     return {
@@ -589,9 +630,11 @@
       html: `<section class="entree">
         <div class="carte transparente ile-titre pile">
           <div style="display:flex;justify-content:center;align-items:center;gap:10px">${imgAv('a', 'moyen')}<span style="font-size:30px">💞</span>${imgAv('b', 'moyen')}</div>
-          <p class="titre">Aloha ${nomDe('a')} & ${nomDe('b')} !</p>
+          <p class="titre">${nomDe('a')} & ${nomDe('b')}, la tour est à vous !</p>
           <p class="petit">Touchez un jeu : il s’ouvre sur ${role === 'local' ? 'ce téléphone' : 'vos deux téléphones'}.</p>
         </div>
+        <button class="tuile-melange" ${A('melange', {})}><img src="img/tourbillon.webp" alt="" loading="lazy">
+          <span class="texte"><b>Le grand mélange</b><span>Tous les jeux s’enchaînent au hasard</span></span><span class="de" aria-hidden="true">🎲</span></button>
         ${hors ? `<p class="bandeau-hors-ligne" style="margin-top:12px">${role === 'a' ? nomDe('b') : nomDe('a')} n’est pas connecté(e) en ce moment. Tout reprendra dès son retour.</p>` : ''}
         ${CATS.map(([cat, titre]) => `<div class="categorie"><h2>${titre}</h2><div class="tuiles">
           ${Object.entries(INFOS).filter(([, i]) => i.cat === cat).map(([id, i]) => {
@@ -604,15 +647,23 @@
   }
 
   /* ---------- l'habillage commun des jeux ---------- */
+  //  en grand mélange : un bandeau, et « Jeu suivant » dès que la manche est finie
+  const mancheFinie = () => !!(etat.jeu && J[etat.jeu.id] && J[etat.jeu.id].fini && J[etat.jeu.id].fini(etat.jeu));
   function cadre(id, corps, sous = '') {
     const i = INFOS[id];
-    return `<section class="pile ${ui.anime ? 'entree' : ''}">
+    const mel = etat.melange;
+    const suite = !mel ? '' : mancheFinie()
+      ? `<button class="bouton jaune large suivant-melange" ${A('melangeSuivant', { m: mel.manche })}>🎲 Jeu suivant</button>`
+      : `<p class="centre"><button class="lien" ${A('melangeSuivant', { m: mel.manche })}>Passer ce jeu →</button></p>`;
+    return `<section class="pile ${ui.anime ? 'entree' : ''} ${mel ? 'en-melange' : ''}">
+      ${mel ? `<div class="bandeau-melange">🎲 Grand mélange · jeu n° ${mel.manche}</div>` : ''}
       <div class="carte transparente">
         <div class="entete-jeu"><img src="img/${i.img}.webp" alt=""><div><h1 class="titre">${i.titre}</h1>${sous ? `<p class="petit">${sous}</p>` : ''}</div></div>
         <details class="regle"><summary>Comment on joue ?</summary><p>${i.regle}</p></details>
       </div>
       ${bandeauHors()}
       ${corps}
+      ${suite}
     </section>`;
   }
   const etatDuo = (fait, oui = 'a répondu ✓', non = 'réfléchit…') => `<div class="etat-duo">${DEUX.map(j => `
@@ -631,7 +682,8 @@
     const f = VUES[j.id];
     if (!f) return { cle: 'inconnu', html: '<p class="carte">Jeu inconnu</p>' };
     const v = f(j);
-    return { ...v, cle: j.id + '|' + v.cle + '|' + (enLigne() ? 1 : 0) };
+    const mel = etat.melange ? etat.melange.manche + ':' + mancheFinie() : '';
+    return { ...v, cle: j.id + '|' + v.cle + '|' + (enLigne() ? 1 : 0) + '|' + mel };
   }
 
   const VUES = {};
@@ -721,7 +773,7 @@
     };
   };
 
-  /* ---------- Quiz Stitch ---------- */
+  /* ---------- Le quiz ---------- */
   VUES.quiz = j => {
     const [q, reps, bonne, plus] = C.quiz[j.q];
     const pts = `${nomDe('a')} <b>${j.points.a}</b> · ${nomDe('b')} <b>${j.points.b}</b>`;
@@ -750,8 +802,8 @@
     };
   };
 
-  /* ---------- Coco, Palme, Pince ---------- */
-  const MAINS = { coco: ['🥥', 'Coco'], palme: ['🌴', 'Palme'], pince: ['🦀', 'Pince'] };
+  /* ---------- Poêle, Affiche, Ciseaux ---------- */
+  const MAINS = { poele: ['🍳', 'Poêle'], affiche: ['📜', 'Affiche'], ciseaux: ['✂️', 'Ciseaux'] };
   VUES.chifoumi = j => {
     const pts = `<div class="carte question-carte"><p class="numero">Premier à 3</p>
       <p class="question" style="display:flex;align-items:center;justify-content:center;gap:12px">${imgAv('a', 'moyen')}<span style="font-family:Chewy;font-size:44px">${j.points.a} – ${j.points.b}</span>${imgAv('b', 'moyen')}</p></div>`;
@@ -762,7 +814,7 @@
         html: cadre('chifoumi', `${pts}
           <div class="choix-trois">${Object.entries(MAINS).map(([v, [e, t]], k) => `<button class="option o${k % 2} ${mien === v ? 'choisie' : ''}" ${A('repondre', { n: j.n, val: v })} ${libre ? '' : 'disabled'}><span class="grand-emoji">${e}</span>${t}</button>`).join('')}</div>
           ${!libre && role !== 'local' ? attenteDe(autre(moi())) : ''}
-          ${role !== 'local' ? etatDuo(x => j.rep[x] !== null || (x === role && !libre)) : ''}`, 'La coco casse la pince, la palme couvre la coco, la pince coupe la palme')
+          ${role !== 'local' ? etatDuo(x => j.rep[x] !== null || (x === role && !libre)) : ''}`, 'La poêle écrase les ciseaux, l’affiche enveloppe la poêle, les ciseaux découpent l’affiche')
       };
     }
     const txt = j.fin ? `${nomDe(j.fin)} remporte la partie ! 🏆` : j.gagne ? `${nomDe(j.gagne)} gagne la manche !` : 'Égalité, on rejoue !';
@@ -872,39 +924,12 @@
       <p class="stats"><b>${etat.scores.coeur ? etat.scores.coeur.cartes : 0}</b> cartes piochées ensemble</p>`)
   });
 
-  /* ---------- Action ou vérité ---------- */
-  VUES.av = j => {
-    const s = etat.scores.av || { a: 0, b: 0 };
-    const stats = `<p class="stats">Défis relevés : ${nomDe('a')} <b>${s.a}</b> · ${nomDe('b')} <b>${s.b}</b></p>`;
-    if (j.phase === 'choix') {
-      return {
-        cle: j.n + 'c',
-        html: cadre('av', `
-          <div class="carte question-carte">${imgAv(j.tour, 'grand')}<p class="intro">${nomDe(j.tour)}, action ou vérité ?</p></div>
-          ${peut(j.tour) ? `<div class="choix-grille">
-            <button class="option o0" ${A('choisir', { n: j.n, choix: 'verite' })}><span class="grand-emoji" style="font-size:32px">🤔</span>Vérité</button>
-            <button class="option o1" ${A('choisir', { n: j.n, choix: 'action' })}><span class="grand-emoji" style="font-size:32px">🔥</span>Action</button></div>` : attenteDe(j.tour)}
-          ${stats}`)
-      };
-    }
-    const texte = j.type === 'action' ? C.actions[j.q] : C.verites[j.q];
-    return {
-      cle: j.n + 'k' + j.q,
-      html: cadre('av', `
-        <div class="carte question-carte ${ui.anime ? 'pop' : ''}"><span class="etiquette ${j.type === 'action' ? 'rose' : ''}">${j.type === 'action' ? '🔥 Action' : '🤔 Vérité'} pour ${nomDe(j.tour)}</span>
-          <p class="question" style="margin-top:12px">${esc(texte)}</p></div>
-        <button class="bouton vert large" ${A('fait', { n: j.n })}>✓ C’est fait !</button>
-        ${peut(j.tour) && j.jokers[j.tour] > 0 ? `<button class="bouton blanc large" ${A('joker', { n: j.n })}>🃏 Joker : une autre carte (${j.jokers[j.tour]})</button>` : ''}
-        ${stats}`)
-    };
-  };
-
-  /* ---------- Stitch dessine ---------- */
-  const COULEURS = ['#1D2A4D', '#4C7BE0', '#FF8DC7', '#FF5A7A', '#FFCB47', '#2FB67B', '#8B5A2B', '#FFFFFF'];
+  /* ---------- Le pinceau magique ---------- */
+  const COULEURS = ['#2E1A47', '#7B52C7', '#E26FA8', '#E0566F', '#F4B942', '#5DB85B', '#8B5A2B', '#FFFFFF'];
   const EPAISSEURS = [8, 16, 32];
   const Toile = {
     n: null, traits: [], index: new Map(), canvas: null, ctx: null, lecture: true,
-    couleur: '#1D2A4D', epaisseur: 16, courant: null, envoyeA: 0, minuteur: null,
+    couleur: '#2E1A47', epaisseur: 16, courant: null, envoyeA: 0, minuteur: null,
     reset(n) { if (this.n !== n) { this.n = n; this.traits = []; this.index = new Map(); this.courant = null; } },
     attacher(canvas, lecture) {
       this.canvas = canvas; this.lecture = lecture;
@@ -1177,7 +1202,7 @@
     const s = etat.scores.morpion || { a: 0, b: 0, nuls: 0 };
     const tete = () => j.gagnant ? `<div class="banniere ${j.gagnant === 'nul' ? 'desaccord' : 'accord'} pop"><span class="grand">${j.gagnant === 'nul' ? 'Match nul ! 🤝' : nomDe(j.gagnant) + ' gagne ! 🏆'}</span></div>`
       : `<div class="banniere ${j.tour === 'a' ? 'bleu' : 'rose'}">${imgAv(j.tour, 'mini')} ${role !== 'local' && role === j.tour ? 'À toi de jouer !' : 'Au tour de ' + nomDe(j.tour)}</div>`;
-    const cases = () => j.cases.map((c, i) => `<button class="case ${j.ligne && j.ligne.includes(i) ? 'gagnante' : ''}" ${A('jouer', { n: j.n, i })} ${!c && !j.gagnant && peut(j.tour) ? '' : 'disabled'} aria-label="Case ${i + 1}${c ? ' : ' + esc(joueur(c).nom) : ''}">${c ? `<img src="img/${esc(joueur(c).avatar)}.webp" alt="">` : ''}</button>`).join('');
+    const cases = () => j.cases.map((c, i) => `<button class="case ${j.ligne && j.ligne.includes(i) ? 'gagnante' : ''}" ${A('jouer', { n: j.n, i })} ${!c && !j.gagnant && peut(j.tour) ? '' : 'disabled'} aria-label="Case ${i + 1}${c ? ' : ' + esc(joueur(c).nom) : ''}">${c ? `<img src="${srcAv(c)}" alt="">` : ''}</button>`).join('');
     const bas = () => `${j.gagnant ? `<button class="bouton rose large" ${A('rejouer', { n: j.n })}>Revanche 🔄</button>` : ''}
       <p class="stats">${nomDe('a')} <b>${s.a}</b> · ${nomDe('b')} <b>${s.b}</b> · nuls <b>${s.nuls}</b></p>`;
     return {
@@ -1189,7 +1214,7 @@
         const g = $('.grille-morpion', mm);
         $$('.case', g).forEach((b, i) => {
           const c = j.cases[i];
-          if (c && !b.querySelector('img')) b.innerHTML = `<img src="img/${esc(joueur(c).avatar)}.webp" alt="">`;
+          if (c && !b.querySelector('img')) b.innerHTML = `<img src="${srcAv(c)}" alt="">`;
           b.disabled = !(!c && !j.gagnant && peut(j.tour));
           b.classList.toggle('gagnante', !!(j.ligne && j.ligne.includes(i)));
         });
@@ -1208,7 +1233,7 @@
       return {
         cle: j.n + 'p' + pret + JSON.stringify(j.prets),
         html: cadre('reflexes', `${score}
-          <div class="carte centre pile"><p><b>Pose ton doigt près de l’écran.</b></p><p class="petit">Quand Stitch surgit, touche l’écran le plus vite possible. Avant, c’est perdu !</p></div>
+          <div class="carte centre pile"><p><b>Pose ton doigt près de l’écran.</b></p><p class="petit">Quand Pascal surgit, touche l’écran le plus vite possible. Avant, c’est perdu !</p></div>
           ${role === 'local' ? `<button class="bouton vert large" data-u="reflexesLocal" data-n="${j.n}">⚡ On y va !</button>`
             : pret ? attenteDe(autre(role)) : `<button class="bouton vert large" ${A('pret', { n: j.n })}>⚡ Je suis prêt(e) !</button>`}
           ${role !== 'local' ? etatDuo(x => j.prets[x], 'prêt(e) ✓', 'pas encore') : ''}${records}`)
@@ -1222,7 +1247,7 @@
       }
       return {
         cle: j.n + 'a' + m + (role === 'local' ? ui.main : ''),
-        html: cadre('reflexes', `${score}<div class="zone-reflexe" data-zone><div data-contenu><p class="consigne">Attends Stitch… 👀</p><p class="petit" style="color:#cfe0ff">${role === 'local' ? nomDe(m) + ', touche dès qu’il apparaît' : 'Ne touche pas encore !'}</p></div></div>`),
+        html: cadre('reflexes', `${score}<div class="zone-reflexe" data-zone><div data-contenu><p class="consigne">Attends Pascal… 👀</p><p class="petit" style="color:#e6dcff">${role === 'local' ? nomDe(m) + ', touche dès qu’il apparaît' : 'Ne touche pas encore !'}</p></div></div>`),
         monter: mm => lancerReflexe(mm, j, m)
       };
     }
@@ -1247,7 +1272,7 @@
       if (fini) return;
       apparu = true;
       zone.classList.add('go');
-      contenu.innerHTML = '<img src="img/cosmos.webp" alt="Stitch !"><p class="consigne">TOUCHE !</p>';
+      contenu.innerHTML = '<img src="img/pascal-saute.webp" alt="Pascal !"><p class="consigne">TOUCHE !</p>';
       requestAnimationFrame(() => { t0 = performance.now(); });
     }, attendre);
     zone.addEventListener('pointerdown', e => {
@@ -1267,7 +1292,7 @@
   }
 
   /* ---------- La roue des câlins ---------- */
-  const TEINTES_ROUE = ['#4C7BE0', '#FF8DC7', '#FFCB47', '#2FB67B', '#3FC1D9', '#FF5A7A'];
+  const TEINTES_ROUE = ['#7B52C7', '#F4B942', '#E26FA8', '#5DB85B', '#B79AD8', '#F28C38'];
   function dessinRoue(gages) {
     const n = gages.length, pas = 360 / n, r = 96;
     const pt = a => [Math.sin(a * Math.PI / 180) * r, -Math.cos(a * Math.PI / 180) * r];
@@ -1278,7 +1303,7 @@
         const [e, court] = C.gages[g];
         return `<path d="M0 0 L${x1.toFixed(2)} ${y1.toFixed(2)} A${r} ${r} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z" fill="${TEINTES_ROUE[i % TEINTES_ROUE.length]}" stroke="#fff" stroke-width="1.5"/>
           <g transform="rotate(${mid - 90})"><text x="80" y="0" font-size="13" text-anchor="middle" dominant-baseline="central" transform="rotate(90 80 0)">${e}</text>
-          <text x="52" y="0" font-size="7.2" font-weight="700" fill="${i % TEINTES_ROUE.length === 2 ? '#4A3300' : '#fff'}" text-anchor="middle" dominant-baseline="central" font-family="Quicksand, sans-serif">${esc(court)}</text></g>`;
+          <text x="52" y="0" font-size="7.2" font-weight="700" fill="${[1, 4].includes(i % TEINTES_ROUE.length) ? '#3A2160' : '#fff'}" text-anchor="middle" dominant-baseline="central" font-family="Nunito, sans-serif">${esc(court)}</text></g>`;
       }).join('')}
     </svg>`;
   }
@@ -1362,6 +1387,292 @@
     };
   };
 
+  /* ---------- Deux vérités, un mensonge ---------- */
+  VUES.mensonge = j => {
+    const s = etat.scores.mensonge || { a: 0, b: 0 };
+    const auteur = j.auteur, devin = autre(auteur);
+    const stats = `<p class="stats">Points : ${nomDe('a')} <b>${s.a}</b> · ${nomDe('b')} <b>${s.b}</b></p>`;
+    const tete = `<div class="carte question-carte"><p class="numero">Manche ${j.n} · ${nomDe(auteur)} écrit, ${nomDe(devin)} enquête</p>
+      <p class="petit" style="margin-top:6px">Inspiration : <b>${esc(C.mensonge[j.theme])}</b></p></div>`;
+    if (j.phase === 'ecrire') {
+      if (ui.fauxPour !== j.n) { ui.faux = null; ui.fauxPour = j.n; }
+      if (!peut(auteur)) return { cle: j.n + 'e-attente', html: cadre('mensonge', `${tete}${attenteDe(auteur)}<p class="centre petit">${nomDe(auteur)} écrit deux vérités et un mensonge 🤫</p>${stats}`) };
+      return {
+        cle: j.n + 'e',
+        html: cadre('mensonge', `${tete}
+          <div class="carte pile">
+            <p><b>Écris trois phrases sur toi : deux vraies, une fausse.</b> Puis touche « C’est le faux » sous le mensonge.</p>
+            ${[0, 1, 2].map(k => `<div class="phrase-saisie"><input class="champ" id="phrase${k}" maxlength="120" autocomplete="off" placeholder="Phrase ${k + 1}…">
+              <button type="button" class="faux-btn" data-u="choisirFaux" data-k="${k}" aria-pressed="${ui.faux === k}">🤥 C’est le faux</button></div>`).join('')}
+            <button class="bouton large" data-u="envoyerMensonge" data-n="${j.n}">Envoyer à ${nomDe(devin)}</button>
+          </div>${stats}`)
+      };
+    }
+    if (j.phase === 'deviner') {
+      if (peut(devin)) {
+        return {
+          cle: j.n + 'd',
+          html: cadre('mensonge', `${tete}<p class="centre"><b>${role === 'local' ? nomDe(devin) + ', l' : 'L'}aquelle est le mensonge ? 🕵️</b></p>
+            <div class="pile">${j.phrases.map((p, i) => `<button class="option o${i % 2}" ${A('deviner', { n: j.n, i })}>${esc(p)}</button>`).join('')}</div>${stats}`)
+        };
+      }
+      return {
+        cle: j.n + 'd-attente',
+        html: cadre('mensonge', `${tete}<div class="pile">${j.phrases.map((p, i) => `<div class="option o${i % 2} ${i === j.faux ? 'mensonge' : ''}">${esc(p)}${i === j.faux ? '<small class="etiquette rose">ton mensonge</small>' : ''}</div>`).join('')}</div>${attenteDe(devin)}`)
+      };
+    }
+    const trouve = j.choix === j.faux;
+    return {
+      cle: j.n + 'r',
+      html: cadre('mensonge', `${tete}
+        <div class="pile">${j.phrases.map((p, i) => `<div class="option o${i % 2} ${i === j.faux ? 'mensonge' : 'verite'}">${esc(p)}
+          <small class="etiquette ${i === j.faux ? 'rose' : 'vert'}">${i === j.faux ? '🤥 Mensonge' : '✓ Vrai'}</small>${i === j.choix ? `<span class="qui-a-choisi">${imgAv(devin)}</span>` : ''}</div>`).join('')}</div>
+        <div class="banniere ${trouve ? 'accord' : 'desaccord'} pop"><span class="grand">${trouve ? 'Démasqué ! 🕵️' : 'Bien menti ! 😏'}</span>+1 pour ${nomDe(trouve ? devin : auteur)}</div>
+        <button class="bouton large" ${A('suivant', { n: j.n })}>À ${nomDe(devin)} d’écrire →</button>${stats}`)
+    };
+  };
+
+  /* ---------- Mots jumeaux ---------- */
+  VUES.jumeaux = j => {
+    const s = etat.scores.jumeaux || { manches: 0, pareils: 0 };
+    const stats = `<p class="stats"><b>${s.pareils}</b> mots jumeaux sur ${s.manches}</p>`;
+    const tete = `<div class="carte question-carte"><p class="numero">Thème ${j.n} · écrivez le même mot !</p><p class="question">${esc(C.jumeaux[j.q])}</p></div>`;
+    if (j.phase === 'choix') {
+      const m = moi(), envoye = j.rep[m] !== null || enAttente.some(a => a.type === 'ecrire' && a.n === j.n);
+      return {
+        cle: j.n + 'c' + m + envoye,
+        html: cadre('jumeaux', `${tete}
+          ${envoye ? `<div class="banniere accord">C’est envoyé ! ✓</div>${role !== 'local' ? attenteDe(autre(m)) : ''}` : `
+          <form class="carte pile" ${A('ecrire', { n: j.n })} data-champ="texte">
+            <label class="etiquette-champ" for="texte">${role === 'local' ? nomDe(m) + ', l' : 'L'}e premier mot qui te vient</label>
+            <input id="texte" class="champ" maxlength="40" autocomplete="off" placeholder="Un seul mot…">
+            <button class="bouton large" type="submit">Valider</button>
+          </form>`}
+          <div data-maj="duo">${role !== 'local' ? etatDuo(x => j.rep[x] !== null) : ''}</div>${stats}`),
+        monter: mm => { const c = $('#texte', mm); if (c) c.focus({ preventScroll: true }); },
+        maj: mm => { const d = $('[data-maj="duo"]', mm); if (d && role !== 'local') d.innerHTML = etatDuo(x => j.rep[x] !== null); }
+      };
+    }
+    return {
+      cle: j.n + 'r' + j.pareil,
+      html: cadre('jumeaux', `${tete}
+        <div class="deux-reponses">${DEUX.map(x => `<div class="reponse-bulle ${x}">${imgAv(x)}<div class="bulle"><small>${nomDe(x)}</small>${esc(j.rep[x])}</div></div>`).join('')}</div>
+        <div class="banniere ${j.pareil ? 'accord' : 'desaccord'} pop"><span class="grand">${j.pareil ? 'Mots jumeaux ! 💞' : 'Pas pareil… 🙃'}</span>${j.pareil ? (j.accorde ? 'Vous avez décidé que ça comptait 😉' : 'Vos esprits se sont rencontrés.') : 'Presque ? À vous de juger.'}</div>
+        ${j.pareil ? '' : `<button class="bouton blanc large" ${A('compter', { n: j.n })}>✓ On compte quand même</button>`}
+        <button class="bouton large" ${A('suivant', { n: j.n })}>Thème suivant →</button>${stats}`)
+    };
+  };
+
+  /* ---------- L'histoire à quatre mains ---------- */
+  const texteHistoire = (debut, phrases) => `<div class="carte histoire"><p class="debut">${esc(C.histoires[debut])}</p>
+    ${phrases.map(([de, t]) => `<p class="phrase ${de}">${imgAv(de, 'mini')}<span>${esc(t)}</span></p>`).join('')}</div>`;
+  VUES.histoire = j => {
+    const s = etat.scores.histoire || { histoires: 0, recueil: [] };
+    const phrases = j.phrases.map(p => [p.de, p.t]);
+    if (j.phase === 'ecrire') {
+      const aMoi = peut(j.tour);
+      return {
+        cle: j.n + 'e' + j.phrases.length,
+        html: cadre('histoire', `<p class="centre petit" style="color:#fff">Phrase ${j.phrases.length + 1} sur ${j.max}</p>
+          ${texteHistoire(j.debut, phrases)}
+          ${aMoi ? `<form class="carte pile" ${A('ajouter', { n: j.n, k: j.phrases.length })} data-champ="texte">
+            <label class="etiquette-champ" for="texte">${role === 'local' ? nomDe(j.tour) + ', à toi d’écrire la suite :' : 'À toi d’écrire la suite :'}</label>
+            <input id="texte" class="champ" maxlength="160" autocomplete="off" placeholder="Et soudain…">
+            <button class="bouton large" type="submit">Ajouter ma phrase</button></form>` : attenteDe(j.tour)}
+          ${j.phrases.length >= 2 ? `<p class="centre"><button class="lien" ${A('finir', { n: j.n })}>Terminer l’histoire ici</button></p>` : ''}`),
+        monter: mm => { const c = $('#texte', mm); if (c) c.focus({ preventScroll: true }); }
+      };
+    }
+    const anciennes = s.recueil.slice(1);
+    return {
+      cle: j.n + 'f',
+      html: cadre('histoire', `<div class="banniere accord pop"><span class="grand">Notre histoire 📖</span>Écrite à quatre mains par ${nomDe('a')} et ${nomDe('b')}</div>
+        ${texteHistoire(j.debut, phrases)}
+        <button class="bouton large" ${A('nouvelle', { n: j.n })}>Nouvelle histoire ✨</button>
+        ${anciennes.length ? `<details class="carte"><summary><b>Nos histoires précédentes (${anciennes.length})</b></summary>
+          <div class="pile" style="margin-top:12px">${anciennes.map(h => texteHistoire(h.debut, h.phrases)).join('')}</div></details>` : ''}
+        <p class="stats"><b>${s.histoires}</b> histoire${s.histoires > 1 ? 's' : ''} écrite${s.histoires > 1 ? 's' : ''} ensemble</p>`)
+    };
+  };
+
+  /* ---------- Le mot mystère ---------- */
+  const lanternesPendu = j => `<div class="lanternes-jeu" role="img" aria-label="${j.max - j.erreurs} lanternes allumées sur ${j.max}">
+    ${Array.from({ length: j.max }, (_, k) => `<span class="lanterne-pendu ${k < j.max - j.erreurs ? 'allumee' : 'eteinte'}"></span>`).join('')}</div>`;
+  const motPendu = (j, tout) => `<div class="mot-pendu">${[...j.mot].map(ch => {
+    const n = J.pendu.lettresDe(ch).replace(/[^A-Z]/g, '');
+    if (!n) return ch === ' ' ? '<span class="espace"></span>' : `<span class="signe">${esc(ch)}</span>`;
+    const vu = tout || [...n].every(x => j.lettres.includes(x));
+    return `<span class="lettre ${vu ? 'vue' : ''}">${vu ? esc(ch.toUpperCase()) : ''}</span>`;
+  }).join('')}</div>`;
+  VUES.pendu = j => {
+    const s = etat.scores.pendu || { a: 0, b: 0 };
+    const poseur = j.poseur, devin = autre(poseur);
+    const stats = `<p class="stats">Victoires : ${nomDe('a')} <b>${s.a}</b> · ${nomDe('b')} <b>${s.b}</b></p>`;
+    if (j.phase === 'choix') {
+      if (!peut(poseur)) return { cle: j.n + 'c-attente', html: cadre('pendu', `<div class="carte question-carte">${imgAv(poseur, 'grand')}<p class="intro">${nomDe(poseur)} choisit un mot…</p></div>${attenteDe(poseur)}${stats}`) };
+      return {
+        cle: j.n + 'c',
+        html: cadre('pendu', `<div class="carte question-carte"><p class="intro">${role === 'local' ? nomDe(poseur) + ', choisis' : 'Choisis'} le mot que ${nomDe(devin)} devra deviner</p></div>
+          <form class="carte pile" ${A('choisir', { n: j.n })} data-champ="mot">
+            <label class="etiquette-champ" for="mot">Ton mot secret (lettres et espaces)</label>
+            <input id="mot" class="champ" maxlength="24" autocomplete="off" autocapitalize="characters" placeholder="Ex. Licorne">
+            <button class="bouton large" type="submit">Valider mon mot</button>
+          </form>
+          <button class="bouton jaune large" ${A('choisir', { n: j.n })}>🎲 Un mot au hasard</button>${stats}`)
+      };
+    }
+    const clavier = actif => `<div class="clavier">${'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l => {
+      const joue = j.lettres.includes(l), bonne = joue && J.pendu.lettresDe(j.mot).includes(l);
+      return `<button class="touche ${joue ? (bonne ? 'bonne' : 'mauvaise') : ''}" ${A('lettre', { n: j.n, l })} ${actif && !joue ? '' : 'disabled'}>${l}</button>`;
+    }).join('')}</div>`;
+    if (j.phase === 'jeu') {
+      const aMoi = peut(devin);
+      return {
+        cle: j.n + 'j' + j.lettres.length,
+        html: cadre('pendu', `${lanternesPendu(j)}
+          <div class="carte centre">${motPendu(j, false)}
+            <p class="petit" style="margin-top:10px">${aMoi ? `Choisis une lettre${role === 'local' ? ', ' + nomDe(devin) : ''} !` : `${nomDe(devin)} cherche ton mot : <b>${esc(j.mot.toUpperCase())}</b>`}</p></div>
+          ${clavier(aMoi)}${stats}`)
+      };
+    }
+    const gagne = j.gagne === devin;
+    return {
+      cle: j.n + 'f',
+      html: cadre('pendu', `${lanternesPendu(j)}
+        <div class="carte centre">${motPendu(j, true)}</div>
+        <div class="banniere ${gagne ? 'accord' : 'desaccord'} pop"><span class="grand">${gagne ? 'Trouvé ! 🌟' : 'Les lanternes se sont éteintes… 🌙'}</span>${gagne ? nomDe(devin) + ' a trouvé le mot.' : nomDe(poseur) + ' remporte la manche.'}</div>
+        <button class="bouton large" ${A('suivant', { n: j.n })}>À ${nomDe(devin)} de choisir un mot →</button>${stats}`)
+    };
+  };
+
+  /* ---------- Quatre à la suite ---------- */
+  VUES.puissance = j => {
+    const P = J.puissance, s = etat.scores.puissance || { a: 0, b: 0, nuls: 0 };
+    const tete = () => (j.gagnant ? `<div class="banniere ${j.gagnant === 'nul' ? 'desaccord' : 'accord'} pop"><span class="grand">${j.gagnant === 'nul' ? 'Match nul ! 🤝' : nomDe(j.gagnant) + ' gagne ! 🏆'}</span></div>`
+      : `<div class="banniere ${j.tour === 'a' ? 'bleu' : 'rose'}">${imgAv(j.tour, 'mini')} ${role !== 'local' && role === j.tour ? 'À toi de jouer !' : 'Au tour de ' + nomDe(j.tour)}</div>`);
+    const grille = () => Array.from({ length: P.cols }, (_, c) => `<button class="p4-col" ${A('jouer', { n: j.n, c })} ${!j.gagnant && peut(j.tour) && !j.cases[c] ? '' : 'disabled'} aria-label="Colonne ${c + 1}">${Array.from({ length: P.ligs }, (_, r) => {
+      const i = r * P.cols + c, x = j.cases[i];
+      return `<span class="p4-case">${x ? `<span class="jeton ${x} ${j.ligne && j.ligne.includes(i) ? 'gagnant' : ''} ${i === j.dernier ? 'tombe' : ''}" style="--r:${r + 1}"><img src="${srcAv(x)}" alt=""></span>` : ''}</span>`;
+    }).join('')}</button>`).join('');
+    const bas = () => `${j.gagnant ? `<button class="bouton rose large" ${A('rejouer', { n: j.n })}>Revanche 🔄</button>` : ''}
+      <p class="stats">${nomDe('a')} <b>${s.a}</b> · ${nomDe('b')} <b>${s.b}</b> · nuls <b>${s.nuls}</b></p>`;
+    return {
+      cle: j.n + 'p',
+      html: cadre('puissance', `<div data-maj="tete">${tete()}</div><div class="p4" data-maj="grille">${grille()}</div><div data-maj="bas" class="pile">${bas()}</div>`),
+      maj: mm => { $('[data-maj="tete"]', mm).innerHTML = tete(); $('[data-maj="grille"]', mm).innerHTML = grille(); $('[data-maj="bas"]', mm).innerHTML = bas(); }
+    };
+  };
+
+  /* ---------- Les petits carrés ---------- */
+  VUES.carres = j => {
+    const T = J.carres.taille, s = etat.scores.carres || { a: 0, b: 0, nuls: 0 };
+    const libre = j.phase === 'jeu' && peut(j.tour);
+    const tete = () => {
+      if (j.phase === 'fin') {
+        const g = j.points.a === j.points.b ? null : j.points.a > j.points.b ? 'a' : 'b';
+        return `<div class="banniere accord pop"><span class="grand">${g ? nomDe(g) + ' gagne ! 🏆' : 'Égalité ! 🤝'}</span>${j.points.a} cases à ${j.points.b}</div>`;
+      }
+      return `<div class="banniere ${j.tour === 'a' ? 'bleu' : 'rose'}">${imgAv(j.tour, 'mini')} ${role !== 'local' && role === j.tour ? 'À toi de tracer un trait !' : 'Au tour de ' + nomDe(j.tour)}</div>`;
+    };
+    const plateau = () => {
+      let h = '';
+      for (let R = 0; R <= 2 * T; R++) for (let K = 0; K <= 2 * T; K++) {
+        if (R % 2 === 0 && K % 2 === 0) h += '<span class="pt"></span>';
+        else if (R % 2 === 0) { const i = (R / 2) * T + (K - 1) / 2, x = j.h[i]; h += `<button class="trait h ${x || ''} ${j.dernier === 'h' + i ? 'dernier' : ''}" ${A('trait', { n: j.n, t: 'h', i })} ${!x && libre ? '' : 'disabled'} aria-label="Trait horizontal"></button>`; }
+        else if (K % 2 === 0) { const i = ((R - 1) / 2) * (T + 1) + K / 2, x = j.v[i]; h += `<button class="trait v ${x || ''} ${j.dernier === 'v' + i ? 'dernier' : ''}" ${A('trait', { n: j.n, t: 'v', i })} ${!x && libre ? '' : 'disabled'} aria-label="Trait vertical"></button>`; }
+        else { const b = ((R - 1) / 2) * T + (K - 1) / 2, x = j.boites[b]; h += `<span class="boite ${x || ''}">${x ? `<img src="${srcAv(x)}" alt="">` : ''}</span>`; }
+      }
+      return h;
+    };
+    const bas = () => `<p class="stats">${nomDe('a')} <b>${j.points.a}</b> case${j.points.a > 1 ? 's' : ''} · ${nomDe('b')} <b>${j.points.b}</b> · parties gagnées ${s.a} – ${s.b}</p>
+      ${j.phase === 'fin' ? `<button class="bouton rose large" ${A('rejouer', { n: j.n })}>Revanche 🔄</button>` : ''}`;
+    return {
+      cle: j.n + 'c',
+      html: cadre('carres', `<div data-maj="tete">${tete()}</div><div class="carte"><div class="carres" data-maj="plateau">${plateau()}</div></div><div data-maj="bas" class="pile">${bas()}</div>`),
+      maj: mm => { $('[data-maj="tete"]', mm).innerHTML = tete(); $('[data-maj="plateau"]', mm).innerHTML = plateau(); $('[data-maj="bas"]', mm).innerHTML = bas(); }
+    };
+  };
+
+  /* ---------- Dans le même ordre ---------- */
+  function zoneOrdre() {
+    const j = etat.jeu, [, items] = C.ordre[j.q], sel = ui.ordre || [];
+    return `<div class="ordre-items">${items.map((it, k) => {
+      const rang = sel.indexOf(k);
+      return `<button class="option o${k % 2} ${rang >= 0 ? 'choisie' : ''}" data-u="ordreChoix" data-k="${k}">${rang >= 0 ? `<span class="rang">${rang + 1}</span>` : ''}${esc(it)}</button>`;
+    }).join('')}</div>
+    <div class="rangee"><button class="bouton blanc" data-u="ordreEffacer" ${sel.length ? '' : 'disabled'}>↺ Recommencer</button>
+      <button class="bouton" data-u="ordreValider" ${sel.length === 4 ? '' : 'disabled'}>Valider ✓</button></div>`;
+  }
+  VUES.ordre = j => {
+    const [titre, items] = C.ordre[j.q], s = etat.scores.ordre || { manches: 0, points: 0, parfaits: 0 };
+    const stats = `<p class="stats"><b>${s.points}</b> places en commun en ${s.manches} classement${s.manches > 1 ? 's' : ''} · <b>${s.parfaits}</b> parfait${s.parfaits > 1 ? 's' : ''}</p>`;
+    const tete = `<div class="carte question-carte"><p class="numero">Classement ${j.n}</p><p class="question">${esc(titre)}</p><p class="petit">Du préféré (1) au moins aimé (4)</p></div>`;
+    if (j.phase === 'choix') {
+      const m = moi(), mien = monChoix(j);
+      const cleMain = j.n + ':' + m;
+      if (ui.ordrePour !== cleMain) { ui.ordre = []; ui.ordrePour = cleMain; }
+      return {
+        cle: j.n + 'c' + m + (mien !== null),
+        html: cadre('ordre', `${tete}
+          ${mien !== null ? `<div class="banniere accord">C’est envoyé ! ✓</div>${role !== 'local' ? attenteDe(autre(m)) : ''}` : `<div class="pile" data-ordre>${zoneOrdre()}</div>`}
+          <div data-maj="duo">${role !== 'local' ? etatDuo(x => j.rep[x] !== null || (x === role && mien !== null)) : ''}</div>${stats}`),
+        maj: mm => { const d = $('[data-maj="duo"]', mm); if (d && role !== 'local') d.innerHTML = etatDuo(x => j.rep[x] !== null || (x === role && mien !== null)); }
+      };
+    }
+    return {
+      cle: j.n + 'r',
+      html: cadre('ordre', `${tete}
+        <div class="classements">${DEUX.map(x => `<div class="classement">${puce(x)}<ol>${j.rep[x].map((k, r) => `<li class="${j.rep.a[r] === j.rep.b[r] ? 'commun' : ''}">${esc(items[k])}</li>`).join('')}</ol></div>`).join('')}</div>
+        <div class="banniere ${j.communs >= 2 ? 'accord' : 'desaccord'} pop"><span class="grand">${j.communs === 4 ? 'Même ordre parfait ! 🌟' : j.communs + ' place' + (j.communs > 1 ? 's' : '') + ' en commun'}</span>${j.communs === 4 ? 'Vous êtes faits pour vous entendre.' : j.communs >= 2 ? 'Pas mal du tout !' : 'Des goûts bien à vous…'}</div>
+        <button class="bouton large" ${A('suivant', { n: j.n })}>Classement suivant →</button>${stats}`)
+    };
+  };
+
+  /* ---------- Plus ou moins ---------- */
+  VUES.nombre = j => {
+    const s = etat.scores.nombre || { a: 0, b: 0, record: { a: null, b: null } };
+    const poseur = j.poseur, devin = autre(poseur);
+    const stats = `<p class="stats">Duels gagnés : ${nomDe('a')} <b>${s.a}</b> · ${nomDe('b')} <b>${s.b}</b> · records ${s.record.a ?? '—'} / ${s.record.b ?? '—'} essais</p>`;
+    const liste = () => `<div class="essais-nombre">${j.essais.slice().reverse().map(e => `<span class="${e.sens}">${e.v} ${e.sens === 'plus' ? '⬆️ c’est plus' : e.sens === 'moins' ? '⬇️ c’est moins' : '🎯 trouvé !'}</span>`).join('')}</div>`;
+    if (j.phase === 'choix') {
+      if (!peut(poseur)) return { cle: j.n + 'c-attente', html: cadre('nombre', `<div class="carte question-carte">${imgAv(poseur, 'grand')}<p class="intro">${nomDe(poseur)} choisit un nombre…</p></div>${attenteDe(poseur)}${stats}`) };
+      return {
+        cle: j.n + 'c',
+        html: cadre('nombre', `<div class="carte question-carte"><p class="intro">${role === 'local' ? nomDe(poseur) + ', choisis' : 'Choisis'} un nombre secret entre 1 et 100</p><p class="petit">${nomDe(devin)} devra le trouver.</p></div>
+          <form class="carte pile" ${A('choisir', { n: j.n })} data-champ="v">
+            <input class="champ code" type="number" min="1" max="100" inputmode="numeric" placeholder="42" aria-label="Nombre secret">
+            <button class="bouton large" type="submit">Valider mon nombre</button>
+          </form>
+          <button class="bouton jaune large" ${A('choisir', { n: j.n })}>🎲 Un nombre au hasard</button>${stats}`)
+      };
+    }
+    let bas = 1, haut = 100;
+    for (const e of j.essais) { if (e.sens === 'plus') bas = Math.max(bas, e.v + 1); if (e.sens === 'moins') haut = Math.min(haut, e.v - 1); }
+    if (j.phase === 'jeu') {
+      const aMoi = peut(devin);
+      return {
+        cle: j.n + 'j' + j.essais.length,
+        html: cadre('nombre', `<div class="carte question-carte"><p class="numero">Essai ${j.essais.length + 1}</p>
+            <p class="question">${aMoi ? `C’est entre <b>${bas}</b> et <b>${haut}</b>` : `Ton nombre : <b>${j.secret}</b>`}</p></div>
+          ${aMoi ? `<form class="deviner" ${A('deviner', { n: j.n, k: j.essais.length })} data-champ="v">
+            <input class="champ" type="number" min="1" max="100" inputmode="numeric" placeholder="${Math.round((bas + haut) / 2)}" aria-label="Ta proposition">
+            <button class="bouton rose" type="submit">Proposer</button></form>` : attenteDe(devin)}
+          ${liste()}${stats}`),
+        monter: mm => { const c = $('.deviner .champ', mm); if (c) c.focus({ preventScroll: true }); }
+      };
+    }
+    const duelFini = j.duel.a !== null && j.duel.b !== null;
+    const gDuel = duelFini && j.duel.a !== j.duel.b ? (j.duel.a < j.duel.b ? 'a' : 'b') : null;
+    return {
+      cle: j.n + 'f',
+      html: cadre('nombre', `<div class="banniere accord pop"><span class="grand">${j.secret} ! Trouvé en ${j.essais.length} essai${j.essais.length > 1 ? 's' : ''} 🎯</span>${nomDe(devin)} a trouvé le nombre de ${nomDe(poseur)}.</div>
+        ${duelFini ? `<div class="banniere rose pop"><span class="grand">${gDuel ? nomDe(gDuel) + ' gagne le duel !' : 'Duel à égalité !'}</span>${nomDe('a')} : ${j.duel.a} essais · ${nomDe('b')} : ${j.duel.b} essais</div>`
+          : `<p class="centre petit" style="color:#fff">Au tour de ${nomDe(devin)} de choisir : le moins d’essais gagne le duel.</p>`}
+        ${liste()}
+        <button class="bouton large" ${A('suivant', { n: j.n })}>${duelFini ? 'Nouveau duel →' : 'À ' + nomDe(devin) + ' de choisir →'}</button>${stats}`)
+    };
+  };
+
   /* ---------- scores et profil ---------- */
   function vueScores() {
     const s = etat.scores, a = nomDe('a'), b = nomDe('b');
@@ -1373,7 +1684,6 @@
     if (s.connais) L('connais', `${a} ${s.connais.a} pts · ${b} ${s.connais.b} pts`);
     if (s.onde) L('onde', `${s.onde.points} points d’équipe en ${s.onde.manches} manches · ${s.onde.parfaits} télépathie${s.onde.parfaits > 1 ? 's' : ''}`);
     if (s.coeur) L('coeur', `${s.coeur.cartes} cartes piochées`);
-    if (s.av) L('av', `Défis relevés : ${a} ${s.av.a} · ${b} ${s.av.b}`);
     if (s.dessin) L('dessin', `${s.dessin.trouves} mots trouvés sur ${s.dessin.manches}`);
     if (s.mime) L('mime', `Records : ${a} ${s.mime.a} · ${b} ${s.mime.b} · ${s.mime.total} mots en tout`);
     if (s.cinq) L('cinq', `Réussis : ${a} ${s.cinq.a} · ${b} ${s.cinq.b}`);
@@ -1383,13 +1693,22 @@
     if (s.memory) L('memory', `Parties gagnées : ${a} ${s.memory.a} · ${b} ${s.memory.b} · nuls ${s.memory.nuls}`);
     if (s.morpion) L('morpion', `${a} ${s.morpion.a} · ${b} ${s.morpion.b} · nuls ${s.morpion.nuls}`);
     if (s.chifoumi) L('chifoumi', `Parties gagnées : ${a} ${s.chifoumi.a} · ${b} ${s.chifoumi.b}`);
+    if (s.mensonge) L('mensonge', `Points : ${a} ${s.mensonge.a} · ${b} ${s.mensonge.b}`);
+    if (s.jumeaux) L('jumeaux', `${s.jumeaux.pareils} mots jumeaux sur ${s.jumeaux.manches}`);
+    if (s.ordre) L('ordre', `${s.ordre.points} places en commun · ${s.ordre.parfaits} classement${s.ordre.parfaits > 1 ? 's' : ''} parfait${s.ordre.parfaits > 1 ? 's' : ''}`);
+    if (s.histoire) L('histoire', `${s.histoire.histoires} histoire${s.histoire.histoires > 1 ? 's' : ''} écrite${s.histoire.histoires > 1 ? 's' : ''} ensemble`);
+    if (s.pendu) L('pendu', `Victoires : ${a} ${s.pendu.a} · ${b} ${s.pendu.b}`);
+    if (s.puissance) L('puissance', `${a} ${s.puissance.a} · ${b} ${s.puissance.b} · nuls ${s.puissance.nuls}`);
+    if (s.carres) L('carres', `Parties gagnées : ${a} ${s.carres.a} · ${b} ${s.carres.b} · nuls ${s.carres.nuls}`);
+    if (s.nombre) L('nombre', `Duels gagnés : ${a} ${s.nombre.a} · ${b} ${s.nombre.b} · records ${s.nombre.record.a ?? '—'} / ${s.nombre.record.b ?? '—'} essais`);
     if (s.reflexes) L('reflexes', `Victoires : ${a} ${s.reflexes.a} · ${b} ${s.reflexes.b} · records ${s.reflexes.record.a ?? '—'} / ${s.reflexes.record.b ?? '—'} ms`);
+    if (s.melange) lignes.unshift(`<div class="score-ligne"><img src="img/tourbillon.webp" alt=""><div><b>Le grand mélange</b><span>${s.melange.manches} jeu${s.melange.manches > 1 ? 'x' : ''} tiré${s.melange.manches > 1 ? 's' : ''} au hasard</span></div></div>`);
     return {
       cle: 'scores' + etat.v,
       html: `<section class="pile ${ui.anime ? 'entree' : ''}">
-        <div class="carte transparente centre pile"><img src="img/guitare.webp" alt="" style="width:110px;margin:0 auto"><p class="titre">Nos scores</p>
+        <div class="carte transparente centre pile"><img src="img/portrait.webp" alt="" style="width:110px;margin:0 auto"><p class="titre">Nos scores</p>
           <p class="petit">Tout ce que vous avez joué ensemble sur cette partie.</p></div>
-        ${lignes.length ? `<div class="scores">${lignes.join('')}</div>` : '<div class="carte centre"><p>Pas encore de score : allez jouer ! 🌴</p></div>'}
+        ${lignes.length ? `<div class="scores">${lignes.join('')}</div>` : '<div class="carte centre"><p>Pas encore de score : allez jouer ! ✨</p></div>'}
         <button class="bouton large" data-u="retour">← Retour</button>
       </section>`
     };
@@ -1400,7 +1719,7 @@
       cle: 'profil',
       html: `<section class="pile ${ui.anime ? 'entree' : ''}">
         <div class="carte transparente centre"><p class="titre">${role === 'local' ? 'Vos prénoms et personnages' : 'Ton prénom et ton personnage'}</p></div>
-        ${qui.map(x => `<div class="carte" data-profil="${x}">${blocProfil('prenom-' + x, joueur(x).nom, joueur(x).avatar, 'modif-' + x, role === 'local' ? 'Prénom' : 'Ton prénom')}</div>`).join('')}
+        ${qui.map(x => `<div class="carte" data-profil="${x}">${blocProfil('prenom-' + x, joueur(x).nom, avatarDe(joueur(x).avatar, x), 'modif-' + x, role === 'local' ? 'Prénom' : 'Ton prénom')}</div>`).join('')}
         <button class="bouton rose large" data-u="enregistrerProfil">Enregistrer</button>
         <button class="bouton blanc large" data-u="retour">Annuler</button>
       </section>`
@@ -1439,7 +1758,7 @@
       if (role === 'b') rendre();
     },
     couleur(b) { Toile.couleur = b.dataset.v; $$('[data-u="couleur"]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); },
-    epaisseur(b) { Toile.epaisseur = +b.dataset.v; if (Toile.couleur === '#FFFFFF') Toile.couleur = '#1D2A4D'; $$('[data-u="epaisseur"]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); },
+    epaisseur(b) { Toile.epaisseur = +b.dataset.v; if (Toile.couleur === '#FFFFFF') Toile.couleur = '#2E1A47'; $$('[data-u="epaisseur"]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); },
     effacerToile() { Toile.effacer(); },
     montrerMot(b) { b.classList.toggle('flou'); },
     reflexesLocal(b) { const n = +b.dataset.n; agir('pret', { n }, 'a'); agir('pret', { n }, 'b'); },
@@ -1452,6 +1771,32 @@
         if (x === 'a' || role === 'b') { profil = { nom, avatar: choisi ? choisi.dataset.v : profil.avatar }; mem.set('profil', profil); }
       }
       ui.ecran = 'ile'; rendre();
+    },
+    choisirFaux(b) {
+      ui.faux = +b.dataset.k;
+      $$('[data-u="choisirFaux"]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+      Son.jouer('pop');
+    },
+    envoyerMensonge(b) {
+      const phrases = [0, 1, 2].map(k => { const c = $('#phrase' + k); return c ? c.value.trim() : ''; });
+      const vide = phrases.findIndex(t => !t);
+      if (vide >= 0) { toast('Il manque la phrase ' + (vide + 1) + ' 🙂'); $('#phrase' + vide).focus(); return; }
+      if (ui.faux === null || ui.faux === undefined) { toast('Touche « C’est le faux » sous ton mensonge 🤥'); return; }
+      agir('ecrire', { n: +b.dataset.n, phrases, faux: ui.faux });
+      if (role === 'b') { b.disabled = true; b.textContent = 'Envoyé ✓'; }
+    },
+    ordreChoix(b) {
+      const k = +b.dataset.k, sel = ui.ordre || (ui.ordre = []);
+      const i = sel.indexOf(k);
+      if (i >= 0) sel.splice(i, 1); else if (sel.length < 4) sel.push(k);
+      const z = $('[data-ordre]'); if (z) z.innerHTML = zoneOrdre();
+      Son.jouer('pop');
+    },
+    ordreEffacer() { ui.ordre = []; const z = $('[data-ordre]'); if (z) z.innerHTML = zoneOrdre(); },
+    ordreValider() {
+      if (!ui.ordre || ui.ordre.length !== 4 || !etat.jeu) return;
+      agir('repondre', { n: etat.jeu.n, val: ui.ordre.slice() });
+      if (role === 'b') rendre();
     },
     sons() { Son.actif = !Son.actif; mem.set('sons', Son.actif); fermerMenu(); toast(Son.actif ? 'Sons activés 🔊' : 'Sons coupés 🔇'); },
     profil() { fermerMenu(); ui.ecran = 'profil'; rendre(); },
@@ -1554,6 +1899,23 @@
     verrouEcran();
     if (salon) { envoyerMsg({ t: 'ping' }); if (role === 'a') publier(); else if (role === 'b') envoyerMsg({ t: 'sync' }); }
   });
+
+  //  les lanternes qui s'envolent derrière le jeu, chacune à son rythme
+  (() => {
+    const ciel = $('.lanternes');
+    if (!ciel) return;
+    for (let i = 0; i < 16; i++) {
+      const l = document.createElement('span');
+      l.className = 'lanterne-volante';
+      const d = 20 + Math.random() * 22;
+      l.style.left = (Math.random() * 96) + '%';
+      l.style.setProperty('--l', (9 + Math.random() * 13).toFixed(1) + 'px');
+      l.style.setProperty('--d', d.toFixed(1) + 's');
+      l.style.setProperty('--r', (-Math.random() * d).toFixed(1) + 's');
+      l.style.setProperty('--x', (Math.random() * 80 - 40).toFixed(0) + 'px');
+      ciel.appendChild(l);
+    }
+  })();
 
   //  le lien partagé ouvert alors que le site l'est déjà : seule l'ancre change
   addEventListener('hashchange', () => {
