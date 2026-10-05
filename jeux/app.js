@@ -1,5 +1,5 @@
 /* ============================================================
-   La tour aux jeux : les écrans, la partie à deux téléphones
+   La station des jeux : les écrans, la partie à deux téléphones
    (ou sur un seul), et l'affichage de chaque jeu.
    ============================================================ */
 (() => {
@@ -25,43 +25,43 @@
 
   /* ---------- personnages et jeux ---------- */
   const AVATARS = [
-    ['raiponce', 'Raiponce'], ['flynn', 'Flynn'], ['pascal', 'Pascal'], ['maximus', 'Maximus'], ['fleurs', 'Raiponce et ses fleurs'],
-    ['eugene', 'Eugene'], ['peinture', 'Raiponce qui peint'], ['pascal-calin', 'Raiponce et Pascal'], ['couronne', 'Raiponce couronnée'],
-    ['guitare', 'Raiponce à la guitare'], ['lanterne', 'Raiponce et la lanterne'], ['poele', 'Raiponce et sa poêle'],
-    ['espiegle', 'Raiponce espiègle'], ['brune', 'Raiponce aux cheveux courts'], ['hiver', 'Raiponce en hiver'], ['pascal-rire', 'Pascal qui rit']
+    ['walle', 'WALL-E'], ['eve', 'EVE'], ['plante', 'WALL-E et la plante'], ['eve-bd', 'EVE toute douce'], ['coucou', 'WALL-E qui fait coucou'],
+    ['eve-reveuse', 'EVE rêveuse'], ['cube', 'WALL-E et son cube'], ['eve-lumiere', 'EVE qui brille'], ['yeux', 'Les grands yeux de WALL-E'],
+    ['robot', 'Robot de l’Axiom'], ['nuit', 'WALL-E de nuit'], ['fusee', 'WALL-E et l’extincteur'], ['jaune', 'WALL-E tout jaune'],
+    ['robot-blanc', 'Petit robot blanc'], ['bras', 'WALL-E bras levé'], ['glaciere', 'WALL-E et sa glacière']
   ];
-  //  un personnage inconnu (ancienne version du site) devient Raiponce ou Flynn
-  const avatarDe = (v, j) => (AVATARS.some(x => x[0] === v) ? v : j === 'b' ? 'flynn' : 'raiponce');
+  //  un personnage inconnu (ancienne version du site) devient WALL-E ou EVE
+  const avatarDe = (v, j) => (AVATARS.some(x => x[0] === v) ? v : j === 'b' ? 'eve' : 'walle');
   const INFOS = {
-    preferes: { titre: 'Tu préfères…', img: 'preferes', c: '#7B52C7', desc: 'Deux choix, un seul possible', cat: 'decouvrir', regle: 'Chacun choisit en secret, puis on révèle en même temps : êtes-vous d’accord ?' },
-    qui: { titre: 'Qui de nous deux ?', img: 'eugene-maximus', c: '#E26FA8', desc: 'Désignez-vous en secret', cat: 'decouvrir', regle: 'Chacun désigne celui ou celle qui correspond le mieux, sans voir la réponse de l’autre.' },
-    jamais: { titre: 'Je n’ai jamais…', img: 'emmelee', c: '#F4B942', desc: 'Avoue… ou pas', cat: 'decouvrir', regle: 'Pour chaque phrase, réponds « Moi si ! » ou « Jamais ». Les deux réponses s’affichent ensemble.' },
-    connais: { titre: 'Tu me connais ?', img: 'livre', c: '#5DB85B', desc: 'L’un répond, l’autre devine', cat: 'decouvrir', regle: 'À tour de rôle, l’un écrit sa vraie réponse et l’autre ce qu’il imagine. Celui qui a répondu juge : juste (+2), presque (+1) ou raté.' },
-    onde: { titre: 'Même longueur d’onde', img: 'telescope', c: '#B79AD8', desc: 'Un curseur de 0 à 10', cat: 'decouvrir', regle: 'L’un place le curseur pour lui-même, l’autre essaie de le mettre au même endroit. Pile dessus : 3 points pour vous deux !' },
-    coeur: { titre: 'À cœur ouvert', img: 'tendresse', c: '#E0566F', desc: 'Des questions pour se raconter', cat: 'decouvrir', regle: 'Tirez une carte et répondez chacun votre tour. Trois niveaux : léger, doux, profond.' },
-    mensonge: { titre: 'Deux vérités, un mensonge', img: 'flynn-pomme', c: '#F28C38', desc: 'Démasque le faux', cat: 'decouvrir', regle: 'L’un écrit trois phrases sur lui : deux vraies, une fausse. L’autre doit trouver le mensonge. Démasqué : un point pour le détective. Raté : un point pour le menteur.' },
-    jumeaux: { titre: 'Mots jumeaux', img: 'the', c: '#7B52C7', desc: 'Pensez au même mot', cat: 'decouvrir', regle: 'Un thème s’affiche, chacun écrit le premier mot qui lui vient, sans se parler. Le même mot ? Vous êtes des âmes jumelles !' },
-    ordre: { titre: 'Dans le même ordre', img: 'reine', c: '#E26FA8', desc: 'Classez pareil !', cat: 'decouvrir', regle: 'Chacun classe quatre choses de la préférée à la moins aimée, en secret. Un point par place en commun.' },
-    dessin: { titre: 'Le pinceau magique', img: 'toile', c: '#7B52C7', desc: 'Dessine, l’autre devine', cat: 'jouer', regle: 'L’un dessine le mot secret, l’autre voit le dessin apparaître sur son téléphone et devine. 90 secondes !' },
-    mime: { titre: 'Le grand mime', img: 'danse', c: '#5DB85B', desc: 'Un max de mots en 60 s', cat: 'jouer', regle: 'L’un mime les mots qui s’affichent sur son téléphone, l’autre devine à voix haute. Trouvé ou passer : le plus possible en 60 secondes.' },
-    cinq: { titre: '5 secondes chrono', img: 'galop', c: '#F4B942', desc: 'Trois réponses, vite !', cat: 'jouer', regle: 'Une consigne s’affiche : cite trois réponses avant la fin des 5 secondes. L’autre juge.' },
-    histoire: { titre: 'L’histoire à quatre mains', img: 'rondin', c: '#B79AD8', desc: 'Une phrase chacun', cat: 'jouer', regle: 'Un début d’histoire s’affiche. Chacun son tour ajoute une phrase, huit en tout. À la fin, on relit tout !' },
-    pendu: { titre: 'Le mot mystère', img: 'une-lanterne', c: '#F28C38', desc: 'Avant que les lanternes s’éteignent', cat: 'jouer', regle: 'L’un choisit un mot (ou un mot au hasard), l’autre propose des lettres. Chaque erreur éteint une lanterne : sept erreurs et c’est perdu.' },
-    quiz: { titre: 'Le quiz', img: 'pascal-pense', c: '#E26FA8', desc: 'Lilo & Stitch et Hawaï', cat: 'jouer', regle: 'Dix questions sur Lilo & Stitch et Hawaï. Chacun répond en secret : un point par bonne réponse.' },
-    roue: { titre: 'La roue des câlins', img: 'calin', c: '#E0566F', desc: 'Des gages tout doux', cat: 'jouer', regle: 'Chacun son tour fait tourner la roue… et fait le gage. On peut changer les gages quand on veut.' },
-    sortie: { titre: 'Idée de sortie', img: 'barque', c: '#B79AD8', desc: 'Trois dés pour un rendez-vous', cat: 'jouer', regle: 'Lancez les dés : un lieu, une activité, un petit plus. Gardez les idées qui vous plaisent.' },
-    memory: { titre: 'Memory', img: 'pascal-bras', c: '#7B52C7', desc: '8 paires de personnages', cat: 'defis', regle: 'Retournez deux cartes : une paire, c’est un point et on rejoue. Sinon, c’est au tour de l’autre.' },
-    morpion: { titre: 'Morpion', img: 'flynn-attrape', c: '#E26FA8', desc: 'Ton personnage contre le sien', cat: 'defis', regle: 'Alignez trois fois votre personnage. Chacun commence une partie sur deux.' },
-    puissance: { titre: 'Quatre à la suite', img: 'neige', c: '#F4B942', desc: 'Le puissance 4 à deux', cat: 'defis', regle: 'Chacun son tour, laisse tomber un jeton dans une colonne. Le premier qui en aligne quatre gagne : en ligne, en colonne ou en diagonale.' },
-    carres: { titre: 'Les petits carrés', img: 'peinture-ciel', c: '#5DB85B', desc: 'Ferme les cases', cat: 'defis', regle: 'Chacun son tour trace un trait. Celui qui ferme une case la gagne et rejoue. À la fin, le plus de cases gagne.' },
-    chifoumi: { titre: 'Poêle, Affiche, Ciseaux', img: 'poele-entiere', c: '#F28C38', desc: 'Le chifoumi du royaume', cat: 'defis', regle: 'La poêle écrase les ciseaux, l’affiche enveloppe la poêle, les ciseaux découpent l’affiche. Premier à 3 !' },
-    reflexes: { titre: 'Duel de réflexes', img: 'maximus-entier', c: '#B79AD8', desc: 'Le plus rapide gagne', cat: 'defis', regle: 'Quand Pascal surgit, touche l’écran le plus vite possible. Trop tôt, c’est perdu ! Premier à 3.' },
-    nombre: { titre: 'Plus ou moins', img: 'pascal-entier', c: '#7B52C7', desc: 'Devine le nombre secret', cat: 'defis', regle: 'L’un choisit un nombre entre 1 et 100, l’autre le devine : « c’est plus », « c’est moins ». Puis on échange : le moins d’essais gagne le duel.' }
+    preferes: { titre: 'Tu préfères…', img: 'couple', c: '#3A8EE6', desc: 'Deux choix, un seul possible', cat: 'decouvrir', regle: 'Chacun choisit en secret, puis on révèle en même temps : êtes-vous d’accord ?' },
+    qui: { titre: 'Qui de nous deux ?', img: 'trio', c: '#E2763D', desc: 'Désignez-vous en secret', cat: 'decouvrir', regle: 'Chacun désigne celui ou celle qui correspond le mieux, sans voir la réponse de l’autre.' },
+    jamais: { titre: 'Je n’ai jamais…', img: 'yeux-entier', c: '#F5BE3B', desc: 'Avoue… ou pas', cat: 'decouvrir', regle: 'Pour chaque phrase, réponds « Moi si ! » ou « Jamais ». Les deux réponses s’affichent ensemble.' },
+    connais: { titre: 'Tu me connais ?', img: 'eve-pense', c: '#7CC243', desc: 'L’un répond, l’autre devine', cat: 'decouvrir', regle: 'À tour de rôle, l’un écrit sa vraie réponse et l’autre ce qu’il imagine. Celui qui a répondu juge : juste (+2), presque (+1) ou raté.' },
+    onde: { titre: 'Même longueur d’onde', img: 'eve-glow', c: '#57C7F2', desc: 'Un curseur de 0 à 10', cat: 'decouvrir', regle: 'L’un place le curseur pour lui-même, l’autre essaie de le mettre au même endroit. Pile dessus : 3 points pour vous deux !' },
+    coeur: { titre: 'À cœur ouvert', img: 'fleur', c: '#E5534B', desc: 'Des questions pour se raconter', cat: 'decouvrir', regle: 'Tirez une carte et répondez chacun votre tour. Trois niveaux : léger, doux, profond.' },
+    mensonge: { titre: 'Deux vérités, un mensonge', img: 'timide', c: '#E2763D', desc: 'Démasque le faux', cat: 'decouvrir', regle: 'L’un écrit trois phrases sur lui : deux vraies, une fausse. L’autre doit trouver le mensonge. Démasqué : un point pour le détective. Raté : un point pour le menteur.' },
+    jumeaux: { titre: 'Mots jumeaux', img: 'face', c: '#3A8EE6', desc: 'Pensez au même mot', cat: 'decouvrir', regle: 'Un thème s’affiche, chacun écrit le premier mot qui lui vient, sans se parler. Le même mot ? Vous êtes des âmes jumelles !' },
+    ordre: { titre: 'Dans le même ordre', img: 'petit', c: '#E2763D', desc: 'Classez pareil !', cat: 'decouvrir', regle: 'Chacun classe quatre choses de la préférée à la moins aimée, en secret. Un point par place en commun.' },
+    dessin: { titre: 'Dessine-moi', img: 'outil', c: '#3A8EE6', desc: 'Dessine, l’autre devine', cat: 'jouer', regle: 'L’un dessine le mot secret, l’autre voit le dessin apparaître sur son téléphone et devine. 90 secondes !' },
+    mime: { titre: 'Le grand mime', img: 'salut', c: '#7CC243', desc: 'Un max de mots en 60 s', cat: 'jouer', regle: 'L’un mime les mots qui s’affichent sur son téléphone, l’autre devine à voix haute. Trouvé ou passer : le plus possible en 60 secondes.' },
+    cinq: { titre: '5 secondes chrono', img: 'avance', c: '#F5BE3B', desc: 'Trois réponses, vite !', cat: 'jouer', regle: 'Une consigne s’affiche : cite trois réponses avant la fin des 5 secondes. L’autre juge.' },
+    histoire: { titre: 'L’histoire à quatre mains', img: 'regard', c: '#57C7F2', desc: 'Une phrase chacun', cat: 'jouer', regle: 'Un début d’histoire s’affiche. Chacun son tour ajoute une phrase, huit en tout. À la fin, on relit tout !' },
+    pendu: { titre: 'Le mot mystère', img: 'assis', c: '#E2763D', desc: 'Avant la panne de batterie', cat: 'jouer', regle: 'L’un choisit un mot (ou un mot au hasard), l’autre propose des lettres. Chaque erreur vide un cran de la batterie de WALL-E : sept erreurs et c’est la panne.' },
+    quiz: { titre: 'Le quiz', img: 'robot-entier', c: '#E2763D', desc: 'Lilo & Stitch et Hawaï', cat: 'jouer', regle: 'Dix questions sur Lilo & Stitch et Hawaï. Chacun répond en secret : un point par bonne réponse.' },
+    roue: { titre: 'La roue des câlins', img: 'glaciere-entier', c: '#E5534B', desc: 'Des gages tout doux', cat: 'jouer', regle: 'Chacun son tour fait tourner la roue… et fait le gage. On peut changer les gages quand on veut.' },
+    sortie: { titre: 'Idée de sortie', img: 'danse', c: '#57C7F2', desc: 'Trois dés pour un rendez-vous', cat: 'jouer', regle: 'Lancez les dés : un lieu, une activité, un petit plus. Gardez les idées qui vous plaisent.' },
+    memory: { titre: 'Memory', img: 'cube-entier', c: '#3A8EE6', desc: '8 paires de personnages', cat: 'defis', regle: 'Retournez deux cartes : une paire, c’est un point et on rejoue. Sinon, c’est au tour de l’autre.' },
+    morpion: { titre: 'Morpion', img: 'profil', c: '#E2763D', desc: 'Ton personnage contre le sien', cat: 'defis', regle: 'Alignez trois fois votre personnage. Chacun commence une partie sur deux.' },
+    puissance: { titre: 'Quatre à la suite', img: 'ombre', c: '#F5BE3B', desc: 'Le puissance 4 à deux', cat: 'defis', regle: 'Chacun son tour, laisse tomber un jeton dans une colonne. Le premier qui en aligne quatre gagne : en ligne, en colonne ou en diagonale.' },
+    carres: { titre: 'Les petits carrés', img: 'mini', c: '#7CC243', desc: 'Ferme les cases', cat: 'defis', regle: 'Chacun son tour trace un trait. Celui qui ferme une case la gagne et rejoue. À la fin, le plus de cases gagne.' },
+    chifoumi: { titre: 'Cube, Botte, Plante', img: 'plante-entiere', c: '#E2763D', desc: 'Le chifoumi des robots', cat: 'defis', regle: 'La botte protège la plante, la plante pousse à travers le cube, le cube écrase la botte. Premier à 3 !' },
+    reflexes: { titre: 'Duel de réflexes', img: 'robot2', c: '#57C7F2', desc: 'Le plus rapide gagne', cat: 'defis', regle: 'Quand EVE surgit, touche l’écran le plus vite possible. Trop tôt, c’est perdu ! Premier à 3.' },
+    nombre: { titre: 'Plus ou moins', img: 'tend-bras', c: '#3A8EE6', desc: 'Devine le nombre secret', cat: 'defis', regle: 'L’un choisit un nombre entre 1 et 100, l’autre le devine : « c’est plus », « c’est moins ». Puis on échange : le moins d’essais gagne le duel.' }
   };
-  const CATS = [['decouvrir', 'Se découvrir 💜'], ['jouer', 'Jouer ensemble ✨'], ['defis', 'Petits défis 🍳']];
-  const MOTS_CODE = ['LANTERNE', 'PASCAL', 'MAXIMUS', 'CORONA', 'TOUR', 'POELE', 'SOLEIL', 'ETOILE', 'FLEUR', 'TRESSE',
-    'PINCEAU', 'REVE', 'LUMIERE', 'COURONNE', 'DIADEME', 'CAMELEON', 'FORET', 'BARQUE', 'BISOU', 'CALIN', 'COEUR', 'MAGIE',
-    'ROYAUME', 'PEINTURE', 'GUITARE', 'CHATEAU', 'BALADE', 'LUNE', 'DORE', 'PRINCESSE'];
+  const CATS = [['decouvrir', 'Se découvrir 💚'], ['jouer', 'Jouer ensemble ✨'], ['defis', 'Petits défis ⚡']];
+  const MOTS_CODE = ['ROBOT', 'EVE', 'AXIOM', 'PLANTE', 'POUSSE', 'ETOILE', 'FUSEE', 'COSMOS', 'ORBITE', 'GALAXIE',
+    'COMETE', 'PLANETE', 'LUNE', 'CUBE', 'BOTTE', 'BOULON', 'LUMIERE', 'DANSE', 'CALIN', 'BISOU', 'COEUR', 'MAGIE', 'REVE',
+    'ESPACE', 'ASTRE', 'SATELLITE', 'RADAR', 'BATTERIE', 'ANTENNE', 'MISSION'];
   //  les phases où chacun répond en secret (sur un seul téléphone, on se le passe)
   const PHASE_SECRETE = { preferes: 'choix', qui: 'choix', jamais: 'choix', quiz: 'choix', chifoumi: 'choix', connais: 'ecrire', onde: 'choix', reflexes: 'attente',
     mensonge: 'ecrire', jumeaux: 'choix', ordre: 'choix', pendu: 'choix', nombre: 'choix' };
@@ -73,12 +73,12 @@
   let decalage = 0;         // écart entre l'horloge de l'hôte et la nôtre
   let vuAutre = 0;          // dernière nouvelle de l'autre téléphone
   let enAttente = [];       // actions envoyées par l'invité, pas encore appliquées par l'hôte
-  let profil = mem.get('profil', { nom: '', avatar: 'raiponce' });
+  let profil = mem.get('profil', { nom: '', avatar: 'walle' });
   profil.avatar = avatarDe(profil.avatar, 'a');
   const ui = { ecran: 'accueil', main: null, vueCle: '', section: '', anime: false, opt: null, erreur: '', code: '', rotation: 0, rouePour: '', reflexe: null };
 
   const maintenant = () => Date.now() + (role === 'b' || role === 'joindre' ? decalage : 0);
-  const joueur = j => (etat && etat.joueurs[j]) || { nom: j === 'a' ? 'Joueur 1' : 'Joueur 2', avatar: j === 'a' ? 'raiponce' : 'flynn' };
+  const joueur = j => (etat && etat.joueurs[j]) || { nom: j === 'a' ? 'Joueur 1' : 'Joueur 2', avatar: j === 'a' ? 'walle' : 'eve' };
   const nomDe = j => esc(joueur(j).nom);
   const srcAv = j => `img/av-${avatarDe(joueur(j).avatar, j)}.webp`;
   const imgAv = (j, cls = '') => `<img class="avatar ${j} ${cls}" src="${srcAv(j)}" alt="" draggable="false">`;
@@ -117,7 +117,7 @@
     }
   };
   const vibrer = ms => { try { navigator.vibrate && navigator.vibrate(ms); } catch {} };
-  function pluie(liste = ['💜', '💛', '✨', '🌟', '🌸', '🌼']) {
+  function pluie(liste = ['💚', '💛', '💙', '✨', '⭐', '🌱']) {
     if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     for (let i = 0; i < 28; i++) {
       const s = document.createElement('span');
@@ -189,7 +189,7 @@
       if (b && b.appareil === appareil) {
         role = 'b'; ui.erreur = ''; ui.ecran = 'ile';
         mem.set('partie', { code: e.code, role: 'b', date: Date.now() });
-        toast('Te voilà dans la tour ! ✨');
+        toast('Te voilà à bord ! 🚀');
         Son.jouer('ok');
       } else if (b && b.appareil !== appareil && enAttente.length === 0) {
         ui.erreur = 'Cette partie a déjà deux joueurs 😿';
@@ -216,7 +216,7 @@
     const avant = structuredClone(etat);
     if (!R.appliquer(etat, act, maintenant())) return false;
     if (act.type === 'rejoindre' && etat.joueurs.b && etat.joueurs.b.appareil === act.appareil && !(avant.joueurs.b && avant.joueurs.b.appareil === act.appareil)) {
-      toast(etat.joueurs.b.nom + ' est arrivé(e) dans la tour ! 💜');
+      toast(etat.joueurs.b.nom + ' est monté(e) à bord ! 💚');
       Son.jouer('fanfare'); pluie();
     }
     sauver();
@@ -287,8 +287,8 @@
     const nom2 = champ ? champ.value.trim().slice(0, 20) : '';
     if (!profil.nom) { toast('Il manque ton prénom 🙂'); ui.ecran = 'accueil'; rendre(); return; }
     if (!nom2) { toast('Écris le prénom de l’autre joueur 🙂'); champ && champ.focus(); return; }
-    mem.set('profil2', { nom: nom2, avatar: ui.avatar2 || 'flynn' });
-    etat = R.creer({ code: 'LOCAL', local: true, a: { nom: profil.nom, avatar: profil.avatar }, b: { nom: nom2, avatar: ui.avatar2 || 'flynn' } });
+    mem.set('profil2', { nom: nom2, avatar: ui.avatar2 || 'eve' });
+    etat = R.creer({ code: 'LOCAL', local: true, a: { nom: profil.nom, avatar: profil.avatar }, b: { nom: nom2, avatar: ui.avatar2 || 'eve' } });
     etat.pid = rid();
     role = 'local';
     sauver();
@@ -332,8 +332,8 @@
   function partager() {
     if (!etat) return;
     const url = location.origin + location.pathname + '#' + etat.code.replace('-', '');
-    const texte = 'Viens jouer avec moi à la tour aux jeux ✨ Code : ' + etat.code;
-    if (navigator.share) navigator.share({ title: 'La tour aux jeux', text: texte, url }).catch(() => {});
+    const texte = 'Viens jouer avec moi à la station des jeux 🚀 Code : ' + etat.code;
+    if (navigator.share) navigator.share({ title: 'La station des jeux', text: texte, url }).catch(() => {});
     else {
       const copie = texte + ' — ' + url;
       (navigator.clipboard ? navigator.clipboard.writeText(copie) : Promise.reject()).then(() => toast('Lien copié ! Colle-le dans ta conversation 💌'), () => toast(copie, 6000));
@@ -368,13 +368,13 @@
         if (devient('revele')) { if (j.fin) { Son.jouer('fanfare'); pluie(); } else Son.jouer(!j.gagne ? 'pop' : role === 'local' || j.gagne === m ? 'ok' : 'ko'); }
         break;
       case 'connais':
-        if (devient('juge')) { if (j.verdict === 'oui') { Son.jouer('ok'); pluie(['💛', '✨', '🌸']); } else Son.jouer(j.verdict === 'non' ? 'ko' : 'pop'); }
+        if (devient('juge')) { if (j.verdict === 'oui') { Son.jouer('ok'); pluie(['💚', '✨', '🌱']); } else Son.jouer(j.verdict === 'non' ? 'ko' : 'pop'); }
         break;
       case 'onde':
-        if (devient('revele')) { if (j.gain === 3) { Son.jouer('fanfare'); pluie(['🔮', '💜', '💛', '✨']); } else Son.jouer(j.gain ? 'ok' : 'ko'); }
+        if (devient('revele')) { if (j.gain === 3) { Son.jouer('fanfare'); pluie(['🔮', '💙', '💚', '✨']); } else Son.jouer(j.gain ? 'ok' : 'ko'); }
         break;
       case 'dessin':
-        if (devient('fin')) { if (j.trouve) { Son.jouer('fanfare'); pluie(['🎨', '✨', '💜']); } else Son.jouer('ko'); }
+        if (devient('fin')) { if (j.trouve) { Son.jouer('fanfare'); pluie(['🎨', '✨', '💙']); } else Son.jouer('ko'); }
         break;
       case 'mime':
         if (devient('fin')) Son.jouer('fanfare');
@@ -398,7 +398,7 @@
         if (devient('resultat')) { if (j.fin) { Son.jouer('fanfare'); pluie(['⚡', '🏆', '✨']); } else Son.jouer(role === 'local' || j.gagne === m ? 'ok' : 'ko'); }
         break;
       case 'roue':
-        if (devient('resultat')) { Son.jouer('fanfare'); pluie(['🤗', '💜', '💛']); }
+        if (devient('resultat')) { Son.jouer('fanfare'); pluie(['🤗', '💚', '💛']); }
         break;
       case 'sortie':
         if (j.n !== a.n) Son.jouer('pop');
@@ -407,14 +407,14 @@
         if (devient('revele')) { if (j.choix === j.faux) { Son.jouer('fanfare'); pluie(['🕵️', '✨', '💛']); } else Son.jouer('ko'); }
         break;
       case 'jumeaux':
-        if (devient('revele') || (j.pareil && !a.pareil)) { if (j.pareil) { Son.jouer('fanfare'); pluie(['💞', '✨', '💛', '💜']); } else Son.jouer('ko'); }
+        if (devient('revele') || (j.pareil && !a.pareil)) { if (j.pareil) { Son.jouer('fanfare'); pluie(['💞', '✨', '💚', '💙']); } else Son.jouer('ko'); }
         break;
       case 'histoire':
-        if (devient('fin')) { Son.jouer('fanfare'); pluie(['📖', '✨', '💜', '🌟']); }
+        if (devient('fin')) { Son.jouer('fanfare'); pluie(['📖', '✨', '💙', '⭐']); }
         else if (j.phrases.length > a.phrases.length) Son.jouer('pop');
         break;
       case 'pendu':
-        if (devient('fin')) { if (j.gagne !== j.poseur) { Son.jouer('fanfare'); pluie(['🌟', '✨', '💛']); } else Son.jouer('ko'); }
+        if (devient('fin')) { if (j.gagne !== j.poseur) { Son.jouer('fanfare'); pluie(['🔋', '✨', '💛']); } else Son.jouer('ko'); }
         else if (j.lettres.length > a.lettres.length) Son.jouer(j.erreurs > a.erreurs ? 'ko' : 'ok');
         break;
       case 'puissance':
@@ -443,11 +443,22 @@
     const nouvellePage = section.split(':').slice(0, 2).join(':') !== ui.section.split(':').slice(0, 2).join(':');
     ui.section = section;
     let v;
-    try { v = vue(); } catch (err) { console.error(err); v = { cle: 'erreur', html: `<div class="carte centre pile"><p>Oups, Pascal a tout renversé 🙈</p><button class="bouton" data-u="ile">Retour à la tour</button></div>` }; }
+    try { v = vue(); } catch (err) { console.error(err); v = { cle: 'erreur', html: `<div class="carte centre pile"><p>Oups, WALL-E a tout compacté 🙈</p><button class="bouton" data-u="ile">Retour à la station</button></div>` }; }
     if (v.cle !== ui.vueCle) {
+      //  même écran redessiné (connexion qui clignote…) : on garde le texte en cours de frappe
+      const cleChamp = (c, i) => c.id || c.name || ('#' + i);
+      const tape = {};
+      if (!ui.anime) $$('input', app).forEach((c, i) => { if (c.value && c.type !== 'range') tape[cleChamp(c, i)] = c.value; });
+      const actif = !ui.anime && app.contains(document.activeElement) ? $$('input', app).indexOf(document.activeElement) : -1;
+      const cleActif = actif >= 0 ? cleChamp(document.activeElement, actif) : null;
       app.innerHTML = v.html;
       ui.vueCle = v.cle;
       if (v.monter) v.monter(app);
+      $$('input', app).forEach((c, i) => {
+        const k = cleChamp(c, i);
+        if (tape[k] && !c.value) c.value = tape[k];
+        if (k === cleActif) c.focus({ preventScroll: true });
+      });
       if (nouvellePage) window.scrollTo({ top: 0, behavior: 'instant' });
     } else if (v.maj) v.maj(app);
     rendreBarre();
@@ -479,7 +490,7 @@
     else if (!enLigne()) { point = 'orange'; texte = 'hors ligne'; }
     const b = etat.joueurs.b;
     const html = `
-      <button class="rond" data-u="${ailleurs ? 'retour' : enJeu ? 'quitterJeu' : 'scores'}" aria-label="${ailleurs ? 'Retour' : enJeu ? 'Retour à la tour' : 'Nos scores'}">${ailleurs ? '←' : enJeu ? '🏰' : '🏆'}</button>
+      <button class="rond" data-u="${ailleurs ? 'retour' : enJeu ? 'quitterJeu' : 'scores'}" aria-label="${ailleurs ? 'Retour' : enJeu ? 'Retour à la station' : 'Nos scores'}">${ailleurs ? '←' : enJeu ? '🚀' : '🏆'}</button>
       <div class="barre-fond">
         <div class="duo">${imgAv('a', 'mini')}<span class="nom-court">${nomDe('a')}</span>${b ? `<span class="coeur-mini">♥</span><span class="nom-court">${nomDe('b')}</span>${imgAv('b', 'mini')}` : ''}</div>
         <span class="etat-connexion"><i class="point ${point}"></i>${texte}</span>
@@ -528,8 +539,8 @@
       cle: 'accueil' + (p ? p.code : ''),
       html: `<section class="pile entree">
         <div class="accueil-haut">
-          <img class="heros" src="img/lanternes.webp" alt="Raiponce et Eugene dans la barque, sous les lanternes">
-          <h1 class="grand-titre"><img class="soleil-titre" src="img/soleil.svg" alt="">La tour aux jeux</h1>
+          <img class="heros" src="img/fleur.webp" alt="WALL-E tend un moulinet à EVE">
+          <h1 class="grand-titre"><img class="embleme-titre" src="img/pousse.svg" alt="">La station des jeux</h1>
           <p class="sous-titre">Des jeux à deux, chacun sur son téléphone ✨</p>
         </div>
         ${p ? `<div class="carte reprendre"><div class="texte"><b>Une partie en cours</b><p class="petit">${p.role === 'local' ? 'Sur ce téléphone' : 'Code ' + esc(p.code)}</p></div>
@@ -548,13 +559,13 @@
     return {
       cle: 'rejoindre',
       html: `<section class="pile entree">
-        <div class="accueil-haut"><img class="heros" src="img/coucou.webp" alt="Raiponce qui fait coucou" style="width:150px"><h1 class="grand-titre" style="font-size:42px">Rejoindre</h1></div>
+        <div class="accueil-haut"><img class="heros" src="img/bleu.webp" alt="WALL-E qui fait coucou" style="width:150px"><h1 class="grand-titre" style="font-size:42px">Rejoindre</h1></div>
         <div class="carte pile">
           <div><label class="etiquette-champ" for="code">Le code de la partie</label>
             <input id="code" class="champ code" maxlength="14" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="OHANA-42" value="${esc(ui.code)}"></div>
         </div>
         <div class="carte">${blocProfil('prenom', profil.nom, profil.avatar, 'profil', 'Ton prénom')}</div>
-        <button class="bouton rose large" data-u="rejoindre"><span class="emoji">🏰</span> Rejoindre la partie</button>
+        <button class="bouton rose large" data-u="rejoindre"><span class="emoji">🚀</span> Rejoindre la partie</button>
         <p class="centre"><button class="lien" data-u="accueil">← Retour</button></p>
       </section>`,
       monter: m => {
@@ -566,12 +577,12 @@
     };
   }
   function vueLocal() {
-    const p2 = mem.get('profil2', { nom: '', avatar: 'flynn' });
+    const p2 = mem.get('profil2', { nom: '', avatar: 'eve' });
     if (!ui.avatar2) ui.avatar2 = avatarDe(p2.avatar, 'b');
     return {
       cle: 'local',
       html: `<section class="pile entree">
-        <div class="accueil-haut"><img class="heros" src="img/calin.webp" alt="" style="width:170px"><h1 class="grand-titre" style="font-size:40px">Sur un seul téléphone</h1>
+        <div class="accueil-haut"><img class="heros" src="img/trio.webp" alt="" style="width:190px"><h1 class="grand-titre" style="font-size:40px">Sur un seul téléphone</h1>
           <p class="sous-titre">Vous vous passerez le téléphone quand il faut répondre en secret.</p></div>
         <div class="carte pile"><p class="titre" style="font-size:22px">${esc(profil.nom) || 'Toi'}</p>
           <p class="petit">C’est toi (tu peux changer ton prénom sur l’accueil).</p></div>
@@ -587,10 +598,10 @@
       cle: 'connexion' + ui.erreur + trouve,
       html: `<section class="pile entree centre">
         <div class="carte pile">
-          <img class="attente-perso" src="img/${ui.erreur ? 'pascal-boude' : 'coucou'}.webp" alt="">
+          <img class="attente-perso" src="img/${ui.erreur ? 'yeux-entier' : 'bleu'}.webp" alt="">
           <p class="titre">${ui.erreur ? 'Hmm…' : trouve ? 'Partie trouvée !' : 'Recherche de la partie'}</p>
           <p class="code-geant" style="font-size:34px">${esc(ui.code)}</p>
-          <p class="sous-titre">${ui.erreur ? esc(ui.erreur) : trouve ? 'On t’installe dans la tour<span class="points-attente"></span>' : 'Connexion aux relais<span class="points-attente"></span>'}</p>
+          <p class="sous-titre">${ui.erreur ? esc(ui.erreur) : trouve ? 'On t’installe à bord<span class="points-attente"></span>' : 'Connexion aux relais<span class="points-attente"></span>'}</p>
           ${ui.erreur ? '<p class="petit">On continue de chercher en attendant.</p>' : ''}
         </div>
         <button class="bouton blanc large" data-u="annulerJoindre">Annuler</button>
@@ -603,12 +614,12 @@
       html: `<section class="pile entree centre">
         <div class="carte pile">
           <p class="titre">Ta partie est prête !</p>
-          <p class="sous-titre">Donne ce code à ta moitié 💜</p>
+          <p class="sous-titre">Donne ce code à ta moitié 💚</p>
           <p><span class="code-geant">${esc(etat.code)}</span></p>
           <button class="bouton rose large" data-u="partager"><span class="emoji">💌</span> Envoyer le lien</button>
         </div>
         <div class="carte pile">
-          <img class="attente-perso" src="img/coucou.webp" alt="">
+          <img class="attente-perso" src="img/eve-grande.webp" alt="">
           <p><b>En attente de l’autre joueur<span class="points-attente"></span></b></p>
           <p class="petit">Sur son téléphone : ouvrir ce site, « Rejoindre avec un code », taper <b>${esc(etat.code)}</b>. Gardez tous les deux la page ouverte pendant la partie.</p>
         </div>
@@ -617,7 +628,7 @@
     };
   }
 
-  /* ---------- la tour : choisir un jeu ---------- */
+  /* ---------- la station : choisir un jeu ---------- */
   function vueIle() {
     const s = etat.scores;
     const joue = id => {
@@ -630,10 +641,10 @@
       html: `<section class="entree">
         <div class="carte transparente ile-titre pile">
           <div style="display:flex;justify-content:center;align-items:center;gap:10px">${imgAv('a', 'moyen')}<span style="font-size:30px">💞</span>${imgAv('b', 'moyen')}</div>
-          <p class="titre">${nomDe('a')} & ${nomDe('b')}, la tour est à vous !</p>
+          <p class="titre">${nomDe('a')} & ${nomDe('b')}, la station est à vous !</p>
           <p class="petit">Touchez un jeu : il s’ouvre sur ${role === 'local' ? 'ce téléphone' : 'vos deux téléphones'}.</p>
         </div>
-        <button class="tuile-melange" ${A('melange', {})}><img src="img/tourbillon.webp" alt="" loading="lazy">
+        <button class="tuile-melange" ${A('melange', {})}><img src="img/danse.webp" alt="" loading="lazy">
           <span class="texte"><b>Le grand mélange</b><span>Tous les jeux s’enchaînent au hasard</span></span><span class="de" aria-hidden="true">🎲</span></button>
         ${hors ? `<p class="bandeau-hors-ligne" style="margin-top:12px">${role === 'a' ? nomDe('b') : nomDe('a')} n’est pas connecté(e) en ce moment. Tout reprendra dès son retour.</p>` : ''}
         ${CATS.map(([cat, titre]) => `<div class="categorie"><h2>${titre}</h2><div class="tuiles">
@@ -802,11 +813,11 @@
     };
   };
 
-  /* ---------- Poêle, Affiche, Ciseaux ---------- */
-  const MAINS = { poele: ['🍳', 'Poêle'], affiche: ['📜', 'Affiche'], ciseaux: ['✂️', 'Ciseaux'] };
+  /* ---------- Cube, Botte, Plante ---------- */
+  const MAINS = { cube: ['📦', 'Cube'], botte: ['👢', 'Botte'], plante: ['🌱', 'Plante'] };
   VUES.chifoumi = j => {
     const pts = `<div class="carte question-carte"><p class="numero">Premier à 3</p>
-      <p class="question" style="display:flex;align-items:center;justify-content:center;gap:12px">${imgAv('a', 'moyen')}<span style="font-family:Chewy;font-size:44px">${j.points.a} – ${j.points.b}</span>${imgAv('b', 'moyen')}</p></div>`;
+      <p class="question" style="display:flex;align-items:center;justify-content:center;gap:12px">${imgAv('a', 'moyen')}<span style="font-family:var(--titre);font-weight:700;font-size:44px">${j.points.a} – ${j.points.b}</span>${imgAv('b', 'moyen')}</p></div>`;
     if (j.phase === 'choix') {
       const mien = monChoix(j), libre = mien === null;
       return {
@@ -814,7 +825,7 @@
         html: cadre('chifoumi', `${pts}
           <div class="choix-trois">${Object.entries(MAINS).map(([v, [e, t]], k) => `<button class="option o${k % 2} ${mien === v ? 'choisie' : ''}" ${A('repondre', { n: j.n, val: v })} ${libre ? '' : 'disabled'}><span class="grand-emoji">${e}</span>${t}</button>`).join('')}</div>
           ${!libre && role !== 'local' ? attenteDe(autre(moi())) : ''}
-          ${role !== 'local' ? etatDuo(x => j.rep[x] !== null || (x === role && !libre)) : ''}`, 'La poêle écrase les ciseaux, l’affiche enveloppe la poêle, les ciseaux découpent l’affiche')
+          ${role !== 'local' ? etatDuo(x => j.rep[x] !== null || (x === role && !libre)) : ''}`, 'La botte protège la plante, la plante pousse à travers le cube, le cube écrase la botte')
       };
     }
     const txt = j.fin ? `${nomDe(j.fin)} remporte la partie ! 🏆` : j.gagne ? `${nomDe(j.gagne)} gagne la manche !` : 'Égalité, on rejoue !';
@@ -925,11 +936,11 @@
   });
 
   /* ---------- Le pinceau magique ---------- */
-  const COULEURS = ['#2E1A47', '#7B52C7', '#E26FA8', '#E0566F', '#F4B942', '#5DB85B', '#8B5A2B', '#FFFFFF'];
+  const COULEURS = ['#1C2340', '#3A8EE6', '#57C7F2', '#E5534B', '#F5BE3B', '#7CC243', '#8B5A2B', '#FFFFFF'];
   const EPAISSEURS = [8, 16, 32];
   const Toile = {
     n: null, traits: [], index: new Map(), canvas: null, ctx: null, lecture: true,
-    couleur: '#2E1A47', epaisseur: 16, courant: null, envoyeA: 0, minuteur: null,
+    couleur: '#1C2340', epaisseur: 16, courant: null, envoyeA: 0, minuteur: null,
     reset(n) { if (this.n !== n) { this.n = n; this.traits = []; this.index = new Map(); this.courant = null; } },
     attacher(canvas, lecture) {
       this.canvas = canvas; this.lecture = lecture;
@@ -1226,14 +1237,14 @@
   VUES.reflexes = j => {
     const s = etat.scores.reflexes || { a: 0, b: 0, record: { a: null, b: null } };
     const score = `<div class="carte question-carte" style="padding:14px"><p class="numero">Premier à 3</p>
-      <p class="question" style="display:flex;align-items:center;justify-content:center;gap:12px">${imgAv('a', 'moyen')}<span style="font-family:Chewy;font-size:40px">${j.points.a} – ${j.points.b}</span>${imgAv('b', 'moyen')}</p></div>`;
+      <p class="question" style="display:flex;align-items:center;justify-content:center;gap:12px">${imgAv('a', 'moyen')}<span style="font-family:var(--titre);font-weight:700;font-size:40px">${j.points.a} – ${j.points.b}</span>${imgAv('b', 'moyen')}</p></div>`;
     const records = `<p class="stats">Records : ${nomDe('a')} <b>${s.record.a ?? '—'}</b> ms · ${nomDe('b')} <b>${s.record.b ?? '—'}</b> ms</p>`;
     if (j.phase === 'pret') {
       const pret = role === 'local' ? false : j.prets[role] || enAttente.some(a => a.type === 'pret' && a.n === j.n);
       return {
         cle: j.n + 'p' + pret + JSON.stringify(j.prets),
         html: cadre('reflexes', `${score}
-          <div class="carte centre pile"><p><b>Pose ton doigt près de l’écran.</b></p><p class="petit">Quand Pascal surgit, touche l’écran le plus vite possible. Avant, c’est perdu !</p></div>
+          <div class="carte centre pile"><p><b>Pose ton doigt près de l’écran.</b></p><p class="petit">Quand EVE surgit, touche l’écran le plus vite possible. Avant, c’est perdu !</p></div>
           ${role === 'local' ? `<button class="bouton vert large" data-u="reflexesLocal" data-n="${j.n}">⚡ On y va !</button>`
             : pret ? attenteDe(autre(role)) : `<button class="bouton vert large" ${A('pret', { n: j.n })}>⚡ Je suis prêt(e) !</button>`}
           ${role !== 'local' ? etatDuo(x => j.prets[x], 'prêt(e) ✓', 'pas encore') : ''}${records}`)
@@ -1247,7 +1258,7 @@
       }
       return {
         cle: j.n + 'a' + m + (role === 'local' ? ui.main : ''),
-        html: cadre('reflexes', `${score}<div class="zone-reflexe" data-zone><div data-contenu><p class="consigne">Attends Pascal… 👀</p><p class="petit" style="color:#e6dcff">${role === 'local' ? nomDe(m) + ', touche dès qu’il apparaît' : 'Ne touche pas encore !'}</p></div></div>`),
+        html: cadre('reflexes', `${score}<div class="zone-reflexe" data-zone><div data-contenu><p class="consigne">Attends EVE… 👀</p><p class="petit" style="color:#d6e6ff">${role === 'local' ? nomDe(m) + ', touche dès qu’il apparaît' : 'Ne touche pas encore !'}</p></div></div>`),
         monter: mm => lancerReflexe(mm, j, m)
       };
     }
@@ -1272,7 +1283,7 @@
       if (fini) return;
       apparu = true;
       zone.classList.add('go');
-      contenu.innerHTML = '<img src="img/pascal-saute.webp" alt="Pascal !"><p class="consigne">TOUCHE !</p>';
+      contenu.innerHTML = '<img src="img/eve-grande.webp" alt="EVE !"><p class="consigne">TOUCHE !</p>';
       requestAnimationFrame(() => { t0 = performance.now(); });
     }, attendre);
     zone.addEventListener('pointerdown', e => {
@@ -1292,7 +1303,7 @@
   }
 
   /* ---------- La roue des câlins ---------- */
-  const TEINTES_ROUE = ['#7B52C7', '#F4B942', '#E26FA8', '#5DB85B', '#B79AD8', '#F28C38'];
+  const TEINTES_ROUE = ['#3A8EE6', '#F5BE3B', '#E2763D', '#7CC243', '#57C7F2', '#E5534B'];
   function dessinRoue(gages) {
     const n = gages.length, pas = 360 / n, r = 96;
     const pt = a => [Math.sin(a * Math.PI / 180) * r, -Math.cos(a * Math.PI / 180) * r];
@@ -1303,7 +1314,7 @@
         const [e, court] = C.gages[g];
         return `<path d="M0 0 L${x1.toFixed(2)} ${y1.toFixed(2)} A${r} ${r} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z" fill="${TEINTES_ROUE[i % TEINTES_ROUE.length]}" stroke="#fff" stroke-width="1.5"/>
           <g transform="rotate(${mid - 90})"><text x="80" y="0" font-size="13" text-anchor="middle" dominant-baseline="central" transform="rotate(90 80 0)">${e}</text>
-          <text x="52" y="0" font-size="7.2" font-weight="700" fill="${[1, 4].includes(i % TEINTES_ROUE.length) ? '#3A2160' : '#fff'}" text-anchor="middle" dominant-baseline="central" font-family="Nunito, sans-serif">${esc(court)}</text></g>`;
+          <text x="52" y="0" font-size="7.2" font-weight="700" fill="${[1, 4].includes(i % TEINTES_ROUE.length) ? '#1C2340' : '#fff'}" text-anchor="middle" dominant-baseline="central" font-family="Nunito, sans-serif">${esc(court)}</text></g>`;
       }).join('')}
     </svg>`;
   }
@@ -1496,8 +1507,9 @@
   };
 
   /* ---------- Le mot mystère ---------- */
-  const lanternesPendu = j => `<div class="lanternes-jeu" role="img" aria-label="${j.max - j.erreurs} lanternes allumées sur ${j.max}">
-    ${Array.from({ length: j.max }, (_, k) => `<span class="lanterne-pendu ${k < j.max - j.erreurs ? 'allumee' : 'eteinte'}"></span>`).join('')}</div>`;
+  const batterie = j => `<div class="batterie" role="img" aria-label="Batterie : ${j.max - j.erreurs} crans sur ${j.max}">
+    <span class="batterie-soleil" aria-hidden="true">☀️</span>
+    ${Array.from({ length: j.max }, (_, k) => `<span class="cran ${k < j.max - j.erreurs ? 'plein' : 'vide'}"></span>`).join('')}</div>`;
   const motPendu = (j, tout) => `<div class="mot-pendu">${[...j.mot].map(ch => {
     const n = J.pendu.lettresDe(ch).replace(/[^A-Z]/g, '');
     if (!n) return ch === ' ' ? '<span class="espace"></span>' : `<span class="signe">${esc(ch)}</span>`;
@@ -1529,7 +1541,7 @@
       const aMoi = peut(devin);
       return {
         cle: j.n + 'j' + j.lettres.length,
-        html: cadre('pendu', `${lanternesPendu(j)}
+        html: cadre('pendu', `${batterie(j)}
           <div class="carte centre">${motPendu(j, false)}
             <p class="petit" style="margin-top:10px">${aMoi ? `Choisis une lettre${role === 'local' ? ', ' + nomDe(devin) : ''} !` : `${nomDe(devin)} cherche ton mot : <b>${esc(j.mot.toUpperCase())}</b>`}</p></div>
           ${clavier(aMoi)}${stats}`)
@@ -1538,9 +1550,9 @@
     const gagne = j.gagne === devin;
     return {
       cle: j.n + 'f',
-      html: cadre('pendu', `${lanternesPendu(j)}
+      html: cadre('pendu', `${batterie(j)}
         <div class="carte centre">${motPendu(j, true)}</div>
-        <div class="banniere ${gagne ? 'accord' : 'desaccord'} pop"><span class="grand">${gagne ? 'Trouvé ! 🌟' : 'Les lanternes se sont éteintes… 🌙'}</span>${gagne ? nomDe(devin) + ' a trouvé le mot.' : nomDe(poseur) + ' remporte la manche.'}</div>
+        <div class="banniere ${gagne ? 'accord' : 'desaccord'} pop"><span class="grand">${gagne ? 'Trouvé ! 🌟' : 'Panne de batterie… 🪫'}</span>${gagne ? nomDe(devin) + ' a trouvé le mot.' : nomDe(poseur) + ' remporte la manche.'}</div>
         <button class="bouton large" ${A('suivant', { n: j.n })}>À ${nomDe(devin)} de choisir un mot →</button>${stats}`)
     };
   };
@@ -1702,11 +1714,11 @@
     if (s.carres) L('carres', `Parties gagnées : ${a} ${s.carres.a} · ${b} ${s.carres.b} · nuls ${s.carres.nuls}`);
     if (s.nombre) L('nombre', `Duels gagnés : ${a} ${s.nombre.a} · ${b} ${s.nombre.b} · records ${s.nombre.record.a ?? '—'} / ${s.nombre.record.b ?? '—'} essais`);
     if (s.reflexes) L('reflexes', `Victoires : ${a} ${s.reflexes.a} · ${b} ${s.reflexes.b} · records ${s.reflexes.record.a ?? '—'} / ${s.reflexes.record.b ?? '—'} ms`);
-    if (s.melange) lignes.unshift(`<div class="score-ligne"><img src="img/tourbillon.webp" alt=""><div><b>Le grand mélange</b><span>${s.melange.manches} jeu${s.melange.manches > 1 ? 'x' : ''} tiré${s.melange.manches > 1 ? 's' : ''} au hasard</span></div></div>`);
+    if (s.melange) lignes.unshift(`<div class="score-ligne"><img src="img/danse.webp" alt=""><div><b>Le grand mélange</b><span>${s.melange.manches} jeu${s.melange.manches > 1 ? 'x' : ''} tiré${s.melange.manches > 1 ? 's' : ''} au hasard</span></div></div>`);
     return {
       cle: 'scores' + etat.v,
       html: `<section class="pile ${ui.anime ? 'entree' : ''}">
-        <div class="carte transparente centre pile"><img src="img/portrait.webp" alt="" style="width:110px;margin:0 auto"><p class="titre">Nos scores</p>
+        <div class="carte transparente centre pile"><img src="img/rubik.webp" alt="" style="width:120px;margin:0 auto"><p class="titre">Nos scores</p>
           <p class="petit">Tout ce que vous avez joué ensemble sur cette partie.</p></div>
         ${lignes.length ? `<div class="scores">${lignes.join('')}</div>` : '<div class="carte centre"><p>Pas encore de score : allez jouer ! ✨</p></div>'}
         <button class="bouton large" data-u="retour">← Retour</button>
@@ -1758,7 +1770,7 @@
       if (role === 'b') rendre();
     },
     couleur(b) { Toile.couleur = b.dataset.v; $$('[data-u="couleur"]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); },
-    epaisseur(b) { Toile.epaisseur = +b.dataset.v; if (Toile.couleur === '#FFFFFF') Toile.couleur = '#2E1A47'; $$('[data-u="epaisseur"]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); },
+    epaisseur(b) { Toile.epaisseur = +b.dataset.v; if (Toile.couleur === '#FFFFFF') Toile.couleur = '#1C2340'; $$('[data-u="epaisseur"]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); },
     effacerToile() { Toile.effacer(); },
     montrerMot(b) { b.classList.toggle('flou'); },
     reflexesLocal(b) { const n = +b.dataset.n; agir('pret', { n }, 'a'); agir('pret', { n }, 'b'); },
@@ -1861,11 +1873,12 @@
     const champ = f.querySelector('input');
     const texte = champ ? champ.value.trim() : '';
     if (!texte) { if (champ) champ.focus(); return; }
+    champ.value = '';
     let d = {};
     try { d = JSON.parse(f.dataset.d || '{}'); } catch {}
     agir(f.dataset.a, { ...d, [f.dataset.champ || 'texte']: texte });
     Son.jouer('pop');
-    if (f.dataset.garder && champ) { champ.value = ''; champ.focus(); }
+    if (f.dataset.garder && champ) champ.focus();
     else if (role === 'b') rendre();
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') fermerMenu(); });
@@ -1900,20 +1913,28 @@
     if (salon) { envoyerMsg({ t: 'ping' }); if (role === 'a') publier(); else if (role === 'b') envoyerMsg({ t: 'sync' }); }
   });
 
-  //  les lanternes qui s'envolent derrière le jeu, chacune à son rythme
+  //  des poussières dorées qui flottent, et de temps en temps une étoile filante
   (() => {
-    const ciel = $('.lanternes');
+    const ciel = $('.poussieres');
     if (!ciel) return;
-    for (let i = 0; i < 16; i++) {
-      const l = document.createElement('span');
-      l.className = 'lanterne-volante';
-      const d = 20 + Math.random() * 22;
-      l.style.left = (Math.random() * 96) + '%';
-      l.style.setProperty('--l', (9 + Math.random() * 13).toFixed(1) + 'px');
-      l.style.setProperty('--d', d.toFixed(1) + 's');
-      l.style.setProperty('--r', (-Math.random() * d).toFixed(1) + 's');
-      l.style.setProperty('--x', (Math.random() * 80 - 40).toFixed(0) + 'px');
-      ciel.appendChild(l);
+    for (let i = 0; i < 22; i++) {
+      const p = document.createElement('span');
+      p.className = 'poussiere';
+      const d = 16 + Math.random() * 24;
+      p.style.left = (Math.random() * 98) + '%';
+      p.style.setProperty('--l', (2 + Math.random() * 4).toFixed(1) + 'px');
+      p.style.setProperty('--d', d.toFixed(1) + 's');
+      p.style.setProperty('--r', (-Math.random() * d).toFixed(1) + 's');
+      p.style.setProperty('--x', (Math.random() * 120 - 60).toFixed(0) + 'px');
+      ciel.appendChild(p);
+    }
+    for (let i = 0; i < 3; i++) {
+      const e = document.createElement('span');
+      e.className = 'etoile-filante';
+      e.style.top = (6 + Math.random() * 30) + '%';
+      e.style.left = (30 + Math.random() * 60) + '%';
+      e.style.animationDelay = (3 + i * 7 + Math.random() * 5).toFixed(1) + 's';
+      ciel.appendChild(e);
     }
   })();
 

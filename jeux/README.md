@@ -1,6 +1,6 @@
-# La tour aux jeux
+# La station des jeux
 
-Des jeux à deux sous les lanternes, aux couleurs de Raiponce. Chacun sur son téléphone :
+Des jeux à deux dans l’univers de WALL-E. Chacun sur son téléphone :
 l'un crée une partie, l'autre la rejoint avec le code (ou le lien envoyé). On peut aussi jouer
 à deux sur un seul téléphone.
 
@@ -11,13 +11,13 @@ l'un crée une partie, l'autre la rejoint avec le code (ou le lien envoyé). On 
 - **Se découvrir** : Tu préfères…, Qui de nous deux ?, Je n'ai jamais…, Tu me connais ?,
   Même longueur d'onde, À cœur ouvert (trois niveaux), Deux vérités un mensonge, Mots jumeaux,
   Dans le même ordre.
-- **Jouer ensemble** : Le pinceau magique (le dessin apparaît en direct chez l'autre), Le grand mime,
-  5 secondes chrono, L'histoire à quatre mains, Le mot mystère (sept lanternes), Le quiz,
+- **Jouer ensemble** : Dessine-moi (le dessin apparaît en direct chez l'autre), Le grand mime,
+  5 secondes chrono, L'histoire à quatre mains, Le mot mystère (la batterie de WALL-E), Le quiz,
   La roue des câlins, Idée de sortie.
-- **Petits défis** : Memory, Morpion, Quatre à la suite, Les petits carrés, Poêle-Affiche-Ciseaux,
+- **Petits défis** : Memory, Morpion, Quatre à la suite, Les petits carrés, Cube-Botte-Plante,
   Duel de réflexes, Plus ou moins.
 
-Les questions ne parlent pas de Raiponce : seul le décor a changé.
+Les questions ne parlent pas de WALL-E : seul le décor est à son image.
 
 ## Ajouter ou changer une question
 
@@ -36,13 +36,13 @@ foi et garde l'état ; si une page se recharge, la partie reprend là où elle e
 
 | Fichier | Rôle |
 |---|---|
-| `index.html` | la page, le ciel, la lune, le royaume au bord du lac |
-| `style.css` | la nuit des lanternes, les cartes, les boutons |
+| `index.html` | la page, le ciel étoilé, la planète, les tours de cubes |
+| `style.css` | l’espace et la Terre poussiéreuse, les cartes blanches d’EVE, les boutons |
 | `contenu.js` | toutes les questions, gages, mots… |
 | `regles.js` | les règles de chaque jeu et du grand mélange (sans affichage) |
 | `reseau.js` | la connexion chiffrée entre les deux téléphones |
 | `app.js` | les écrans et l'affichage des jeux |
-| `img/` | les personnages (`av-*.webp`), les illustrations, le soleil de Corona (`soleil.svg`), l'aperçu du lien (`apercu.jpg`) |
+| `img/` | les personnages (`av-*.webp`), les illustrations, la petite pousse (`pousse.svg`), l'aperçu du lien (`apercu.jpg`) |
 
-Les personnages de Raiponce appartiennent à Disney. Images utilisées ici pour un cadeau
+Les personnages de WALL-E appartiennent à Disney / Pixar. Images utilisées ici pour un cadeau
 personnel, sans usage commercial. La page demande aux moteurs de recherche de ne pas l'indexer.

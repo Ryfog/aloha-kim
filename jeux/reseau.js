@@ -166,7 +166,7 @@
     }
     get connecte() { return this.clients.some(c => c.pret); }
     async arrivee(sujet, octets, garde) {
-      if (!octets.length) return;
+      if (!octets.length || !this.cle) return;
       const m = await dechiffrer(this.cle, octets);
       if (!m || m.de === this.appareil) return;
       //  le même message arrive par chaque relais : on ne le traite qu'une fois
@@ -178,6 +178,7 @@
       this.surMessage(sujet.slice(this.base.length + 1), m, garde);
     }
     async envoyer(sous, obj, garder = false) {
+      if (!this.cle) return false;          // la clé est encore en cours de calcul
       const m = { ...obj, de: this.appareil, mid: obj.mid || (Date.now().toString(36) + Math.random().toString(36).slice(2, 8)) };
       const octets = await chiffrer(this.cle, m);
       let parti = false;

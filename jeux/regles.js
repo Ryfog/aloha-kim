@@ -103,9 +103,9 @@
   });
   JEUX.quiz.taillePartie = QUIZ_PARTIE;
 
-  //  Poêle, Affiche, Ciseaux : la poêle écrase les ciseaux, l'affiche enveloppe la poêle,
-  //  les ciseaux découpent l'affiche. Premier à 3.
-  const BAT = { poele: 'ciseaux', affiche: 'poele', ciseaux: 'affiche' };
+  //  Cube, Botte, Plante : la botte protège la plante, la plante pousse à travers le cube,
+  //  le cube écrase la botte. Premier à 3.
+  const BAT = { botte: 'plante', plante: 'cube', cube: 'botte' };
   JEUX.chifoumi = vote({
     question(etat, jeu) { if (!jeu.points || jeu.fin) { jeu.points = { a: 0, b: 0 }; jeu.fin = null; } jeu.gagne = null; },
     valide: v => v in BAT,
@@ -280,8 +280,8 @@
   };
 
   /* ---------- Memory : 8 paires d'images Stitch ---------- */
-  const IMAGES_MEMORY = ['av-raiponce', 'av-flynn', 'av-pascal', 'av-maximus', 'av-fleurs', 'av-eugene', 'av-peinture',
-    'av-pascal-calin', 'av-couronne', 'av-guitare', 'av-lanterne', 'av-poele', 'av-espiegle', 'av-brune', 'av-hiver', 'av-pascal-rire'];
+  const IMAGES_MEMORY = ['av-walle', 'av-eve', 'av-plante', 'av-eve-bd', 'av-coucou', 'av-eve-reveuse', 'av-cube', 'av-eve-lumiere',
+    'av-yeux', 'av-robot', 'av-nuit', 'av-fusee', 'av-jaune', 'av-robot-blanc', 'av-bras', 'av-glaciere'];
   JEUX.memory = {
     init(etat) { const jeu = { n: 0, premier: 'a' }; JEUX.memory.donne(jeu); return jeu; },
     donne(jeu) {
@@ -528,7 +528,7 @@
     attendus: (etat, jeu) => (jeu.phase === 'ecrire' ? [jeu.tour] : [])
   };
 
-  /* ---------- Le mot mystère : sept lanternes, une s'éteint à chaque erreur ---------- */
+  /* ---------- Le mot mystère : sept crans de batterie, un se vide à chaque erreur ---------- */
   const lettresDe = mot => String(mot).toUpperCase().replace(/Œ/g, 'OE').replace(/Æ/g, 'AE').normalize('NFD').replace(/[̀-ͯ]/g, '');
   JEUX.pendu = {
     secret: true,
