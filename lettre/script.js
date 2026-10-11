@@ -13,7 +13,8 @@
 
   /* ---------- le ciel : poussière dorée et petits cœurs qui montent ---------- */
   const ciel = $('#ciel'), ctx = ciel.getContext('2d');
-  let W = 0, H = 0, dpr = 1, grains = [];
+  let W = 0, H = 0, dpr = 1, grains = [], petales = [];
+  const TEINTES = ['232,83,122', '244,169,191', '194,24,91', '249,211,222', '165,25,47'];
   function taille() {
     dpr = Math.min(devicePixelRatio || 1, 2);
     W = innerWidth; H = innerHeight;
@@ -21,6 +22,27 @@
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     const n = Math.round(Math.min(70, W * H / 14000));
     grains = Array.from({ length: n }, (_, i) => nouveau(true, i));
+    petales = Array.from({ length: Math.round(Math.min(18, 6 + W / 60)) }, () => petale(true));
+  }
+  // pétales de rose qui tombent en tournoyant
+  function petale(partout) {
+    return { x: Math.random() * W, y: partout ? Math.random() * H : -24, s: 6 + Math.random() * 7, vy: .3 + Math.random() * .55,
+      vx: (Math.random() - .5) * .5, a: Math.random() * Math.PI * 2, va: (Math.random() - .5) * .035, o: Math.random() * Math.PI * 2,
+      c: TEINTES[Math.floor(Math.random() * TEINTES.length)], al: .55 + Math.random() * .35 };
+  }
+  function dessinerPetale(p) {
+    ctx.save();
+    ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.scale(1, .45 + .55 * Math.abs(Math.sin(p.o)));
+    const s = p.s;
+    ctx.fillStyle = `rgba(${p.c},${p.al})`;
+    ctx.beginPath();
+    ctx.moveTo(0, -s);
+    ctx.bezierCurveTo(s * .95, -s * .55, s * .75, s * .85, 0, s);
+    ctx.bezierCurveTo(-s * .75, s * .85, -s * .95, -s * .55, 0, -s);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.18)';
+    ctx.beginPath(); ctx.ellipse(-s * .2, -s * .2, s * .22, s * .5, .4, 0, Math.PI * 2); ctx.fill();
+    ctx.restore();
   }
   function nouveau(partout, i = 0) {
     return { x: Math.random() * W, y: partout ? Math.random() * H : H + 20, r: .6 + Math.random() * 1.8,
@@ -48,18 +70,61 @@
       if (p.coeur) { ctx.fillStyle = `rgba(244,169,191,${a * .7})`; coeur(p.x, p.y, p.t); }
       else { ctx.fillStyle = `rgba(230,196,127,${a})`; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fill(); }
     }
+    for (const p of petales) {
+      p.y += p.vy; p.o += .03; p.a += p.va; p.x += p.vx + Math.sin(p.o) * .45;
+      if (p.y > H + 24) Object.assign(p, petale(false));
+      dessinerPetale(p);
+    }
   }
   taille(); addEventListener('resize', taille);
   if (!reduit) requestAnimationFrame(dessiner); else dessiner(100);
 
-  /* ---------- la boîte à musique (mélodie originale, Web Audio) ---------- */
+  /* ---------- la musique : « Réanymé » (Tayc ft. Anyme) par le lecteur YouTube officiel.
+     La boîte à musique (mélodie originale, Web Audio) prend le relais si YouTube ne répond pas. ---------- */
   const son = $('#son');
+  const CHANSON = 'qOrBNgOntnM';   // Tayc - RÉANYMÉ ft. Anyme (Lyrics Vidéo), chaîne officielle de Tayc
+  let yt = null, ytPret = false, source = null;   // source : 'youtube' | 'boite'
+  window.onYouTubeIframeAPIReady = () => {
+    yt = new YT.Player('yt', {
+      videoId: CHANSON, width: 320, height: 200,
+      playerVars: { playsinline: 1, controls: 0, disablekb: 1, rel: 0, fs: 0, iv_load_policy: 3 },
+      events: {
+        onReady: () => { ytPret = true; },
+        onStateChange: e => { if (e.data === YT.PlayerState.ENDED) { yt.seekTo(0); yt.playVideo(); } },
+        onError: () => { ytPret = false; if (source === 'youtube') jouerBoite(); },
+      },
+    });
+  };
+  const api = document.createElement('script');
+  api.src = 'https://www.youtube.com/iframe_api';
+  document.head.appendChild(api);
+  window.__musique = () => ({ source, pret: ytPret, etat: ytPret ? yt.getPlayerState() : null });
+
+  // Appelé pendant le toucher du sceau : c'est le seul moment où les navigateurs autorisent le son.
+  function lancerMusique() {
+    if (coupe) return;
+    preparerAudio();   // la boîte à musique est prête au cas où (un AudioContext doit naître pendant un geste)
+    if (ytPret) {
+      source = 'youtube';
+      yt.unMute(); yt.setVolume(85); yt.playVideo();
+      setTimeout(() => {
+        const e = yt.getPlayerState();
+        if (source === 'youtube' && e !== YT.PlayerState.PLAYING && e !== YT.PlayerState.BUFFERING) jouerBoite();
+      }, 4000);
+    } else jouerBoite();
+  }
+  function jouerBoite() {
+    source = 'boite';
+    try { yt && yt.pauseVideo(); } catch {}
+    demarrerMusique();
+  }
+
   let audio = null, coupe = false, prochaine = 0, pas = 0, minuteur = 0;
   const NOTES = { C5: 523.25, D5: 587.33, E5: 659.25, F5: 698.46, G5: 783.99, A5: 880, B5: 987.77, C6: 1046.5, D6: 1174.66, E6: 1318.5, G4: 392, A4: 440, C4: 261.63, F4: 349.23, E4: 329.63 };
   const MELODIE = ['E5','G5','C6','G5','E5','G5','D6','C6', 'A4','C5','E5','A5','G5','E5','C5','E5',
                    'F4','A4','C5','F5','E5','C5','A4','C5', 'G4','B5','D6','B5','G5','D5','G5','B5'];
-  function demarrerMusique() {
-    if (audio || coupe) return;
+  function preparerAudio() {
+    if (audio) return;
     try {
       audio = new (window.AudioContext || window.webkitAudioContext)();
       const sortie = audio.createGain(); sortie.gain.value = .055;
@@ -68,10 +133,17 @@
       const retour = audio.createGain(); retour.gain.value = .32;
       filtre.connect(sortie); filtre.connect(echo); echo.connect(retour); retour.connect(echo); retour.connect(sortie);
       sortie.connect(audio.destination);
-      audio._entree = filtre; audio._sortie = sortie;
-      prochaine = audio.currentTime + .1;
-      planifier();
+      audio._entree = filtre; audio._sortie = sortie; audio._joue = false;
     } catch { audio = null; }
+  }
+  function demarrerMusique() {
+    if (coupe) return;
+    preparerAudio();
+    if (!audio || audio._joue) return;
+    audio._joue = true;
+    if (audio.state === 'suspended') audio.resume();
+    prochaine = audio.currentTime + .1;
+    planifier();
   }
   function note(f, t, fort) {
     for (const [type, mult, vol] of [['triangle', 1, 1], ['sine', 2, .25]]) {
@@ -94,15 +166,16 @@
     coupe = !coupe;
     son.classList.toggle('coupe', coupe);
     son.setAttribute('aria-label', coupe ? 'Remettre la musique' : 'Couper la musique');
-    if (!audio) { if (!coupe) demarrerMusique(); return; }
-    audio._sortie.gain.setTargetAtTime(coupe ? 0 : .055, audio.currentTime, .15);
+    if (source === 'youtube') { coupe ? yt.pauseVideo() : yt.playVideo(); return; }
+    if (source === 'boite' && audio) { audio._sortie.gain.setTargetAtTime(coupe ? 0 : .055, audio.currentTime, .15); return; }
+    if (!coupe) lancerMusique();
   });
 
   /* ---------- l'ouverture ---------- */
   const sceau = $('#sceau'), intro = $('#intro'), contenu = $('#contenu');
   sceau.addEventListener('click', ouvrir, { once: true });
   function ouvrir() {
-    demarrerMusique();
+    lancerMusique();
     son.hidden = false;
     $('#indice').style.visibility = 'hidden';
     sceau.style.animation = 'none';
@@ -115,7 +188,9 @@
       .set('#rabat', { zIndex: -1 }, .7)
       .to('#mini-papier', { yPercent: -58, duration: .9, ease: 'power3.out' }, 1)
       .to('.intro-haut', { opacity: 0, y: -20, duration: .6 }, 1.3)
-      .to('#enveloppe', { y: 40, scale: .92, opacity: 0, duration: .7, ease: 'power2.in' }, 1.9);
+      .to('#enveloppe', { y: 40, scale: .92, opacity: 0, duration: .7, ease: 'power2.in' }, 1.9)
+      .to('.deco-intro-1', { x: -80, y: 60, opacity: 0, duration: .8, ease: 'power2.in' }, 1.8)
+      .to('.deco-intro-2', { x: 80, y: -60, opacity: 0, duration: .8, ease: 'power2.in' }, 1.8);
   }
   function montrer() {
     intro.hidden = true;
@@ -125,6 +200,7 @@
     if (!g || reduit) { demarrerTout(); return; }
     $('#lettre').classList.add('attend');
     g.fromTo('#lettre', { scaleY: .12, opacity: 0, y: 40 }, { scaleY: 1, opacity: 1, y: 0, duration: 1.1, ease: 'power3.out' });
+    g.from('.deco-lettre', { opacity: 0, scale: .5, rotation: -20, duration: 1.1, stagger: .25, delay: .9, ease: 'back.out(1.6)' });
     document.fonts.ready.then(() => { ecrireLettre(); demarrerTout(); });
   }
 
@@ -141,7 +217,7 @@
       const decoupe = new SplitText(p, { type: 'lines', mask: 'lines', linesClass: 'l' });
       const tl = g.timeline({ paused: true, onComplete: () => decoupe.revert() });
       decoupe.lines.forEach(l => {
-        const duree = Math.min(1.1, .25 + l.textContent.length * .019);
+        const duree = Math.min(.9, .2 + l.textContent.length * .014);
         tl.fromTo(l, { clipPath: 'inset(0 100% 0 0)' }, { clipPath: 'inset(0 0% 0 0)', duration: duree, ease: 'none' });
       });
       lignes.push(tl);
@@ -169,12 +245,14 @@
 
   function apparitions() {
     $$('.apparait').forEach(e => g.from(e, { opacity: 0, y: 30, duration: .9, ease: 'power3.out', scrollTrigger: { trigger: e, start: 'top 88%', once: true } }));
+    // les roses du bord arrivent en glissant, puis remontent un peu plus lentement que la page (profondeur)
+    $$('.deco-bord').forEach(r => {
+      const bloc = r.parentElement, gauche = r.classList.contains('gauche');
+      g.from(r, { opacity: 0, x: gauche ? -60 : 60, rotation: gauche ? -16 : 16, duration: 1.3, ease: 'power3.out', scrollTrigger: { trigger: bloc, start: 'top 85%', once: true } });
+      g.to(r, { y: -60, ease: 'none', scrollTrigger: { trigger: bloc, start: 'top bottom', end: 'bottom top', scrub: true } });
+    });
+    g.from('.deco-final', { opacity: 0, y: 40, rotation: i => i ? 20 : -20, duration: 1.2, stagger: .2, ease: 'back.out(1.5)', scrollTrigger: { trigger: '.final-scene', start: 'top 85%', once: true } });
     g.from('#suite', { opacity: 0, duration: 1, delay: 4 });
-    // le fil doré de la frise se dessine au défilement
-    const frise = $('#frise');
-    ScrollTrigger.create({ trigger: frise, start: 'top 70%', end: 'bottom 60%', scrub: .6,
-      onUpdate: s => frise.style.setProperty('--fil', s.progress.toFixed(3)) });
-    $$('.etape').forEach(e => g.from(e, { opacity: 0, x: 24, duration: .8, ease: 'power3.out', scrollTrigger: { trigger: e, start: 'top 85%', once: true } }));
     g.from('.carte', { opacity: 0, y: 40, rotation: () => g.utils.random(-6, 6), duration: .8, stagger: .08, ease: 'back.out(1.6)', scrollTrigger: { trigger: '#raisons', start: 'top 80%', once: true } });
     g.from('#promesses li', { opacity: 0, x: -30, duration: .7, stagger: .18, ease: 'power3.out', scrollTrigger: { trigger: '#promesses', start: 'top 80%', once: true } });
     g.from('.envie', { opacity: 0, scale: .8, duration: .6, stagger: .06, ease: 'back.out(2)', scrollTrigger: { trigger: '#envies', start: 'top 82%', once: true } });

@@ -14,17 +14,20 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500;1,600&family=Nunito:wght@400;600;700;800&display=swap">
-  <link rel="stylesheet" href="style.css?v=1">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body class="ferme">
 
   <canvas id="ciel" aria-hidden="true"></canvas>
+  <div class="lecteur" aria-hidden="true"><div id="yt"></div></div>
   <button id="son" class="son" type="button" aria-label="Couper la musique" hidden>
     <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 18V5l11-2v13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17" cy="16" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
   </button>
 
   <!-- ==================== L'ENVELOPPE ==================== -->
   <section id="intro" class="intro">
+    <img class="deco deco-intro-1" src="img/rose-rouge.webp" alt="" aria-hidden="true">
+    <img class="deco deco-intro-2" src="img/rose-corail.webp" alt="" aria-hidden="true">
     <p class="intro-haut">Pour toi, <em>Kim</em></p>
     <div class="enveloppe" id="enveloppe">
       <div class="env-dos"></div>
@@ -44,15 +47,18 @@
     <!-- ==================== LA LETTRE ==================== -->
     <section class="bloc bloc-lettre">
       <article class="lettre" id="lettre">
+        <img class="deco deco-lettre haut" src="img/rose-framboise.webp" alt="" aria-hidden="true">
+        <img class="deco deco-lettre bas" src="img/rose-ancienne.webp" alt="" aria-hidden="true">
         <p class="lettre-date">Le 11 octobre 2026</p>
-        <p class="ligne">Kim,</p>
-        <p class="ligne">Je voulais t'écrire une vraie lettre. Pas un message qu'on lit en deux secondes entre deux notifications, mais quelque chose que tu peux garder, relire, et ouvrir quand tu en as envie.</p>
-        <p class="ligne">Tout a commencé sur Happn, presque par hasard. Et puis il y a eu ce samedi 26 septembre. Notre premier rendez-vous, notre premier bisou, et ce moment où j'ai compris que je n'avais pas envie que la journée se termine.</p>
-        <p class="ligne">Depuis, tout va vite, et pourtant tout est simple avec toi. Ta maman, ton petit frère et ta petite sœur m'ont accueilli avec une gentillesse que je n'oublierai pas. Et le lendemain, tu es venue chez moi rencontrer mes parents, et on a passé la soirée dans les bras l'un de l'autre. Je crois que je pourrais revivre cette soirée tous les jours.</p>
-        <p class="ligne">Je ne sais pas encore tout de toi, et c'est peut-être ce que je préfère : j'ai envie de tout découvrir. Ce qui te fait rire, ce qui te rend triste, tes souvenirs, tes rêves, tes petites manies.</p>
-        <p class="ligne">Ce que je sais déjà, c'est que je suis bien avec toi. Vraiment bien. Et que quand on n'est pas ensemble, c'est à toi que je pense.</p>
-        <p class="ligne">Alors cette lettre est à toi. Garde-la, et relis-la surtout les jours où tu en as besoin.</p>
-        <p class="ligne lettre-fin">Je t'aime.</p>
+        <p class="ligne lettre-titre">Kim, mon amour ❤️</p>
+        <p class="ligne">Ça fait seulement 15 jours qu’on se connaît, 15 jours qu’on est ensemble, et pourtant, je suis déjà complètement accro à toi et fou amoureux de toi. C’est fou comme, en si peu de temps, tu as réussi à prendre une place aussi importante dans mon cœur.</p>
+        <p class="ligne">À chaque câlin qu’on se fait, j’ai l’impression que le temps s’arrête. Plus rien n’existe autour de nous, il n’y a que toi et moi. Dans ces moments-là, je me sens tellement bien que je n’ai plus envie de te lâcher. J’aimerais pouvoir rester des heures dans tes bras, à profiter de ta présence, de ton sourire et de tout ce qui fait que tu es toi.</p>
+        <p class="ligne">Tu es une fille forte, courageuse, qui a sûrement dû affronter beaucoup de choses. Mais je veux que tu saches une chose : maintenant, tu n’es plus toute seule. Tu peux te reposer sur moi, me parler de tout, me confier tes peurs, tes doutes comme tes joies. Je serai toujours là pour t’écouter, te soutenir, te rassurer et t'accompagner, même dans les moments les plus difficiles. Je veux être cette personne auprès de qui tu peux être toi-même, sans avoir besoin de faire semblant d’aller bien.</p>
+        <p class="ligne">J’ai tellement envie de vivre des choses de fou à tes côtés, de créer des souvenirs inoubliables, de partir à l’aventure, de rire jusqu’à en avoir mal au ventre, de faire plein de petites choses toutes simples qui deviendront extraordinaires juste parce que je les partagerai avec toi.</p>
+        <p class="ligne">Je sais que ça ne fait que 15 jours, et qu’on a encore énormément de choses à découvrir l’un sur l’autre, mais une chose est sûre : je veux prendre le temps de construire quelque chose de beau et de sincère avec toi. Je ne sais pas exactement ce que l’avenir nous réserve, mais j’espère de tout mon cœur qu’il nous réserve une très longue histoire.</p>
+        <p class="ligne">Je ne te promets pas que tout sera toujours parfait, mais je te promets de faire de mon mieux pour te rendre heureuse, te faire sourire et te montrer chaque jour à quel point tu comptes pour moi.</p>
+        <p class="ligne">En seulement 15 jours, tu es devenue mon sourire préféré, mon câlin préféré et surtout la personne que je n’ai jamais envie de quitter.</p>
+        <p class="ligne lettre-fin">Je t’aime, Kim, et j’espère que ces 15 premiers jours ne sont que le début d’une magnifique histoire à deux. ❤️</p>
         <p class="signature">Enzo
           <svg class="signature-coeur" viewBox="0 0 60 52" aria-hidden="true"><path d="M30 48C12 36 3 27 3 16 3 8 9 3 16 3c6 0 10 4 14 9 4-5 8-9 14-9 7 0 13 5 13 13 0 11-9 20-27 32z"/></svg>
         </p>
@@ -62,6 +68,7 @@
 
     <!-- ==================== LE COMPTEUR ==================== -->
     <section class="bloc bloc-compteur apparait">
+      <img class="deco deco-bord droite" src="img/rose-corail.webp" alt="" aria-hidden="true" loading="lazy">
       <p class="kicker">Ensemble depuis</p>
       <div class="compteur" aria-live="off">
         <div><b id="c-jours">0</b><small>jours</small></div>
@@ -72,22 +79,9 @@
       <p class="sous-titre">depuis le samedi 26 septembre 2026, le jour de notre premier rendez-vous. Et ça ne fait que commencer.</p>
     </section>
 
-    <!-- ==================== NOTRE HISTOIRE ==================== -->
-    <section class="bloc bloc-histoire">
-      <p class="kicker apparait">Notre histoire, pour l'instant</p>
-      <h2 class="apparait">Les premières pages</h2>
-      <ol class="frise" id="frise">
-        <li class="etape"><span class="point"></span><small>Un jour, sur Happn</small><p>Deux chemins qui se croisent sur une appli. J'aurais pu passer à côté. Heureusement, non.</p></li>
-        <li class="etape"><span class="point"></span><small>Samedi 26 septembre</small><p>Notre premier rendez-vous. Notre premier bisou. Le jour où tout a commencé.</p></li>
-        <li class="etape"><span class="point"></span><small>Ta famille</small><p>Ta maman, ton petit frère et ta petite sœur. Ils m'ont accueilli avec tellement de gentillesse.</p></li>
-        <li class="etape"><span class="point"></span><small>Dimanche 27 septembre</small><p>Tu es venue chez moi rencontrer mes parents. Et on a passé toute la soirée à se faire des câlins.</p></li>
-        <li class="etape"><span class="point"></span><small>Mercredi 30 septembre</small><p>Les magasins. J'ai craqué, je t'ai offert plein de choses… dont un petit Stitch, pour qu'il te fasse des câlins quand je ne suis pas là.</p></li>
-        <li class="etape etape-suite"><span class="point"></span><small>Et la suite…</small><p>Elle s'écrit maintenant. Avec toi.</p></li>
-      </ol>
-    </section>
-
     <!-- ==================== CE QUE J'AIME CHEZ TOI ==================== -->
     <section class="bloc bloc-raisons">
+      <img class="deco deco-bord gauche" src="img/rose-rouge.webp" alt="" aria-hidden="true" loading="lazy">
       <p class="kicker apparait">Retourne les cartes</p>
       <h2 class="apparait">Ce que j'aime chez toi</h2>
       <div class="raisons" id="raisons">
@@ -105,6 +99,7 @@
 
     <!-- ==================== MES PROMESSES ==================== -->
     <section class="bloc bloc-promesses">
+      <img class="deco deco-bord droite" src="img/rose-ancienne.webp" alt="" aria-hidden="true" loading="lazy">
       <p class="kicker apparait">Ce que je te promets</p>
       <h2 class="apparait">Mes promesses</h2>
       <ul class="promesses" id="promesses">
@@ -119,6 +114,7 @@
 
     <!-- ==================== NOS ENVIES ==================== -->
     <section class="bloc bloc-envies">
+      <img class="deco deco-bord gauche" src="img/rose-framboise.webp" alt="" aria-hidden="true" loading="lazy">
       <p class="kicker apparait">Choisis celles qui te font envie</p>
       <h2 class="apparait">Ce que j'ai envie de vivre avec toi</h2>
       <div class="envies" id="envies">
@@ -140,6 +136,7 @@
 
     <!-- ==================== OUVRE QUAND ==================== -->
     <section class="bloc bloc-quand">
+      <img class="deco deco-bord droite" src="img/rose-corail.webp" alt="" aria-hidden="true" loading="lazy">
       <p class="kicker apparait">À garder pour plus tard</p>
       <h2 class="apparait">Ouvre quand…</h2>
       <div class="quand" id="quand">
@@ -155,7 +152,11 @@
       <svg class="grand-coeur" id="grand-coeur" viewBox="0 0 120 104" aria-hidden="true"><path d="M60 98C24 74 6 56 6 33 6 17 18 6 32 6c12 0 20 8 28 18 8-10 16-18 28-18 14 0 26 11 26 27 0 23-18 41-54 65z"/></svg>
       <p class="final-haut apparait">Kim,</p>
       <p class="final-texte apparait">merci d'être entrée dans ma vie.</p>
+      <div class="final-scene">
+        <img class="deco deco-final gauche" src="img/rose-rouge.webp" alt="" aria-hidden="true" loading="lazy">
+        <img class="deco deco-final droite" src="img/rose-framboise.webp" alt="" aria-hidden="true" loading="lazy">
       <img class="stitch apparait" src="../img/calin.webp" alt="Stitch et Angel qui se font un câlin" width="260" height="260" loading="lazy">
+      </div>
       <p class="jtm" id="jtm">Je t'aime</p>
       <p class="final-signature apparait">— Enzo</p>
       <button class="bouton bouton-clair" type="button" id="relire">Relire la lettre</button>
@@ -173,6 +174,6 @@
   <script src="vendor/gsap.min.js"></script>
   <script src="vendor/ScrollTrigger.min.js"></script>
   <script src="vendor/SplitText.min.js"></script>
-  <script src="script.js?v=1"></script>
+  <script src="script.js?v=3"></script>
 </body>
 </html>
