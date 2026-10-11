@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Une lettre pour toi, Kim</title>
+  <meta name="robots" content="noindex">
+  <meta name="description" content="Une lettre à ouvrir quand tu es prête.">
+  <meta property="og:title" content="Une lettre pour toi, Kim 💌">
+  <meta property="og:description" content="Ouvre-la quand tu es prête.">
+  <meta property="og:image" content="https://ryfog.github.io/aloha-kim/lettre/apercu.jpg">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#170b19">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,400;1,500;1,600&family=Nunito:wght@400;600;700;800&display=swap">
+  <link rel="stylesheet" href="style.css?v=1">
+</head>
+<body class="ferme">
+
+  <canvas id="ciel" aria-hidden="true"></canvas>
+  <button id="son" class="son" type="button" aria-label="Couper la musique" hidden>
+    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 18V5l11-2v13" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="6" cy="18" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17" cy="16" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+  </button>
+
+  <!-- ==================== L'ENVELOPPE ==================== -->
+  <section id="intro" class="intro">
+    <p class="intro-haut">Pour toi, <em>Kim</em></p>
+    <div class="enveloppe" id="enveloppe">
+      <div class="env-dos"></div>
+      <div class="env-papier" id="mini-papier"><span>Kim,</span><i></i><i></i><i></i><i></i></div>
+      <div class="env-devant"></div>
+      <div class="env-rabat" id="rabat"></div>
+      <button class="sceau" id="sceau" type="button" aria-label="Briser le sceau et ouvrir la lettre">
+        <span class="moitie gauche"></span><span class="moitie droite"></span>
+        <span class="sceau-k">K</span>
+      </button>
+    </div>
+    <p class="intro-bas" id="indice">Touche le sceau pour ouvrir</p>
+  </section>
+
+  <main id="contenu" hidden>
+
+    <!-- ==================== LA LETTRE ==================== -->
+    <section class="bloc bloc-lettre">
+      <article class="lettre" id="lettre">
+        <p class="lettre-date">Le 11 octobre 2026</p>
+        <p class="ligne">Kim,</p>
+        <p class="ligne">Je voulais t'écrire une vraie lettre. Pas un message qu'on lit en deux secondes entre deux notifications, mais quelque chose que tu peux garder, relire, et ouvrir quand tu en as envie.</p>
+        <p class="ligne">Tout a commencé sur Happn, presque par hasard. Et puis il y a eu ce samedi 26 septembre. Notre premier rendez-vous, notre premier bisou, et ce moment où j'ai compris que je n'avais pas envie que la journée se termine.</p>
+        <p class="ligne">Depuis, tout va vite, et pourtant tout est simple avec toi. Ta maman, ton petit frère et ta petite sœur m'ont accueilli avec une gentillesse que je n'oublierai pas. Et le lendemain, tu es venue chez moi rencontrer mes parents, et on a passé la soirée dans les bras l'un de l'autre. Je crois que je pourrais revivre cette soirée tous les jours.</p>
+        <p class="ligne">Je ne sais pas encore tout de toi, et c'est peut-être ce que je préfère : j'ai envie de tout découvrir. Ce qui te fait rire, ce qui te rend triste, tes souvenirs, tes rêves, tes petites manies.</p>
+        <p class="ligne">Ce que je sais déjà, c'est que je suis bien avec toi. Vraiment bien. Et que quand on n'est pas ensemble, c'est à toi que je pense.</p>
+        <p class="ligne">Alors cette lettre est à toi. Garde-la, et relis-la surtout les jours où tu en as besoin.</p>
+        <p class="ligne lettre-fin">Je t'aime.</p>
+        <p class="signature">Enzo
+          <svg class="signature-coeur" viewBox="0 0 60 52" aria-hidden="true"><path d="M30 48C12 36 3 27 3 16 3 8 9 3 16 3c6 0 10 4 14 9 4-5 8-9 14-9 7 0 13 5 13 13 0 11-9 20-27 32z"/></svg>
+        </p>
+      </article>
+      <p class="suite" id="suite">Continue, il y a d'autres choses pour toi<span aria-hidden="true">↓</span></p>
+    </section>
+
+    <!-- ==================== LE COMPTEUR ==================== -->
+    <section class="bloc bloc-compteur apparait">
+      <p class="kicker">Ensemble depuis</p>
+      <div class="compteur" aria-live="off">
+        <div><b id="c-jours">0</b><small>jours</small></div>
+        <div><b id="c-heures">0</b><small>heures</small></div>
+        <div><b id="c-minutes">0</b><small>minutes</small></div>
+        <div><b id="c-secondes">0</b><small>secondes</small></div>
+      </div>
+      <p class="sous-titre">depuis le samedi 26 septembre 2026, le jour de notre premier rendez-vous. Et ça ne fait que commencer.</p>
+    </section>
+
+    <!-- ==================== NOTRE HISTOIRE ==================== -->
+    <section class="bloc bloc-histoire">
+      <p class="kicker apparait">Notre histoire, pour l'instant</p>
+      <h2 class="apparait">Les premières pages</h2>
+      <ol class="frise" id="frise">
+        <li class="etape"><span class="point"></span><small>Un jour, sur Happn</small><p>Deux chemins qui se croisent sur une appli. J'aurais pu passer à côté. Heureusement, non.</p></li>
+        <li class="etape"><span class="point"></span><small>Samedi 26 septembre</small><p>Notre premier rendez-vous. Notre premier bisou. Le jour où tout a commencé.</p></li>
+        <li class="etape"><span class="point"></span><small>Ta famille</small><p>Ta maman, ton petit frère et ta petite sœur. Ils m'ont accueilli avec tellement de gentillesse.</p></li>
+        <li class="etape"><span class="point"></span><small>Dimanche 27 septembre</small><p>Tu es venue chez moi rencontrer mes parents. Et on a passé toute la soirée à se faire des câlins.</p></li>
+        <li class="etape"><span class="point"></span><small>Mercredi 30 septembre</small><p>Les magasins. J'ai craqué, je t'ai offert plein de choses… dont un petit Stitch, pour qu'il te fasse des câlins quand je ne suis pas là.</p></li>
+        <li class="etape etape-suite"><span class="point"></span><small>Et la suite…</small><p>Elle s'écrit maintenant. Avec toi.</p></li>
+      </ol>
+    </section>
+
+    <!-- ==================== CE QUE J'AIME CHEZ TOI ==================== -->
+    <section class="bloc bloc-raisons">
+      <p class="kicker apparait">Retourne les cartes</p>
+      <h2 class="apparait">Ce que j'aime chez toi</h2>
+      <div class="raisons" id="raisons">
+        <button class="carte" type="button" aria-pressed="false"><span class="face avant"><i>01</i><b>Ton sourire</b></span><span class="face arriere">Il arrive avant même que tu dises un mot, et il me fait fondre à chaque fois.</span></button>
+        <button class="carte" type="button" aria-pressed="false"><span class="face avant"><i>02</i><b>Tes câlins</b></span><span class="face arriere">Je pourrais y passer des heures. D'ailleurs, le 27 septembre, c'est un peu ce qu'on a fait.</span></button>
+        <button class="carte" type="button" aria-pressed="false"><span class="face avant"><i>03</i><b>Ton rire</b></span><span class="face arriere">Mon son préféré. Et de loin.</span></button>
+        <button class="carte" type="button" aria-pressed="false"><span class="face avant"><i>04</i><b>Ta douceur</b></span><span class="face arriere">Avec toi, même les journées compliquées deviennent légères.</span></button>
+        <button class="carte" type="button" aria-pressed="false"><span class="face avant"><i>05</i><b>Ton petit Stitch</b></span><span class="face arriere">Ton amour pour ce petit monstre bleu. Il a beaucoup de chance. Moi aussi.</span></button>
+        <button class="carte" type="button" aria-pressed="false"><span class="face avant"><i>06</i><b>Ta façon de me regarder</b></span><span class="face arriere">Je ne sais pas si tu t'en rends compte. Moi, je le vois. Et ça me fait quelque chose.</span></button>
+        <button class="carte" type="button" aria-pressed="false"><span class="face avant"><i>07</i><b>Ton cœur</b></span><span class="face arriere">La façon dont tu prends soin des gens que tu aimes.</span></button>
+        <button class="carte" type="button" aria-pressed="false"><span class="face avant"><i>08</i><b>Toi, tout simplement</b></span><span class="face arriere">Pas besoin de raison. C'est toi, et c'est tout.</span></button>
+      </div>
+      <p class="compte" id="compte-raisons">0 / 8 cartes retournées</p>
+    </section>
+
+    <!-- ==================== MES PROMESSES ==================== -->
+    <section class="bloc bloc-promesses">
+      <p class="kicker apparait">Ce que je te promets</p>
+      <h2 class="apparait">Mes promesses</h2>
+      <ul class="promesses" id="promesses">
+        <li>Te faire rire, même avec mes blagues nulles.</li>
+        <li>T'écouter vraiment, même quand c'est dur à dire.</li>
+        <li>Être là les jours gris, pas seulement les jours de soleil.</li>
+        <li>Te respecter, toujours.</li>
+        <li>Te dire les choses au lieu de les garder pour moi.</li>
+        <li>Te prendre en photo bien plus que de raison.</li>
+      </ul>
+    </section>
+
+    <!-- ==================== NOS ENVIES ==================== -->
+    <section class="bloc bloc-envies">
+      <p class="kicker apparait">Choisis celles qui te font envie</p>
+      <h2 class="apparait">Ce que j'ai envie de vivre avec toi</h2>
+      <div class="envies" id="envies">
+        <button class="envie" type="button" aria-pressed="false" data-id="plage">Un coucher de soleil sur la plage de Lacanau</button>
+        <button class="envie" type="button" aria-pressed="false" data-id="photo">Une séance photo rien que pour toi</button>
+        <button class="envie" type="button" aria-pressed="false" data-id="noel">Les illuminations de Noël, main dans la main</button>
+        <button class="envie" type="button" aria-pressed="false" data-id="disney">Disneyland, pour dire bonjour à Stitch</button>
+        <button class="envie" type="button" aria-pressed="false" data-id="film">Une soirée film sous un plaid</button>
+        <button class="envie" type="button" aria-pressed="false" data-id="gateau">Cuisiner ensemble (et rater le gâteau)</button>
+        <button class="envie" type="button" aria-pressed="false" data-id="lac">Un pique-nique au bord du lac</button>
+        <button class="envie" type="button" aria-pressed="false" data-id="voyage">Un petit voyage, rien que nous deux</button>
+      </div>
+      <button class="bouton" type="button" id="tirer">Tirer notre prochain rendez-vous</button>
+      <div class="resultat" id="resultat" hidden>
+        <small>Notre prochain rendez-vous</small>
+        <p id="resultat-texte"></p>
+        <span>Fais une capture d'écran et envoie-la-moi 😉</span>
+      </div>
+    </section>
+
+    <!-- ==================== OUVRE QUAND ==================== -->
+    <section class="bloc bloc-quand">
+      <p class="kicker apparait">À garder pour plus tard</p>
+      <h2 class="apparait">Ouvre quand…</h2>
+      <div class="quand" id="quand">
+        <button class="mini-env" type="button" data-titre="tu doutes de toi" data-texte="Relis ma lettre. Tout ce que j'y ai écrit est vrai. Dans ces moments-là, tu vaux tellement plus que ce que tu penses. Moi, je le vois, même quand toi tu ne le vois plus."><span>…tu doutes de toi</span></button>
+        <button class="mini-env" type="button" data-titre="je te manque" data-texte="Tu me manques aussi, c'est sûr. Ferme les yeux, repense à notre dimanche 27 et à tous ces câlins. Et appelle-moi, même pour rien."><span>…je te manque</span></button>
+        <button class="mini-env" type="button" data-titre="tu n'arrives pas à dormir" data-texte="Serre ton Stitch très fort : c'est un câlin de ma part. Et pense à notre prochain rendez-vous. Je suis sûrement en train de penser à toi aussi."><span>…tu n'arrives pas à dormir</span></button>
+        <button class="mini-env" type="button" data-titre="tu as besoin de sourire" data-texte="Imagine-moi en train d'essayer de danser le hula. Avec les mouvements de hanches. Voilà. Tu souris."><span>…tu as besoin de sourire</span></button>
+      </div>
+    </section>
+
+    <!-- ==================== LE CIEL ==================== -->
+    <section class="bloc bloc-final" id="final">
+      <svg class="grand-coeur" id="grand-coeur" viewBox="0 0 120 104" aria-hidden="true"><path d="M60 98C24 74 6 56 6 33 6 17 18 6 32 6c12 0 20 8 28 18 8-10 16-18 28-18 14 0 26 11 26 27 0 23-18 41-54 65z"/></svg>
+      <p class="final-haut apparait">Kim,</p>
+      <p class="final-texte apparait">merci d'être entrée dans ma vie.</p>
+      <img class="stitch apparait" src="../img/calin.webp" alt="Stitch et Angel qui se font un câlin" width="260" height="260" loading="lazy">
+      <p class="jtm" id="jtm">Je t'aime</p>
+      <p class="final-signature apparait">— Enzo</p>
+      <button class="bouton bouton-clair" type="button" id="relire">Relire la lettre</button>
+    </section>
+  </main>
+
+  <dialog class="note" id="note">
+    <form method="dialog">
+      <p class="note-titre" id="note-titre"></p>
+      <p class="note-texte" id="note-texte"></p>
+      <button class="bouton" value="fermer">Refermer</button>
+    </form>
+  </dialog>
+
+  <script src="vendor/gsap.min.js"></script>
+  <script src="vendor/ScrollTrigger.min.js"></script>
+  <script src="vendor/SplitText.min.js"></script>
+  <script src="script.js?v=1"></script>
+</body>
+</html>
