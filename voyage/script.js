@@ -1,4 +1,4 @@
-/* Kim, un voyage dans le futur — 5 épreuves pour charger le cristal, puis il éclate et révèle le cadeau (2 jours au Futuroscope). */
+/* Kim, un voyage dans le futur — 5 épreuves pour charger le cristal, puis il éclate et révèle le cadeau. */
 (() => {
   'use strict';
   const $ = (s) => document.querySelector(s);
