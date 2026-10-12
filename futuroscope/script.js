@@ -7,6 +7,17 @@
                  ecrire(o) { try { localStorage.setItem(CLE, JSON.stringify(o)); } catch (e) {} } };
   const hasard = (a, b) => a + Math.random() * (b - a);
   const COULEURS = ['#7cf2ff', '#a68bff', '#ff86dc', '#ffd98a', '#ffffff'];
+  // densité d'un canvas plein écran : au plus ~1,1 million de pixels, quel que soit l'écran
+  const densite = (max) => Math.max(0.5, Math.min(max, devicePixelRatio || 1, Math.sqrt(1.1e6 / (innerWidth * innerHeight))));
+  // mode léger : pas d'accélération graphique (rendu logiciel) ou forcé par ?leger=1
+  const LEGER = { on: false, force: new URLSearchParams(location.search).get('leger') };
+  (() => {
+    if (LEGER.force === '1') { LEGER.on = true; return; } if (LEGER.force === '0') return;
+    try { const gl = document.createElement('canvas').getContext('webgl'); if (!gl) { LEGER.on = true; return; }
+      const ext = gl.getExtension('WEBGL_debug_renderer_info'), nom = ext ? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL)) : '';
+      if (/swiftshader|llvmpipe|software|basic render/i.test(nom)) LEGER.on = true; } catch (e) { LEGER.on = true; }
+  })();
+  if (LEGER.on) document.documentElement.classList.add('leger');
 
   /* ================= SON : tout est synthétisé, rien à télécharger ================= */
   const Son = (() => {
@@ -67,7 +78,7 @@
   const Ciel = (() => {
     const cv = $('#ciel'), cx = cv.getContext('2d'); let W = 0, H = 0;
     const etoiles = [], filantes = []; const etat = { v: 0.12 };
-    function taille() { const d = Math.min(1.5, devicePixelRatio || 1); W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; cx.setTransform(d, 0, 0, d, 0, 0); }
+    function taille() { const d = densite(1.5); W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; cx.setTransform(d, 0, 0, d, 0, 0); }
     function nouvelle(e, partout) { e.x = hasard(-1, 1); e.y = hasard(-1, 1); e.z = partout ? hasard(0.05, 1) : 1; e.c = COULEURS[(Math.random() * 5) | 0]; e.tw = hasard(0, 6.28); e.pz = e.z; return e; }
     for (let i = 0; i < 220; i++) etoiles.push(nouvelle({}, true));
     function frame(t, dt) {
@@ -94,11 +105,12 @@
       }
       cx.globalAlpha = 1;
     }
-    return { taille, frame, etat };
+    function alleger() { etoiles.length = 110; }
+    return { taille, frame, etat, alleger };
   })();
 
   const trace = $('#trace'), tx = trace.getContext('2d');
-  function tailleTrace() { const d = Math.min(1.5, devicePixelRatio || 1); trace.width = innerWidth * d; trace.height = innerHeight * d; tx.setTransform(d, 0, 0, d, 0, 0); }
+  function tailleTrace() { const d = densite(1.5); trace.width = innerWidth * d; trace.height = innerHeight * d; tx.setTransform(d, 0, 0, d, 0, 0); }
 
   /* ================= ÉCLATS : particules de lumière (réussites, doigt, confettis) ================= */
   const Eclats = (() => {
@@ -106,7 +118,7 @@
     const SPRITES = {};
     COULEURS.forEach((c) => { const s = document.createElement('canvas'); s.width = s.height = 64; const g = s.getContext('2d'), r = g.createRadialGradient(32, 32, 0, 32, 32, 32);
       r.addColorStop(0, '#fff'); r.addColorStop(0.18, c); r.addColorStop(0.45, c + '55'); r.addColorStop(1, c + '00'); g.fillStyle = r; g.fillRect(0, 0, 64, 64); SPRITES[c] = s; });
-    function taille() { const d = Math.min(1.5, devicePixelRatio || 1); W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; cx.setTransform(d, 0, 0, d, 0, 0); }
+    function taille() { const d = densite(1.5); W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; cx.setTransform(d, 0, 0, d, 0, 0); }
     function gerbe(x, y, n, force, gravite) {
       for (let i = 0; i < n; i++) { const a = hasard(0, 6.283), v = hasard(0.2, 1) * (force || 420);
         ps.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, g: gravite == null ? 260 : gravite, vie: 1, dv: hasard(0.6, 1.3), r: hasard(1.5, 3.6), c: COULEURS[(Math.random() * 5) | 0], forme: Math.random() < 0.35 ? 'losange' : 'rond', rot: hasard(0, 6), vr: hasard(-6, 6) }); }
@@ -114,7 +126,7 @@
     function pluie(n) { for (let i = 0; i < n; i++) ps.push({ x: hasard(0, W), y: hasard(-H * 0.6, -10), vx: hasard(-30, 30), vy: hasard(80, 200), g: 30, vie: 1, dv: hasard(0.12, 0.22), r: hasard(2, 4.5), c: COULEURS[(Math.random() * 5) | 0], forme: 'losange', rot: hasard(0, 6), vr: hasard(-3, 3) }); }
     function frame(t, dt) {
       if (!ps.length) { if (!vide) { cx.clearRect(0, 0, W, H); vide = true; } return; } vide = false;
-      if (ps.length > 500) ps.splice(0, ps.length - 500);
+      const MAXP = LEGER.on ? 180 : 500; if (ps.length > MAXP) ps.splice(0, ps.length - MAXP);
       cx.clearRect(0, 0, W, H); cx.globalCompositeOperation = 'lighter';
       for (let i = ps.length - 1; i >= 0; i--) {
         const p = ps[i]; p.vy += p.g * dt; p.vx *= 1 - dt * 0.8; p.x += p.vx * dt; p.y += p.vy * dt; p.vie -= dt * p.dv; p.rot += p.vr * dt;
@@ -136,7 +148,7 @@
     const cv = $('#cristal'); let rendu = null, scene, cam, mesh; const U = { uTime: { value: 0 }, uCharge: { value: 0 }, uExplose: { value: 0 }, uFlash: { value: 0 } };
     const etat = { vit: 0.4, secousse: 0 };
     try {
-      rendu = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true }); rendu.setPixelRatio(Math.min(1.5, devicePixelRatio || 1));
+      rendu = new THREE.WebGLRenderer({ canvas: cv, antialias: !LEGER.on, alpha: true }); rendu.setPixelRatio(LEGER.on ? 1 : Math.min(1.5, devicePixelRatio || 1));
       scene = new THREE.Scene(); cam = new THREE.PerspectiveCamera(32, 1, 0.1, 100); cam.position.set(0, 0, 7);
       let g = new THREE.IcosahedronGeometry(1.3, 1); if (g.index) g = g.toNonIndexed(); g.scale(0.9, 1.32, 0.9);
       const p = g.attributes.position, n = p.count, nor = new Float32Array(n * 3), cen = new Float32Array(n * 3), dir = new Float32Array(n * 3), rnd = new Float32Array(n);
@@ -182,11 +194,12 @@
     function taille() { if (!rendu) return; const w = cv.offsetWidth, h = cv.offsetHeight; if (w > 0) rendu.setSize(w, h, false); }
     let ang = 0;
     function frame(t, dt) {
-      if (!rendu) return; U.uTime.value = t; ang += dt * etat.vit;
+      if (!rendu || cv.parentNode.style.opacity === '0') return; U.uTime.value = t; ang += dt * etat.vit;
       mesh.rotation.y = ang; mesh.rotation.x = Math.sin(t * 0.5) * 0.12 + Math.sin(t * 37) * etat.secousse; mesh.rotation.z = Math.sin(t * 41) * etat.secousse;
       rendu.render(scene, cam);
     }
-    return { U, etat, taille, frame, ok: () => !!rendu };
+    function alleger() { if (rendu) { rendu.setPixelRatio(1); taille(); } }
+    return { U, etat, taille, frame, alleger, ok: () => !!rendu };
   })();
 
   /* ================= FOND : lumière liquide (caustiques irisées) ================= */
@@ -213,15 +226,29 @@
             col *= 0.75 + 0.25 * smoothstep(0.0, 0.7, vUv.y);
             gl_FragColor = vec4(col, 1.0); }` })));
     } catch (e) { r = null; cv.style.display = 'none'; }
-    return { taille() { if (r) { r.setSize(innerWidth, innerHeight, false); U.uRes.value.set(innerWidth, innerHeight); } },
-             frame(t, k) { if (r && k % 2 === 0) { U.uTime.value = t; r.render(sc, cam); } } };
+    let fige = false;
+    return { taille() { if (r) { r.setPixelRatio(Math.min(0.35, Math.sqrt(2.6e5 / (innerWidth * innerHeight)))); r.setSize(innerWidth, innerHeight, false); U.uRes.value.set(innerWidth, innerHeight); if (fige) { U.uTime.value = 40; r.render(sc, cam); } } },
+             frame(t, k) { if (r && !fige && k % 2 === 0) { U.uTime.value = t; r.render(sc, cam); } },
+             figer() { fige = true; if (r) { U.uTime.value = 40; r.render(sc, cam); } } };
   })();
 
   /* ================= boucle commune ================= */
   function taille() { Fond.taille(); Ciel.taille(); Eclats.taille(); Cristal.taille(); tailleTrace(); }
   addEventListener('resize', taille); taille();
   let t0 = performance.now(), avant = t0;
-  let img = 0; (function boucle(n) { const dt = Math.min(0.05, (n - avant) / 1000); avant = n; const t = (n - t0) / 1000; Fond.frame(t, img++); Ciel.frame(t, dt); Cristal.frame(t, dt); Eclats.frame(t, dt); requestAnimationFrame(boucle); })(t0);
+  let img = 0, acc = 0, mesures = [];
+  function passerLeger() {
+    if (LEGER.on && document.documentElement.classList.contains('leger-actif')) return;
+    LEGER.on = true; document.documentElement.classList.add('leger', 'leger-actif'); Fond.figer(); Ciel.alleger(); Cristal.alleger(); gsap.killTweensOf('.billet-scene', 'y'); gsap.set('.billet-scene', { y: 0 });
+  }
+  if (LEGER.on) passerLeger();
+  (function boucle(n) {
+    const dt = Math.min(0.05, (n - avant) / 1000); avant = n; const t = (n - t0) / 1000; img++;
+    if (!LEGER.on && LEGER.force !== '0' && t > 1 && t < 4) { mesures.push(dt); if (mesures.length === 60) { const moy = mesures.reduce((a, b) => a + b) / 60; if (moy > 0.03) passerLeger(); } }
+    Fond.frame(t, img);
+    if (LEGER.on) { acc += dt; if (img % 2 === 0) { Ciel.frame(t, acc); Cristal.frame(t, acc); acc = 0; } } else { Ciel.frame(t, dt); Cristal.frame(t, dt); }
+    Eclats.frame(t, dt); requestAnimationFrame(boucle);
+  })(t0);
 
   gsap.to('#halo', { opacity: 0.6, duration: 2.6, yoyo: true, repeat: -1, ease: 'sine.inOut' });
 
@@ -520,7 +547,7 @@
     hud.hidden = true;
     aller($('#cadeau'), { avant: () => {
       gsap.fromTo('#billet', { rotationX: 55, y: 80, scale: 0.7, opacity: 0 }, { rotationX: 0, y: 0, scale: 1, opacity: 1, duration: 1.4, ease: 'expo.out', delay: 0.2 });
-      Eclats.pluie(80); setTimeout(() => Eclats.pluie(50), 1400);
+      Eclats.pluie(LEGER.on ? 40 : 80); setTimeout(() => Eclats.pluie(LEGER.on ? 25 : 50), 1400);
       Son.succes();
     } });
   }
@@ -531,7 +558,7 @@
   $('.billet-scene').addEventListener('pointermove', (e) => { const r = billet.getBoundingClientRect(); pencher((e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height); });
   $('.billet-scene').addEventListener('pointerleave', () => pencher(0.5, 0.5));
   addEventListener('deviceorientation', (e) => { if (actuel !== $('#cadeau') || e.gamma == null) return; pencher(0.5 + Math.max(-0.5, Math.min(0.5, e.gamma / 40)), 0.5 + Math.max(-0.5, Math.min(0.5, (e.beta - 45) / 40))); });
-  gsap.to('.billet-scene', { y: -8, duration: 2.4, yoyo: true, repeat: -1, ease: 'sine.inOut' });
+  if (!LEGER.on) gsap.to('.billet-scene', { y: -8, duration: 2.4, yoyo: true, repeat: -1, ease: 'sine.inOut' });
   $('#voir').addEventListener('click', () => { const g = $('#grand'); g.hidden = false; gsap.fromTo(g, { opacity: 0 }, { opacity: 1, duration: 0.3 }); gsap.fromTo('#grand img', { scale: 0.85 }, { scale: 1, duration: 0.5, ease: 'back.out(1.6)' }); });
   $('#grand').addEventListener('click', () => { $('#grand').hidden = true; });
   $('#rejouer').addEventListener('click', () => {
