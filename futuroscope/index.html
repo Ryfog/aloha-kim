@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#070818">
+<title>Kim, un voyage dans le futur</title>
+<meta property="og:title" content="Kim, un voyage dans le futur ✨">
+<meta property="og:description" content="Un cadeau est enfermé dans un cristal. 5 épreuves pour l'ouvrir.">
+<meta property="og:image" content="https://ryfog.github.io/aloha-kim/futuroscope/img/apercu.jpg">
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<canvas id="fond" aria-hidden="true"></canvas>
+<canvas id="ciel" aria-hidden="true"></canvas>
+<div id="aurore" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i></div>
+<div id="cristal-boite" aria-hidden="true"><canvas id="cristal"></canvas><div id="halo"></div></div>
+<canvas id="eclats" aria-hidden="true"></canvas>
+<canvas id="trace" aria-hidden="true"></canvas>
+
+<header id="hud" hidden>
+  <div class="eclats-hud"><i></i><i></i><i></i><i></i><i></i></div>
+  <button id="son" aria-label="Couper ou remettre les sons">🔊</button>
+</header>
+
+<main>
+  <!-- ACCUEIL -->
+  <section id="accueil" class="ecran">
+    <p class="sur-titre">Pour toi, Kim</p>
+    <h1 class="holo">Un voyage<br>dans le futur</h1>
+    <p class="texte">Ton cadeau est enfermé dans ce cristal.<br>Pour l'ouvrir, réussis <b>5 petites épreuves</b>.</p>
+    <div id="porte">
+      <svg class="indice" viewBox="0 0 120 110" aria-hidden="true"><path id="indice-coeur" d="M60 100 C 22 74, 5 50, 14 29 C 23 9, 50 9, 60 31 C 70 9, 97 9, 106 29 C 115 50, 98 74, 60 100 Z"/><circle id="indice-point" r="4.5"/></svg>
+      <p class="mono" id="porte-txt">Dessine un cœur pour commencer</p>
+      <button class="lien" id="partir">ou touche ici</button>
+    </div>
+  </section>
+
+  <!-- UNE ÉPREUVE -->
+  <section id="epreuve" class="ecran" hidden>
+    <p class="sur-titre" id="ep-num">Épreuve 1 / 5</p>
+    <h2 class="holo" id="ep-titre"></h2>
+    <p class="texte" id="ep-consigne"></p>
+    <div id="jeu"></div>
+    <p class="etat" id="ep-etat" aria-live="polite"></p>
+  </section>
+
+  <!-- RÉUSSITE D'UNE ÉPREUVE -->
+  <section id="bravo" class="ecran" hidden>
+    <div class="eclat-gagne" aria-hidden="true"></div>
+    <h2 class="holo" id="bravo-titre">Bravo !</h2>
+    <p class="texte" id="bravo-texte"></p>
+    <button class="bouton" id="suivant"><span>Épreuve suivante</span></button>
+  </section>
+
+  <!-- LE CRISTAL EST CHARGÉ -->
+  <section id="ouvrir" class="ecran" hidden>
+    <p class="sur-titre">5 / 5</p>
+    <h2 class="holo">Le cristal est chargé</h2>
+    <p class="texte" id="ouvrir-texte">Touche-le trois fois pour l'ouvrir.</p>
+  </section>
+
+  <!-- LE CADEAU -->
+  <section id="cadeau" class="ecran" hidden>
+    <p class="sur-titre">Ton cadeau</p>
+    <h2 class="titre-cadeau holo">On part au<br>Futuroscope !</h2>
+    <div class="billet-scene">
+      <div class="billet" id="billet">
+        <img src="img/billet.webp" alt="Billet Futuroscope : 2 jours, 2 adultes, valable les 28 et 29 novembre">
+        <div class="reflet"></div>
+      </div>
+    </div>
+    <p class="date">Les <b>28 &amp; 29 novembre</b><br>deux jours, rien que toi et moi</p>
+    <p class="mot">Des attractions, des étoiles plein les yeux,<br>et ta main dans la mienne.<br><span class="signe">— Enzo ❤️</span></p>
+    <div class="actions">
+      <button class="bouton petit" id="voir"><span>Voir le billet en grand</span></button>
+      <button class="lien" id="rejouer">Revivre le voyage</button>
+    </div>
+  </section>
+</main>
+
+<div id="grand" hidden><img src="img/billet.webp" alt=""><p>Touche pour fermer</p></div>
+<div id="flash" aria-hidden="true"></div>
+
+<script src="vendor/gsap.min.js"></script>
+<script src="vendor/three.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
