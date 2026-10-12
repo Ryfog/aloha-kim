@@ -19,17 +19,12 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 #fond, #ciel, #eclats, #trace { position: fixed; inset: 0; width: 100%; height: 100%; }
 #trace { pointer-events: none; z-index: 25; }
 #eclats { pointer-events: none; z-index: 30; }
-#aurore { position: fixed; inset: -20%; filter: blur(70px); opacity: .32; pointer-events: none; }
-#aurore i { position: absolute; border-radius: 50%; mix-blend-mode: screen; }
-#aurore .a1 { width: 70vmax; height: 40vmax; left: -10%; top: 5%; background: radial-gradient(closest-side, rgba(124, 242, 255, .55), transparent); }
-#aurore .a2 { width: 60vmax; height: 45vmax; right: -15%; top: 25%; background: radial-gradient(closest-side, rgba(166, 139, 255, .6), transparent); }
-#aurore .a3 { width: 55vmax; height: 35vmax; left: 15%; bottom: -5%; background: radial-gradient(closest-side, rgba(255, 134, 220, .45), transparent); }
-#cristal-boite { position: fixed; left: 50%; top: 7vh; width: var(--cristal); aspect-ratio: 1; z-index: 5; pointer-events: none; }
+#cristal-boite { position: fixed; left: 50%; top: 7vh; width: var(--cristal); aspect-ratio: 1; z-index: 5; pointer-events: none; will-change: transform; }
 #cristal-boite.touchable { pointer-events: auto; cursor: pointer; z-index: 15; }
 #ouvrir { pointer-events: none; }
 #cristal { width: 100%; height: 100%; display: block; }
 .cristal-css { position: absolute; inset: 14% 26%; clip-path: polygon(50% 0, 100% 32%, 82% 100%, 18% 100%, 0 32%); background: var(--holo); background-size: 300% 100%; animation: holo 5s linear infinite; }
-#halo { position: absolute; inset: 12%; border-radius: 50%; background: radial-gradient(closest-side, rgba(190, 170, 255, .45), rgba(124, 242, 255, .12) 60%, transparent); filter: blur(18px); z-index: -1; }
+#halo { position: absolute; inset: -4%; border-radius: 50%; background: radial-gradient(closest-side, rgba(190, 170, 255, .38), rgba(124, 242, 255, .1) 55%, transparent 75%); z-index: -1; will-change: opacity, transform; }
 
 /* ---------- écrans ---------- */
 main { position: fixed; inset: 0; z-index: 10; }
@@ -41,7 +36,7 @@ h1, h2 { font-family: 'Syne', sans-serif; font-weight: 700; letter-spacing: -.01
 h1 { font-size: clamp(36px, 10.8vw, 70px); margin-bottom: 16px; }
 h2 { font-size: clamp(29px, 8.6vw, 52px); margin-bottom: 12px; }
 .holo { background: var(--holo); background-size: 260% 100%; -webkit-background-clip: text; background-clip: text; color: transparent; animation: holo 7s linear infinite;
-  filter: drop-shadow(0 0 22px rgba(170, 150, 255, .35)); }
+}
 @keyframes holo { to { background-position: -260% 0; } }
 .texte { font-size: 17px; line-height: 1.55; color: rgba(244, 242, 255, .82); max-width: 340px; }
 .texte b { color: var(--blanc); font-weight: 800; }
@@ -52,8 +47,8 @@ h2 { font-size: clamp(29px, 8.6vw, 52px); margin-bottom: 12px; }
 #accueil { touch-action: none; }
 #porte { margin-top: 22px; display: flex; flex-direction: column; align-items: center; }
 .indice { width: 96px; height: 88px; overflow: visible; }
-#indice-coeur { fill: none; stroke: rgba(255, 255, 255, .9); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 6px rgba(200, 182, 255, .9)); }
-#indice-point { fill: #fff; filter: drop-shadow(0 0 8px #fff); }
+#indice-coeur { fill: none; stroke: rgba(255, 255, 255, .92); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+#indice-point { fill: #fff; }
 #porte .mono { margin: 12px 0 0; color: rgba(244, 242, 255, .9); }
 #porte .lien { margin-top: 10px; font-size: 13px; }
 /* bouton : verre + bord holographique qui tourne */
@@ -71,14 +66,14 @@ h2 { font-size: clamp(29px, 8.6vw, 52px); margin-bottom: 12px; }
 #hud { position: fixed; left: 0; right: 0; top: 0; z-index: 20; display: flex; justify-content: space-between; align-items: center; padding: max(14px, env(safe-area-inset-top)) 18px 0; pointer-events: none; }
 .eclats-hud { display: flex; gap: 7px; }
 .eclats-hud i { width: 15px; height: 22px; clip-path: polygon(50% 0, 100% 35%, 50% 100%, 0 35%); background: rgba(255, 255, 255, .14); transition: background .4s, filter .4s; }
-.eclats-hud i.on { background: var(--holo); background-size: 300% 100%; animation: holo 4s linear infinite; filter: drop-shadow(0 0 8px rgba(190, 170, 255, .9)); }
-#son { pointer-events: auto; width: 42px; height: 42px; border-radius: 50%; background: var(--verre); border: 1px solid var(--bord); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); font-size: 18px; }
+.eclats-hud i.on { background: linear-gradient(160deg, #b5f4ff, #c8b6ff 45%, #ff9fe0); }
+#son { pointer-events: auto; width: 42px; height: 42px; border-radius: 50%; background: rgba(22, 19, 58, .7); border: 1px solid var(--bord); font-size: 18px; }
 #son.coupe { opacity: .45; text-decoration: line-through; }
 
 /* ---------- les jeux ---------- */
 #jeu { flex: 1 0 auto; width: 100%; max-width: 420px; display: flex; align-items: center; align-items: safe center; justify-content: center; min-height: 300px; position: relative; margin-top: 8px; }
-.panneau { width: 100%; padding: 22px; border-radius: 26px; background: var(--verre); border: 1px solid var(--bord); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .12); }
+.panneau { width: 100%; padding: 22px; border-radius: 26px; border: 1px solid var(--bord);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, .35), inset 0 1px 0 rgba(255, 255, 255, .12); background: rgba(22, 19, 58, .82); }
 svg.cadran { width: min(78vw, 300px); height: auto; overflow: visible; touch-action: manipulation; }
 .moteurs { display: flex; gap: 10px; justify-content: center; margin-top: 18px; }
 .moteurs i { width: 46px; height: 10px; border-radius: 6px; background: rgba(255, 255, 255, .12); transition: background .3s, box-shadow .3s; }
@@ -101,8 +96,7 @@ canvas.pluie { width: 100%; height: min(54vh, 460px); border-radius: 24px; backg
 
 /* ---------- bravo ---------- */
 #bravo { justify-content: center; padding-top: 0; }
-.eclat-gagne { width: 90px; height: 128px; margin-bottom: 26px; clip-path: polygon(50% 0, 100% 35%, 50% 100%, 0 35%); background: var(--holo); background-size: 300% 100%; animation: holo 3s linear infinite;
-  filter: drop-shadow(0 0 24px rgba(200, 180, 255, .9)); }
+.eclat-gagne { width: 90px; height: 128px; margin-bottom: 26px; clip-path: polygon(50% 0, 100% 35%, 50% 100%, 0 35%); background: linear-gradient(160deg, #b5f4ff, #c8b6ff 40%, #ff9fe0 70%, #ffe3a6); }
 
 /* ---------- ouvrir / cadeau ---------- */
 #ouvrir { justify-content: flex-end; padding-bottom: 12vh; }

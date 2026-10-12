@@ -67,9 +67,9 @@
   const Ciel = (() => {
     const cv = $('#ciel'), cx = cv.getContext('2d'); let W = 0, H = 0;
     const etoiles = [], filantes = []; const etat = { v: 0.12 };
-    function taille() { const d = Math.min(2, devicePixelRatio || 1); W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; cx.setTransform(d, 0, 0, d, 0, 0); }
+    function taille() { const d = Math.min(1.5, devicePixelRatio || 1); W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; cx.setTransform(d, 0, 0, d, 0, 0); }
     function nouvelle(e, partout) { e.x = hasard(-1, 1); e.y = hasard(-1, 1); e.z = partout ? hasard(0.05, 1) : 1; e.c = COULEURS[(Math.random() * 5) | 0]; e.tw = hasard(0, 6.28); e.pz = e.z; return e; }
-    for (let i = 0; i < 300; i++) etoiles.push(nouvelle({}, true));
+    for (let i = 0; i < 220; i++) etoiles.push(nouvelle({}, true));
     function frame(t, dt) {
       cx.clearRect(0, 0, W, H);
       const v = etat.v, f = Math.max(W, H) * 0.55;
@@ -98,40 +98,45 @@
   })();
 
   const trace = $('#trace'), tx = trace.getContext('2d');
-  function tailleTrace() { const d = Math.min(2, devicePixelRatio || 1); trace.width = innerWidth * d; trace.height = innerHeight * d; tx.setTransform(d, 0, 0, d, 0, 0); }
+  function tailleTrace() { const d = Math.min(1.5, devicePixelRatio || 1); trace.width = innerWidth * d; trace.height = innerHeight * d; tx.setTransform(d, 0, 0, d, 0, 0); }
 
   /* ================= ÉCLATS : particules de lumière (réussites, doigt, confettis) ================= */
   const Eclats = (() => {
-    const cv = $('#eclats'), cx = cv.getContext('2d'); let W = 0, H = 0; const ps = [];
-    function taille() { const d = Math.min(2, devicePixelRatio || 1); W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; cx.setTransform(d, 0, 0, d, 0, 0); }
+    const cv = $('#eclats'), cx = cv.getContext('2d'); let W = 0, H = 0; const ps = []; let vide = false;
+    const SPRITES = {};
+    COULEURS.forEach((c) => { const s = document.createElement('canvas'); s.width = s.height = 64; const g = s.getContext('2d'), r = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+      r.addColorStop(0, '#fff'); r.addColorStop(0.18, c); r.addColorStop(0.45, c + '55'); r.addColorStop(1, c + '00'); g.fillStyle = r; g.fillRect(0, 0, 64, 64); SPRITES[c] = s; });
+    function taille() { const d = Math.min(1.5, devicePixelRatio || 1); W = innerWidth; H = innerHeight; cv.width = W * d; cv.height = H * d; cx.setTransform(d, 0, 0, d, 0, 0); }
     function gerbe(x, y, n, force, gravite) {
       for (let i = 0; i < n; i++) { const a = hasard(0, 6.283), v = hasard(0.2, 1) * (force || 420);
         ps.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, g: gravite == null ? 260 : gravite, vie: 1, dv: hasard(0.6, 1.3), r: hasard(1.5, 3.6), c: COULEURS[(Math.random() * 5) | 0], forme: Math.random() < 0.35 ? 'losange' : 'rond', rot: hasard(0, 6), vr: hasard(-6, 6) }); }
     }
     function pluie(n) { for (let i = 0; i < n; i++) ps.push({ x: hasard(0, W), y: hasard(-H * 0.6, -10), vx: hasard(-30, 30), vy: hasard(80, 200), g: 30, vie: 1, dv: hasard(0.12, 0.22), r: hasard(2, 4.5), c: COULEURS[(Math.random() * 5) | 0], forme: 'losange', rot: hasard(0, 6), vr: hasard(-3, 3) }); }
     function frame(t, dt) {
+      if (!ps.length) { if (!vide) { cx.clearRect(0, 0, W, H); vide = true; } return; } vide = false;
+      if (ps.length > 500) ps.splice(0, ps.length - 500);
       cx.clearRect(0, 0, W, H); cx.globalCompositeOperation = 'lighter';
       for (let i = ps.length - 1; i >= 0; i--) {
         const p = ps[i]; p.vy += p.g * dt; p.vx *= 1 - dt * 0.8; p.x += p.vx * dt; p.y += p.vy * dt; p.vie -= dt * p.dv; p.rot += p.vr * dt;
         if (p.vie <= 0 || p.y > H + 30) { ps.splice(i, 1); continue; }
-        cx.globalAlpha = Math.min(1, p.vie * 1.4); cx.fillStyle = p.c; cx.shadowColor = p.c; cx.shadowBlur = 12;
+        cx.globalAlpha = Math.min(1, p.vie * 1.4); cx.fillStyle = p.c;
+        const tl = p.r * 7; cx.drawImage(SPRITES[p.c] || SPRITES['#ffffff'], p.x - tl / 2, p.y - tl / 2, tl, tl);
         if (p.forme === 'losange') { cx.save(); cx.translate(p.x, p.y); cx.rotate(p.rot); cx.beginPath(); cx.moveTo(0, -p.r * 2); cx.lineTo(p.r, 0); cx.lineTo(0, p.r * 2); cx.lineTo(-p.r, 0); cx.closePath(); cx.fill(); cx.restore(); }
-        else { cx.beginPath(); cx.arc(p.x, p.y, p.r, 0, 6.283); cx.fill(); }
       }
-      cx.shadowBlur = 0; cx.globalAlpha = 1; cx.globalCompositeOperation = 'source-over';
+      cx.globalAlpha = 1; cx.globalCompositeOperation = 'source-over';
     }
     return { taille, frame, gerbe, pluie, ps };
   })();
   // poussière de lumière sous le doigt
   let dernierTrait = 0;
-  addEventListener('pointermove', (e) => { const n = performance.now(); if (n - dernierTrait > 45) { dernierTrait = n; Eclats.ps.push({ x: e.clientX, y: e.clientY, vx: hasard(-30, 30), vy: hasard(-40, 10), g: 40, vie: 0.8, dv: 1.6, r: hasard(1, 2.4), c: COULEURS[(Math.random() * 5) | 0], forme: 'rond', rot: 0, vr: 0 }); } }, { passive: true });
+  addEventListener('pointermove', (e) => { const n = performance.now(); if (n - dernierTrait > 70) { dernierTrait = n; Eclats.ps.push({ x: e.clientX, y: e.clientY, vx: hasard(-30, 30), vy: hasard(-40, 10), g: 40, vie: 0.8, dv: 1.6, r: hasard(1, 2.4), c: COULEURS[(Math.random() * 5) | 0], forme: 'rond', rot: 0, vr: 0 }); } }, { passive: true });
 
   /* ================= CRISTAL 3D (three.js) : irisé, se charge, éclate ================= */
   const Cristal = (() => {
     const cv = $('#cristal'); let rendu = null, scene, cam, mesh; const U = { uTime: { value: 0 }, uCharge: { value: 0 }, uExplose: { value: 0 }, uFlash: { value: 0 } };
     const etat = { vit: 0.4, secousse: 0 };
     try {
-      rendu = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true }); rendu.setPixelRatio(Math.min(2, devicePixelRatio || 1));
+      rendu = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true }); rendu.setPixelRatio(Math.min(1.5, devicePixelRatio || 1));
       scene = new THREE.Scene(); cam = new THREE.PerspectiveCamera(32, 1, 0.1, 100); cam.position.set(0, 0, 7);
       let g = new THREE.IcosahedronGeometry(1.3, 1); if (g.index) g = g.toNonIndexed(); g.scale(0.9, 1.32, 0.9);
       const p = g.attributes.position, n = p.count, nor = new Float32Array(n * 3), cen = new Float32Array(n * 3), dir = new Float32Array(n * 3), rnd = new Float32Array(n);
@@ -188,7 +193,7 @@
   const Fond = (() => {
     const cv = $('#fond'); let r = null, sc, cam, U = { uTime: { value: 0 }, uRes: { value: new THREE.Vector2(1, 1) } };
     try {
-      r = new THREE.WebGLRenderer({ canvas: cv, antialias: false, alpha: false }); r.setPixelRatio(0.5);
+      r = new THREE.WebGLRenderer({ canvas: cv, antialias: false, alpha: false, powerPreference: 'low-power' }); r.setPixelRatio(0.35);
       sc = new THREE.Scene(); cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
       sc.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), new THREE.ShaderMaterial({ uniforms: U, depthTest: false,
         vertexShader: 'varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position.xy, 0.0, 1.0); }',
@@ -209,18 +214,16 @@
             gl_FragColor = vec4(col, 1.0); }` })));
     } catch (e) { r = null; cv.style.display = 'none'; }
     return { taille() { if (r) { r.setSize(innerWidth, innerHeight, false); U.uRes.value.set(innerWidth, innerHeight); } },
-             frame(t) { if (r) { U.uTime.value = t; r.render(sc, cam); } } };
+             frame(t, k) { if (r && k % 2 === 0) { U.uTime.value = t; r.render(sc, cam); } } };
   })();
 
   /* ================= boucle commune ================= */
   function taille() { Fond.taille(); Ciel.taille(); Eclats.taille(); Cristal.taille(); tailleTrace(); }
   addEventListener('resize', taille); taille();
   let t0 = performance.now(), avant = t0;
-  (function boucle(n) { const dt = Math.min(0.05, (n - avant) / 1000); avant = n; const t = (n - t0) / 1000; Fond.frame(t); Ciel.frame(t, dt); Cristal.frame(t, dt); Eclats.frame(t, dt); requestAnimationFrame(boucle); })(t0);
+  let img = 0; (function boucle(n) { const dt = Math.min(0.05, (n - avant) / 1000); avant = n; const t = (n - t0) / 1000; Fond.frame(t, img++); Ciel.frame(t, dt); Cristal.frame(t, dt); Eclats.frame(t, dt); requestAnimationFrame(boucle); })(t0);
 
-  // aurores qui dérivent lentement
-  [['.a1', 120, 60], ['.a2', -90, 80], ['.a3', 70, -70]].forEach(([s, x, y], i) => gsap.to('#aurore ' + s, { x, y, scale: 1.15, duration: 14 + i * 4, yoyo: true, repeat: -1, ease: 'sine.inOut' }));
-  gsap.to('#halo', { scale: 1.12, opacity: 0.8, duration: 2.6, yoyo: true, repeat: -1, ease: 'sine.inOut' });
+  gsap.to('#halo', { opacity: 0.6, duration: 2.6, yoyo: true, repeat: -1, ease: 'sine.inOut' });
 
   /* ================= placements du cristal ================= */
   const boite = $('#cristal-boite');
@@ -403,7 +406,7 @@
   function jeuPluie(el, fini) {
     const cv = document.createElement('canvas'); cv.className = 'pluie'; const cpt = document.createElement('div'); cpt.className = 'compteur';
     el.append(cv, cpt);
-    const cx = cv.getContext('2d'); let W, H; const d = Math.min(2, devicePixelRatio || 1);
+    const cx = cv.getContext('2d'); let W, H; const d = Math.min(1.5, devicePixelRatio || 1);
     const dims = () => { const r = cv.getBoundingClientRect(); W = r.width; H = r.height; cv.width = W * d; cv.height = H * d; cx.setTransform(d, 0, 0, d, 0, 0); };
     dims();
     const BUT = 12; let pris = 0, fin = false, raf, cible = W / 2, x = W / 2, prochaine = 0.3, t = 0; const etoiles = [];
@@ -425,7 +428,7 @@
         const e = etoiles[i]; e.y += e.v * dt; e.rot += dt * 2; const ex = e.x + Math.sin(t * 2 + e.ph) * 14;
         const gr = cx.createLinearGradient(ex, e.y - 50, ex, e.y); gr.addColorStop(0, 'rgba(255,255,255,0)'); gr.addColorStop(1, e.c);
         cx.globalAlpha = 0.5; cx.strokeStyle = gr; cx.lineWidth = 3; cx.beginPath(); cx.moveTo(ex, e.y - 50); cx.lineTo(ex, e.y); cx.stroke();
-        cx.globalAlpha = 1; cx.fillStyle = e.c; cx.shadowColor = e.c; cx.shadowBlur = 16; etoile(ex, e.y, 11, e.rot); cx.shadowBlur = 0;
+        cx.globalAlpha = 0.35; cx.fillStyle = e.c; cx.beginPath(); cx.arc(ex, e.y, 20, 0, 6.283); cx.fill(); cx.globalAlpha = 1; etoile(ex, e.y, 11, e.rot);
         if (Math.hypot(ex - x, e.y - yc) < 38) {
           etoiles.splice(i, 1); pris++; maj(); Son.ton(440 * Math.pow(2, (pris % 8) / 6)); const r = cv.getBoundingClientRect(); Eclats.gerbe(r.left + ex, r.top + e.y, 16, 240);
           if (pris >= BUT) { fin = true; dire('Toutes attrapées !'); setTimeout(fini, 500); }
@@ -560,8 +563,8 @@
   addEventListener('pointermove', (e) => {
     if (!pts) return; const [px, py] = pts[pts.length - 1]; pts.push([e.clientX, e.clientY]);
     const g = tx.createLinearGradient(px, py, e.clientX, e.clientY); g.addColorStop(0, '#b5f4ff'); g.addColorStop(1, '#ff9fe0');
-    tx.strokeStyle = g; tx.lineWidth = 5; tx.lineCap = 'round'; tx.shadowColor = '#c8b6ff'; tx.shadowBlur = 18;
-    tx.beginPath(); tx.moveTo(px, py); tx.lineTo(e.clientX, e.clientY); tx.stroke();
+    tx.lineCap = 'round'; tx.strokeStyle = 'rgba(200, 182, 255, .22)'; tx.lineWidth = 16; tx.beginPath(); tx.moveTo(px, py); tx.lineTo(e.clientX, e.clientY); tx.stroke();
+    tx.strokeStyle = g; tx.lineWidth = 4.5; tx.beginPath(); tx.moveTo(px, py); tx.lineTo(e.clientX, e.clientY); tx.stroke();
     if (pts.length % 4 === 0) Son.tic(600 + Math.min(900, pts.length * 4));
   });
   const finTrace = () => {
