@@ -222,7 +222,7 @@ SCENES.discussion = async () => {
   await choix(['STITCH !!! 😱', 'Tu as MANGÉ mon billet ?!']);
   await dit('Ih ! Pas de panique !', 700);
   await dit('De toute façon, le futur c\'était pas assez bien pour toi.');
-  await dit('Enzo et moi, on t\'a caché un autre billet. Beaucoup plus magique ✨');
+  await dit('Enzo et moi, on t\'a trouvé une autre destination. Top secret 🤫');
   await dit('Mais je l\'ai un peu… cassé en 3 morceaux 🙈');
   await dit('Tu m\'aides à les retrouver ?');
   await choix(['On y va ! 💙']);
@@ -261,21 +261,17 @@ $$('[data-ramasser]').forEach(b => b.addEventListener('click', async () => {
 SCENES.etoiles = () => {
   const c = $('#j-etoiles'), x = c.getContext('2d'); $('#f-etoiles').hidden = true; $('#c-etoiles').style.opacity = 1;
   let L, H, pts = [], allumees = 0, fini = false, etincelles = [];
-  // trois ronds qui se touchent : une grosse tête et deux oreilles
-  const RONDS = [{ cx: .5, cy: .62, r: .3, n: 16 }, { cx: .21, cy: .24, r: .185, n: 11 }, { cx: .79, cy: .24, r: .185, n: 11 }];
+  const N_COEUR = 30;
   function placer() {
     L = c.clientWidth; H = c.clientHeight; c.width = Math.round(L * DPR); c.height = Math.round(H * DPR); x.setTransform(DPR, 0, 0, DPR, 0, 0);
-    const s = Math.min(L * .86, H * .5), ox = (L - s) / 2, oy = H * .22;
-    const ronds = RONDS;
+    const s = Math.min(L * .8, H * .42), ox = (L - s) / 2, oy = H * .17;
+    // un cœur, étoile par étoile
     const anciens = pts; pts = [];
-    ronds.forEach((o, ri) => {
-      for (let k = 0; k < o.n; k++) {
-        const a = k / o.n * Math.PI * 2 - Math.PI / 2, px = o.cx + Math.cos(a) * o.r, py = o.cy + Math.sin(a) * o.r;
-        // pas d'étoile cachée à l'intérieur d'un autre rond
-        if (ronds.some((p, pj) => pj !== ri && Math.hypot(px - p.cx, py - p.cy) < p.r * .98)) continue;
-        pts.push({ rond: ri, k, x: ox + px * s, y: oy + py * s, allumee: false, t: 0 });
-      }
-    });
+    for (let k = 0; k < N_COEUR; k++) {
+      const a = k / N_COEUR * Math.PI * 2;
+      const hx = 16 * Math.pow(Math.sin(a), 3), hy = -(13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a));
+      pts.push({ rond: 0, k, x: ox + (.5 + hx / 36) * s, y: oy + (.48 + hy / 36) * s, allumee: false, t: 0 });
+    }
     anciens.forEach((a, i) => { if (pts[i]) pts[i].allumee = a.allumee; });
   }
   function toucher(e) {
@@ -293,7 +289,7 @@ SCENES.etoiles = () => {
   c.onpointerdown = e => { c.setPointerCapture && c.setPointerCapture(e.pointerId); toucher(e); };
   c.onpointermove = e => { if (e.buttons || e.pointerType === 'touch') toucher(e); };
   function voisins(p) { // relier deux étoiles qui se suivent sur le même rond
-    const n = RONDS[p.rond].n;
+    const n = N_COEUR;
     return pts.filter(q => q.rond === p.rond && q !== p && (Math.abs(q.k - p.k) === 1 || Math.abs(q.k - p.k) === n - 1));
   }
   let vivant = true;
@@ -363,10 +359,10 @@ function Feux(canvas) {
 
 /* ================= 3 · le vœu ================= */
 SCENES.voeu = () => {
-  const etoile = $('#etoile-voeu'), anneau = $('#anneau'), c = $('#j-feux'); $('#f-voeu').hidden = true;
+  const etoile = $('#etoile-voeu'), anneau = $('#anneau'); $('#f-voeu').hidden = true;
   etoile.hidden = false; etoile.classList.remove('partie', 'tenue'); anneau.style.strokeDashoffset = 339.3;
   $('#c-voeu').textContent = 'Garde ton doigt sur l\'étoile et fais un vœu…'; $('#c-voeu').style.opacity = 1;
-  const feux = Feux(c); let tenue = null, progres = 0, etat = 'voeu', tirs = 0, note = 0;
+  let tenue = null, progres = 0, etat = 'voeu', note = 0;
   function tenir(t) {
     if (tenue === null || etat !== 'voeu') return;
     progres = Math.min(1, (t - tenue) / 2200); anneau.style.strokeDashoffset = 339.3 * (1 - progres);
@@ -380,21 +376,8 @@ SCENES.voeu = () => {
   async function exauce() {
     etat = 'feux'; etoile.classList.remove('tenue'); etoile.classList.add('partie'); Son.magie(); vibrer([40, 40, 80]);
     $('#c-voeu').style.opacity = 0;
-    await attendre(900); etoile.hidden = true;
-    for (let k = 0; k < 4; k++) { feux.lancer(); await attendre(380); }
-    $('#c-voeu').textContent = 'Touche le ciel pour en lancer d\'autres 🎇'; $('#c-voeu').style.opacity = 1;
-    etat = 'ciel';
-    setTimeout(() => { if (etat === 'ciel') fin(); }, 9000);
-  }
-  c.onpointerdown = e => {
-    if (etat !== 'ciel') return; const b = c.getBoundingClientRect();
-    feux.lancer(e.clientX - b.left, Math.min(e.clientY - b.top, b.height * .6)); tirs++;
-    if (tirs >= 5) fin();
-  };
-  async function fin() {
-    if (etat === 'fin') return; etat = 'fin'; $('#c-voeu').style.opacity = 0;
-    for (let k = 0; k < 3; k++) { feux.lancer(undefined, undefined, k === 1 ? 'coeur' : 'rond'); await attendre(300); }
-    await attendre(1200); $('#f-voeu').hidden = false;
+    await attendre(1100); etoile.hidden = true; etat = 'fin';
+    await attendre(500); $('#f-voeu').hidden = false;
   }
   window.__kim.voeu = () => etat;
 };
@@ -462,8 +445,8 @@ SCENES.billet = async () => {
   x.fillStyle = g; x.fillRect(0, 0, c.width, c.height);
   for (let i = 0; i < 260; i++) { x.fillStyle = `rgba(255,255,255,${hasard(.05, .3)})`; x.fillRect(Math.random() * c.width, Math.random() * c.height, 2 * DPR, 2 * DPR); }
   x.fillStyle = 'rgba(138,90,18,.75)'; x.textAlign = 'center'; x.textBaseline = 'middle';
-  x.font = `700 ${Math.round(H * .17 * DPR)}px Fredoka, sans-serif`; x.fillText('Gratte-moi ✨', c.width / 2, c.height * .44);
-  x.font = `600 ${Math.round(H * .085 * DPR)}px Nunito, sans-serif`; x.fillText('un billet très spécial', c.width / 2, c.height * .66);
+  x.font = `700 ${Math.round(H * .15 * DPR)}px Fredoka, sans-serif`; x.fillText('48,87° N · 2,78° E', c.width / 2, c.height * .44);
+  x.font = `600 ${Math.round(H * .085 * DPR)}px Nunito, sans-serif`; x.fillText('gratte pour découvrir où on va', c.width / 2, c.height * .66);
   // empreintes de Stitch
   x.fillStyle = 'rgba(138,90,18,.18)';
   for (const [px, py] of [[.12, .2], [.2, .34], [.84, .72], [.92, .58]]) { x.beginPath(); x.arc(px * c.width, py * c.height, 9 * DPR, 0, 6.283); x.fill(); }

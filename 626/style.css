@@ -257,7 +257,16 @@ body.chasse .decor .mer { opacity: .5; transition: opacity 1.2s; }
   position: absolute; left: 50%; bottom: 30vh; width: 120vw; height: 70vw; transform: translateX(-50%);
   background: radial-gradient(ellipse at 50% 60%, rgba(255, 200, 240, .45), rgba(150, 140, 255, .18) 40%, transparent 70%);
 }
-.chateau { position: relative; width: min(88vw, 400px); margin-bottom: 25vh; }
+.vaisseau { position: relative; width: min(84vw, 380px); margin-bottom: 30vh; transform: rotate(-6deg); filter: drop-shadow(0 10px 20px rgba(0, 0, 0, .4)); }
+.paysage.allume .vaisseau { animation: decolle 3s ease-in-out infinite alternate; }
+@keyframes decolle { from { transform: rotate(-6deg) translateY(0); } to { transform: rotate(-3deg) translateY(-14px); } }
+.indice {
+  display: flex; flex-direction: column; align-items: center; gap: 2px; margin: 0 0 10px; padding: 10px 22px; border-radius: 14px;
+  background: linear-gradient(160deg, #fff3b0, var(--or) 50%, var(--or-fonce)); color: #4a2c06;
+  box-shadow: 0 0 26px rgba(255, 211, 110, .45); transform: rotate(-2deg);
+}
+.indice small { font-size: 11px; letter-spacing: .16em; text-transform: uppercase; font-weight: 800; opacity: .75; }
+.indice b { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 24px; }
 .chateau .fenetres rect { opacity: .25; transition: opacity .6s; }
 .paysage.allume .chateau .fenetres rect { opacity: 1; animation: fenetre 2.6s ease-in-out infinite alternate; }
 .paysage.allume .chateau .fenetres rect:nth-child(3n) { animation-delay: -.9s; }

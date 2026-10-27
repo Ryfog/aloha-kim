@@ -110,7 +110,8 @@
     <canvas class="jeu" id="j-etoiles"></canvas>
     <div class="quete-fin" id="f-etoiles" hidden>
       <img src="img/dessine.webp" alt="" class="perso">
-      <p>Trois ronds dans le ciel…<br>Ça te dit quelque chose&nbsp;? 😏</p>
+      <div class="indice"><small>Morceau 1</small><b>48,87° N</b></div>
+      <p>Hmm… un chiffre bizarre&nbsp;? 🤔<br>Garde-le bien.</p>
       <button class="bouton" type="button" data-ramasser="0">Ramasser le morceau ✨</button>
     </div>
   </section>
@@ -119,7 +120,6 @@
   <section class="scene quete" id="s-voeu" data-scene="voeu" hidden>
     <div class="quete-titre"><small>Morceau 2 sur 3</small><h2>Le vœu</h2></div>
     <p class="consigne" id="c-voeu">Garde ton doigt sur l'étoile et fais un vœu…</p>
-    <canvas class="jeu" id="j-feux"></canvas>
     <button class="etoile-voeu" id="etoile-voeu" type="button" aria-label="L'étoile à vœu">
       <svg viewBox="0 0 120 120">
         <circle class="anneau-fond" cx="60" cy="60" r="54"/>
@@ -129,7 +129,8 @@
     </button>
     <div class="quete-fin" id="f-voeu" hidden>
       <img src="img/jongle.webp" alt="" class="perso">
-      <p>Là où on va, le ciel s'allume<br>comme ça tous les soirs 🎆</p>
+      <div class="indice"><small>Morceau 2</small><b>2,78° E</b></div>
+      <p>Ton vœu est parti… 💫<br>Encore un chiffre&nbsp;!</p>
       <button class="bouton" type="button" data-ramasser="1">Ramasser le morceau ✨</button>
     </div>
   </section>
@@ -140,11 +141,12 @@
     <p class="consigne" id="c-brume">Efface la brume avec ton doigt</p>
     <div class="paysage" id="paysage">
       <div class="halo-chateau"></div>
-      <svg class="chateau" viewBox="0 0 300 260" aria-hidden="true"><use href="#chateau"/></svg>
+      <img class="vaisseau" src="img/fusee.webp" alt="">
       <canvas class="brume" id="j-brume"></canvas>
     </div>
     <div class="quete-fin" id="f-brume" hidden>
-      <p>Un château…<br>mais lequel&nbsp;? 🏰</p>
+      <div class="indice"><small>Morceau 3</small><b>2 passagers · Kim &amp; Enzo</b></div>
+      <p>Le vaisseau est prêt…<br>mais pour aller où&nbsp;? 🚀</p>
       <button class="bouton" type="button" data-ramasser="2">Ramasser le dernier morceau ✨</button>
     </div>
   </section>
