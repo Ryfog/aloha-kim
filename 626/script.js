@@ -266,24 +266,42 @@ function fissure() {
       { duration: hasard(700, 1300), easing: 'cubic-bezier(.3,.1,.7,1)' }).onfinish = () => m.remove();
   }
 }
-function surgit(type, image, mot) {
+function surgit(type, image, mot, bas) {
   const s = $('#surgit'); $('#surgit-img').src = image; $('#onomato').textContent = mot;
   s.className = 'surgit ' + type; s.hidden = false;
-  const p = $('#pendule'); p.style.animation = 'none'; void p.offsetWidth; p.style.animation = '';
+  const p = $('#pendule'); p.style.bottom = bas != null ? bas + 'px' : ''; p.style.animation = 'none'; void p.offsetWidth; p.style.animation = '';
   return s;
+}
+// la poêle (à 30 % du haut de l'image) doit frapper le billet : on fait défiler le billet à sa hauteur,
+// puis on cale l'image sur la position réelle du billet
+async function viserBillet() {
+  if (!billetCanvas) return null;
+  const w = Math.min(innerWidth * .86, 380), h = w * 720 / 592, cible = innerHeight - .66 * h;
+  const r0 = billetCanvas.getBoundingClientRect();
+  fil.scrollTo({ top: fil.scrollTop + (r0.top + r0.height / 2 - cible), behavior: 'smooth' });
+  await attendre(600);
+  const r = billetCanvas.getBoundingClientRect(), cy = r.top + r.height / 2;
+  return Math.round(innerHeight - cy - .66 * h);
 }
 SCENES.discussion = async () => {
   await attendre(700);
-  await dit('Coucou Kim ! 🌸', 700);
-  await dit('C\'est moi, Raiponce 💜 Enzo m\'a confié un truc super important pour toi…');
+  await dit('Coucou Kim ! Ça va ? 🌸', 800);
+  await choix(['Oui et toi ? 😊']);
+  await dit('Oui, super ! 💜', 700);
+  await choix(['Dis-moi, qu\'est-ce que tu veux ? 🤔']);
+  await dit('En fait… j\'ai un petit problème 😬', 900);
+  await choix(['C\'est-à-dire ?']);
+  await dit('Bah… Enzo m\'a confié ton billet, mais…', 1000);
   await billetDansBulle();
-  await dit('Ton billet pour le futur 🚀');
-  await ecrit(2000);
-  await dit('Sauf que…', 600);
-  await dit('quelque chose a bougé derrière… j\'ai cru que c\'était un intrus 😳');
-  await attendre(400);
+  await dit('ton billet pour le futur 🚀', 600);
+  await choix(['Mais quoi ?! 😳', 'Il est trop beau 😍']);
+  await dit('Tout à l\'heure, quelque chose a bougé derrière…', 900);
+  await dit('j\'ai cru que c\'était un intrus 😳');
+  await choix(['Et ?? 😨', 'Raiponce… t\'as fait quoi ?']);
+  await dit('Et j\'ai fait ça :', 700);
+  await attendre(300);
   // Raiponce surgit avec sa poêle : BONG
-  surgit('poele', 'img/poele.webp', 'BONG !');
+  surgit('poele', 'img/poele.webp', 'BONG !', await viserBillet());
   await attendre(470);
   fissure(); vibrer([60, 30, 40]); document.body.classList.remove('secousse'); void document.body.offsetWidth; document.body.classList.add('secousse');
   await attendre(1300); $('#surgit').hidden = true; document.body.classList.remove('secousse');
@@ -293,7 +311,10 @@ SCENES.discussion = async () => {
   await choix(['RAIPONCE !!! 😱', 'Tu as cassé mon billet ?!']);
   await dit('Pardon, pardon ! Pas de panique !', 700);
   await dit('De toute façon, le futur c\'était pas assez bien pour toi.');
+  await choix(['Comment ça ? 🤨']);
   await dit('Enzo et moi, on t\'a trouvé une autre destination. Top secret 🤫');
+  await choix(['C\'est quoi ?? 😍', 'Dis-moi !!']);
+  await dit('Hihi, je peux rien dire 🤐', 700);
   await dit('Pascal l\'a caché en 3 morceaux… il adore jouer à cache-cache 🦎');
   await dit('Tu m\'aides à les retrouver ?');
   await choix(['On y va ! 💜']);
