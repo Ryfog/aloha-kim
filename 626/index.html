@@ -3,63 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
-<title>Un message de Stitch</title>
-<meta name="description" content="Stitch a un truc à t'avouer…">
+<title>Un message de Raiponce</title>
+<meta name="description" content="Raiponce a un truc à t'avouer…">
 <meta name="robots" content="noindex, nofollow">
-<meta name="theme-color" content="#0b1033">
-<meta property="og:title" content="Un message de Stitch 👽">
+<meta name="theme-color" content="#1a0d33">
+<meta property="og:title" content="Un message de Raiponce 🌸">
 <meta property="og:description" content="Kim, j'ai un truc à t'avouer…">
 <meta property="og:image" content="img/apercu.jpg">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="img/icone-192.png">
-<link rel="apple-touch-icon" href="img/icone-180.png">
+<link rel="manifest" href="manifest.webmanifest?v=r1">
+<link rel="icon" href="img/icone-192.png?v=r1">
+<link rel="apple-touch-icon" href="img/icone-180.png?v=r1">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Stitch">
+<meta name="apple-mobile-web-app-title" content="Raiponce">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@500;700;800&family=Parisienne&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=r1">
 </head>
-<body>
+<body data-scene="verrou">
 
-<!-- Le décor, toujours là : ciel, lune, mer, palmiers -->
-<div class="decor" id="decor" aria-hidden="true">
+<!-- Le décor, toujours là : le fond d'écran de Raiponce, un voile, des lanternes qui montent -->
+<div class="decor" aria-hidden="true">
+  <div class="fond" id="fond"></div>
+  <div class="voile"></div>
   <canvas id="ciel"></canvas>
-  <div class="lune"></div>
-  <svg class="mer" viewBox="0 0 400 120" preserveAspectRatio="none">
-    <defs>
-      <linearGradient id="gMer" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#2a2f7a"/><stop offset="1" stop-color="#0a0d2c"/>
-      </linearGradient>
-      <linearGradient id="gReflet" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#ffe7b8" stop-opacity=".75"/><stop offset="1" stop-color="#ffe7b8" stop-opacity="0"/>
-      </linearGradient>
-    </defs>
-    <rect width="400" height="120" fill="url(#gMer)"/>
-    <g class="reflet" fill="url(#gReflet)">
-      <rect x="282" y="4" width="36" height="2.2" rx="1"/><rect x="272" y="12" width="56" height="2" rx="1"/>
-      <rect x="286" y="21" width="30" height="1.8" rx="1"/><rect x="266" y="31" width="66" height="1.8" rx="1"/>
-      <rect x="280" y="43" width="40" height="1.6" rx="1"/><rect x="260" y="57" width="78" height="1.6" rx="1"/>
-    </g>
-  </svg>
-  <svg class="palmiers" viewBox="0 0 400 300" preserveAspectRatio="xMidYMax slice">
-    <g fill="#050719">
-      <path d="M0 300 L0 258 Q60 238 130 252 Q190 262 250 250 Q330 236 400 256 L400 300Z"/>
-      <path d="M58 262 C60 210 64 160 78 112 L84 113 C72 160 68 212 68 262Z"/>
-      <path d="M80 112 C60 96 30 98 8 116 C34 104 58 106 78 118Z"/>
-      <path d="M80 112 C70 86 46 72 22 74 C48 82 66 96 76 116Z"/>
-      <path d="M81 112 C92 84 116 74 140 80 C116 84 98 96 86 116Z"/>
-      <path d="M82 113 C104 100 132 104 150 124 C128 110 104 110 84 118Z"/>
-      <path d="M81 112 C84 92 80 74 66 58 C82 70 90 90 86 114Z"/>
-      <path d="M346 262 C344 222 338 184 326 150 L331 148 C344 182 352 222 356 262Z"/>
-      <path d="M328 150 C344 136 370 136 392 152 C370 142 348 144 332 156Z"/>
-      <path d="M328 150 C322 128 304 116 282 116 C304 124 318 136 326 154Z"/>
-      <path d="M329 149 C340 128 360 120 382 124 C362 128 346 138 334 154Z"/>
-      <path d="M327 151 C310 140 288 142 272 158 C290 148 308 148 324 156Z"/>
-    </g>
-  </svg>
 </div>
 
 <!-- La barre des 3 morceaux (pendant la chasse) -->
@@ -77,9 +46,9 @@
       <div class="verrou-heure" id="heure">00:00</div>
     </div>
     <button class="notif" id="notif" type="button">
-      <img src="img/mignon.webp" alt="" class="notif-avatar">
+      <img src="img/avatar.webp" alt="" class="notif-avatar">
       <span class="notif-texte">
-        <span class="notif-ligne"><b>Stitch</b><small>maintenant</small></span>
+        <span class="notif-ligne"><b>Raiponce</b><small>maintenant</small></span>
         <span>Kim, j'ai un truc à t'avouer… 🙈</span>
       </span>
     </button>
@@ -92,12 +61,12 @@
   <!-- 1 · La discussion -->
   <section class="scene discussion" id="s-discussion" data-scene="discussion" hidden>
     <header class="disc-tete">
-      <img src="img/mignon.webp" alt="" class="disc-avatar">
+      <img src="img/avatar.webp" alt="" class="disc-avatar">
       <div>
-        <b>Stitch</b>
+        <b>Raiponce</b>
         <small id="statut">en ligne</small>
       </div>
-      <span class="disc-626">626</span>
+      <img src="img/pascal-coucou.webp" alt="" class="disc-pascal">
     </header>
     <div class="fil" id="fil"></div>
     <div class="reponses" id="reponses"></div>
@@ -109,7 +78,7 @@
     <p class="consigne" id="c-etoiles">Passe ton doigt sur toutes les étoiles ✨</p>
     <canvas class="jeu" id="j-etoiles"></canvas>
     <div class="quete-fin" id="f-etoiles" hidden>
-      <img src="img/dessine.webp" alt="" class="perso">
+      <img src="img/peint.webp" alt="" class="perso large">
       <div class="indice"><small>Morceau 1</small><b>48,87° N</b></div>
       <p>Hmm… un chiffre bizarre&nbsp;? 🤔<br>Garde-le bien.</p>
       <button class="bouton" type="button" data-ramasser="0">Ramasser le morceau ✨</button>
@@ -119,16 +88,24 @@
   <!-- 3 · Morceau 2 : le vœu -->
   <section class="scene quete" id="s-voeu" data-scene="voeu" hidden>
     <div class="quete-titre"><small>Morceau 2 sur 3</small><h2>Le vœu</h2></div>
-    <p class="consigne" id="c-voeu">Garde ton doigt sur l'étoile et fais un vœu…</p>
-    <button class="etoile-voeu" id="etoile-voeu" type="button" aria-label="L'étoile à vœu">
+    <p class="consigne" id="c-voeu">Garde ton doigt sur la fleur magique et fais un vœu…</p>
+    <button class="fleur-voeu" id="fleur-voeu" type="button" aria-label="La fleur magique">
       <svg viewBox="0 0 120 120">
         <circle class="anneau-fond" cx="60" cy="60" r="54"/>
         <circle class="anneau" id="anneau" cx="60" cy="60" r="54"/>
-        <path class="etoile-forme" d="M60 14 L72 46 L106 47 L79 68 L89 101 L60 81 L31 101 L41 68 L14 47 L48 46Z"/>
+        <g class="fleur-forme">
+          <ellipse cx="60" cy="36" rx="11.5" ry="19"/>
+          <ellipse cx="60" cy="36" rx="11.5" ry="19" transform="rotate(60 60 60)"/>
+          <ellipse cx="60" cy="36" rx="11.5" ry="19" transform="rotate(120 60 60)"/>
+          <ellipse cx="60" cy="36" rx="11.5" ry="19" transform="rotate(180 60 60)"/>
+          <ellipse cx="60" cy="36" rx="11.5" ry="19" transform="rotate(240 60 60)"/>
+          <ellipse cx="60" cy="36" rx="11.5" ry="19" transform="rotate(300 60 60)"/>
+          <circle class="coeur-fleur" cx="60" cy="60" r="11"/>
+        </g>
       </svg>
     </button>
     <div class="quete-fin" id="f-voeu" hidden>
-      <img src="img/jongle.webp" alt="" class="perso">
+      <img src="img/fleurs.webp" alt="" class="perso">
       <div class="indice"><small>Morceau 2</small><b>2,78° E</b></div>
       <p>Ton vœu est parti… 💫<br>Encore un chiffre&nbsp;!</p>
       <button class="bouton" type="button" data-ramasser="1">Ramasser le morceau ✨</button>
@@ -140,111 +117,77 @@
     <div class="quete-titre"><small>Morceau 3 sur 3</small><h2>La brume</h2></div>
     <p class="consigne" id="c-brume">Efface la brume avec ton doigt</p>
     <div class="paysage" id="paysage">
-      <div class="halo-chateau"></div>
-      <img class="vaisseau" src="img/fusee.webp" alt="">
+      <div class="halo-lac"></div>
+      <div class="barque-zone">
+        <svg class="barque" viewBox="0 0 320 180" aria-hidden="true"><use href="#barque"/></svg>
+        <img class="pascal-barque" src="img/pascal.webp" alt="">
+      </div>
       <canvas class="brume" id="j-brume"></canvas>
     </div>
     <div class="quete-fin" id="f-brume" hidden>
       <div class="indice"><small>Morceau 3</small><b>2 passagers · Kim &amp; Enzo</b></div>
-      <p>Le vaisseau est prêt…<br>mais pour aller où&nbsp;? 🚀</p>
+      <p>Le bateau est prêt…<br>mais pour aller où&nbsp;? ⛵</p>
       <button class="bouton" type="button" data-ramasser="2">Ramasser le dernier morceau ✨</button>
     </div>
   </section>
 
-  <!-- 5 · Le nouveau billet -->
-  <section class="scene billet-scene" id="s-billet" data-scene="billet" hidden>
-    <div class="quete-titre"><small>Les 3 morceaux sont réunis</small><h2 id="t-billet">Ton nouveau billet</h2></div>
-    <p class="consigne" id="c-billet">Gratte le billet avec ton doigt ✨</p>
-    <div class="billet" id="billet">
-      <div class="billet-corps">
-        <svg class="billet-chateau" viewBox="0 0 300 260" aria-hidden="true"><use href="#chateau"/></svg>
-        <div class="billet-textes">
-          <small>Billet magique</small>
-          <strong>Disneyland Paris</strong>
-          <span>Kim &amp; Enzo</span>
-          <em>Admission · 2 personnes</em>
-        </div>
-      </div>
-      <div class="billet-talon">
-        <img src="img/mignon.webp" alt="">
-        <b>626</b>
-        <i>Ohana</i>
-      </div>
-      <div class="holo" aria-hidden="true"></div>
-      <canvas class="grattage" id="grattage"></canvas>
-      <div class="morceaux" id="morceaux" aria-hidden="true">
-        <span class="morceau m0"></span><span class="morceau m1"></span><span class="morceau m2"></span>
-      </div>
+  <!-- 5 · La lanterne, puis le billet -->
+  <section class="scene lanterne" id="s-lanterne" data-scene="lanterne" hidden>
+    <canvas class="jeu" id="j-lanterne"></canvas>
+    <canvas class="feux-fin" id="j-feux"></canvas>
+    <div class="quete-titre" id="t-lanterne"><small>Les 3 morceaux sont réunis</small><h2>La lanterne</h2></div>
+    <p class="consigne" id="c-lanterne">&nbsp;</p>
+    <div class="fleches" id="fleches" hidden aria-hidden="true">
+      <span></span><span></span><span></span>
+      <b>Glisse vers le haut</b>
     </div>
-  </section>
-
-  <!-- 6 · La fête -->
-  <section class="scene fete" id="s-fete" data-scene="fete" hidden>
-    <canvas class="feux-fond" id="j-fete"></canvas>
-    <h1 class="annonce" id="annonce"><span class="l1">On part à</span><span class="l2">Disneyland&nbsp;!</span></h1>
-    <div class="place-billet" id="place-billet"></div>
-    <div class="mot" id="mot">
-      <p>Kim, le futur attendra.</p>
-      <p>On part là où les rêves deviennent réalité&nbsp;: toi, moi, un château et plein de magie.</p>
-      <p>J'ai tellement hâte de vivre ça avec toi.</p>
-      <p class="signe">Je t'aime 💙 <span>Enzo</span></p>
-    </div>
-    <div class="bande" aria-hidden="true">
-      <img src="../img/hula.webp" alt=""><img src="../img/ukulele.webp" alt=""><img src="img/pirouette.webp" alt=""><img src="../img/coeur.webp" alt="">
-    </div>
-    <div class="fete-boutons">
-      <button class="bouton" id="briller" type="button">✨ Fais briller le billet</button>
-      <p class="astuce">Fais une capture et envoie-la à Enzo 📸</p>
-      <button class="lien" id="revoir" type="button">Revoir depuis le début</button>
+    <div class="final" id="final" hidden>
+      <div class="billet" id="billet">
+        <img class="billet-img" src="img/billet-disney.webp" alt="Billet d'admission Disneyland Paris · Kim &amp; Enzo">
+        <div class="holo" aria-hidden="true"></div>
+      </div>
+      <p class="billet-mot" id="billet-mot">Pour une princesse comme toi,<br>tu mérites bien mieux<br>que le Futuroscope</p>
+      <div class="fete-boutons">
+        <button class="bouton" id="briller" type="button">✨ Fais briller le billet</button>
+        <p class="astuce">Fais une capture et envoie-la à Enzo 📸</p>
+        <button class="lien" id="revoir" type="button">Revoir depuis le début</button>
+      </div>
     </div>
   </section>
 
 </main>
 
-<!-- Stitch qui surgit (croque, s'écrase contre l'écran) -->
-<div class="surgit" id="surgit" hidden><img id="surgit-img" src="img/croque.webp" alt=""><span class="onomato" id="onomato">CRONCH</span></div>
+<!-- Raiponce qui surgit (la poêle, la balançoire de cheveux) -->
+<div class="surgit" id="surgit" hidden>
+  <div class="pendule" id="pendule"><span class="corde"></span><img id="surgit-img" src="img/poele.webp" alt=""></div>
+  <span class="onomato" id="onomato">BONG</span>
+</div>
 
-<!-- Le château, dessiné une seule fois -->
+<!-- Dessins utilisés plusieurs fois -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
-    <linearGradient id="gMur" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbe6f4"/><stop offset="1" stop-color="#c9b6e8"/></linearGradient>
-    <linearGradient id="gToit" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fa8ff"/><stop offset="1" stop-color="#3d4fb8"/></linearGradient>
     <linearGradient id="gOr" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff3b0"/><stop offset="1" stop-color="#e0a93a"/></linearGradient>
-    <symbol id="chateau" viewBox="0 0 300 260">
-      <!-- rochers et remparts -->
-      <path d="M18 260 Q40 228 70 232 L230 232 Q262 228 282 260Z" fill="#8f7cc4"/>
-      <rect x="34" y="176" width="232" height="60" fill="url(#gMur)"/>
-      <path d="M34 176 h232 v-8 h-12 v6 h-12 v-6 h-12 v6 h-12 v-6 h-12 v6 h-12 v-6 h-12 v6 h-12 v-6 h-12 v6 h-12 v-6 h-12 v6 h-12 v-6 h-12 v6 h-12 v-6 h-12 v6 h-12 v-6 h-12 v6 h-12 v-6 h-10z" fill="url(#gMur)"/>
-      <!-- tours extérieures -->
-      <rect x="22" y="132" width="30" height="104" fill="url(#gMur)"/><path d="M17 134 L37 70 L57 134Z" fill="url(#gToit)"/>
-      <rect x="248" y="132" width="30" height="104" fill="url(#gMur)"/><path d="M243 134 L263 70 L283 134Z" fill="url(#gToit)"/>
-      <!-- tours intermédiaires -->
-      <rect x="72" y="112" width="26" height="70" fill="url(#gMur)"/><path d="M67 114 L85 58 L103 114Z" fill="url(#gToit)"/>
-      <rect x="202" y="112" width="26" height="70" fill="url(#gMur)"/><path d="M197 114 L215 58 L233 114Z" fill="url(#gToit)"/>
-      <!-- corps central -->
-      <rect x="104" y="98" width="92" height="138" fill="url(#gMur)"/>
-      <path d="M100 100 L150 52 L200 100Z" fill="url(#gToit)"/>
-      <rect x="128" y="58" width="44" height="58" fill="url(#gMur)"/>
-      <path d="M122 60 L150 6 L178 60Z" fill="url(#gToit)"/>
-      <rect x="112" y="76" width="16" height="30" fill="url(#gMur)"/><path d="M108 78 L120 44 L132 78Z" fill="url(#gToit)"/>
-      <rect x="172" y="76" width="16" height="30" fill="url(#gMur)"/><path d="M168 78 L180 44 L192 78Z" fill="url(#gToit)"/>
-      <!-- pointes dorées et fanions -->
-      <g fill="url(#gOr)"><circle cx="150" cy="6" r="3"/><circle cx="37" cy="70" r="2.4"/><circle cx="263" cy="70" r="2.4"/><circle cx="85" cy="58" r="2.2"/><circle cx="215" cy="58" r="2.2"/><circle cx="120" cy="44" r="2"/><circle cx="180" cy="44" r="2"/></g>
-      <g fill="#ff8fc2"><path d="M150 6 v-14 l12 4 l-12 4z"/><path d="M37 70 v-12 l10 3 l-10 3z"/><path d="M263 70 v-12 l10 3 l-10 3z"/></g>
-      <!-- porte et fenêtres (s'allument) -->
-      <path d="M134 236 v-30 a16 16 0 0 1 32 0 v30z" fill="#5a3f8f"/>
-      <g class="fenetres" fill="#ffd36e">
-        <rect x="143" y="72" width="7" height="12" rx="3.5"/><rect x="152" y="72" width="7" height="12" rx="3.5"/>
-        <rect x="118" y="124" width="8" height="14" rx="4"/><rect x="174" y="124" width="8" height="14" rx="4"/>
-        <rect x="146" y="126" width="8" height="16" rx="4"/>
-        <rect x="31" y="150" width="8" height="13" rx="4"/><rect x="261" y="150" width="8" height="13" rx="4"/>
-        <rect x="81" y="130" width="7" height="12" rx="3.5"/><rect x="212" y="130" width="7" height="12" rx="3.5"/>
-        <rect x="60" y="196" width="7" height="11" rx="3.5"/><rect x="233" y="196" width="7" height="11" rx="3.5"/>
-      </g>
+    <linearGradient id="gBois" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a86f42"/><stop offset="1" stop-color="#4a2818"/></linearGradient>
+    <radialGradient id="gLueur"><stop offset="0" stop-color="#ffe3a0" stop-opacity=".95"/><stop offset=".45" stop-color="#ffb04a" stop-opacity=".35"/><stop offset="1" stop-color="#ff9a3c" stop-opacity="0"/></radialGradient>
+    <linearGradient id="gPapier" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd27a"/><stop offset="1" stop-color="#ff9638"/></linearGradient>
+
+    <!-- la barque, avec sa petite lanterne au bout d'une perche -->
+    <symbol id="barque" viewBox="0 0 320 180">
+      <ellipse cx="160" cy="160" rx="150" ry="9" fill="rgba(255,205,130,.16)"/>
+      <path d="M268 104 L252 22" stroke="#5a3520" stroke-width="5" stroke-linecap="round"/>
+      <path d="M252 22 Q238 18 232 30" stroke="#5a3520" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <circle class="lueur-perche" cx="232" cy="48" r="38" fill="url(#gLueur)"/>
+      <path d="M223 34 h18 l3.5 26 h-25z" fill="url(#gPapier)"/>
+      <path d="M223 34 h18" stroke="#c96a1e" stroke-width="2"/>
+      <path d="M14 100 Q160 116 306 94 Q292 148 238 156 L90 156 Q34 150 14 100Z" fill="url(#gBois)"/>
+      <path d="M30 118 Q160 130 294 112" stroke="rgba(0,0,0,.28)" stroke-width="2.2" fill="none"/>
+      <path d="M50 137 Q160 146 276 132" stroke="rgba(0,0,0,.28)" stroke-width="2.2" fill="none"/>
+      <path d="M14 100 Q160 116 306 94" stroke="#e6b47a" stroke-width="5" fill="none" stroke-linecap="round"/>
     </symbol>
+
   </defs>
 </svg>
 
-<script src="script.js"></script>
+<script src="script.js?v=r1"></script>
 </body>
 </html>
