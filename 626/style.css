@@ -29,17 +29,17 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .decor { position: fixed; inset: 0; overflow: hidden; z-index: 0; background: var(--nuit-1); }
 .fond {
   position: absolute; inset: -3%;
-  background: #2a1352 url(img/fond.webp) 46% 100% / cover no-repeat;
+  background: #2a1352 url(img/fond2.webp) 46% 50% / cover no-repeat;
   transform: translate(calc(var(--px) * -9px), calc(var(--py) * -7px)) scale(1.02);
   transition: filter 1.2s;
 }
 .voile {
   position: absolute; inset: 0; transition: background 1.2s, opacity 1.2s;
   /* écran verrouillé : juste de quoi lire l'heure et la notification */
-  background: linear-gradient(180deg, rgba(14, 6, 34, .42) 0%, rgba(14, 6, 34, 0) 32%, rgba(14, 6, 34, 0) 70%, rgba(14, 6, 34, .45) 100%);
+  background: linear-gradient(180deg, rgba(14, 6, 34, .55) 0%, rgba(14, 6, 34, .18) 30%, rgba(14, 6, 34, 0) 42%, rgba(14, 6, 34, 0) 74%, rgba(14, 6, 34, .5) 100%);
 }
 #ciel { position: absolute; inset: 0; width: 100%; height: 100%; }
-body:not([data-scene="verrou"]) .voile { background: rgba(16, 7, 38, .64); }
+body:not([data-scene="verrou"]) .voile { background: rgba(16, 7, 38, .7); }
 body:not([data-scene="verrou"]) .fond { filter: blur(2px) saturate(1.1); }
 body.chasse .voile { background: rgba(12, 5, 30, .8); }
 
@@ -67,7 +67,9 @@ body.chasse .voile { background: rgba(12, 5, 30, .8); }
 .lien { margin-top: 10px; font-size: 14px; opacity: .7; text-decoration: underline; padding: 8px; }
 
 /* ---------- 0 · écran verrouillé ---------- */
-.verrou { justify-content: space-between; text-align: center; }
+.verrou { justify-content: flex-start; text-align: center; }
+.verrou .notif { margin-top: 20px; }
+.verrou .glisser { margin-top: auto; }
 .verrou-haut { margin-top: 4vh; text-shadow: 0 2px 14px rgba(20, 6, 40, .55); }
 .verrou-cadenas { font-size: 18px; opacity: .85; }
 .verrou-date { margin-top: 6px; font-size: 17px; font-weight: 700; text-transform: capitalize; opacity: .95; }
