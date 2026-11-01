@@ -295,7 +295,7 @@ $('#suiv').addEventListener('click', () => { if (vue === 'plan') naviguerPlan(1)
 const glisse = { etat: null };
 scene.addEventListener('pointerdown', e => {
   if (e.button > 0 || drag || vue === 'plan') return;
-  if (e.target.closest('.ajout-rapide, .zone-retirer, .lien')) return;
+  if (e.target.closest('.ajout-rapide, .zone-retirer, .lien, .vues')) return;
   const carte = e.target.closest('.carte');
   Object.assign(glisse, { etat: 'indecis', source: 'anneau', x0: e.clientX, y0: e.clientY, pos0: pos, id: carte ? carte.dataset.id : null, pointer: e.pointerId, hist: [[e.clientX, performance.now()]] });
   vitesse = 0; cible = null;
