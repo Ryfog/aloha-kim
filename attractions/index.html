@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Notre Disneyland</title>
+<meta name="description" content="La liste de nos attractions à Disneyland Paris : on fait tourner le manège, on attrape celles qui nous font envie.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0b0820">
+<meta property="og:title" content="Notre Disneyland ✨">
+<meta property="og:description" content="Kim & Enzo — la liste de nos attractions">
+<meta property="og:image" content="img/apercu.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Manrope:wght@500;600;700;800&family=Parisienne&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+
+<header class="hero" id="haut">
+  <img class="hero-fond" src="img/chateau-nuit.webp" srcset="img/chateau-nuit-petit.webp 900w, img/chateau-nuit.webp 1920w" sizes="100vw" alt="">
+  <canvas class="lanternes" id="lanternes" aria-hidden="true"></canvas>
+  <div class="hero-voile"></div>
+  <div class="hero-contenu">
+    <p class="surtitre">Disneyland Paris</p>
+    <h1><em>Notre</em> Disneyland</h1>
+    <p class="signature">Kim &amp; Enzo</p>
+    <p class="intro">56 attractions, spectacles et rencontres sur les deux parcs. On fait tourner le manège, on attrape celles qui nous font envie et on les range dans notre programme.</p>
+    <div class="hero-actions">
+      <label class="puce-date" id="puceDate">
+        <span aria-hidden="true">📅</span>
+        <span id="texteDate">Choisir notre date</span>
+        <input type="date" id="champDate" aria-label="Date de notre journée à Disney">
+      </label>
+      <a class="btn-or" href="#app">Faire notre liste <span aria-hidden="true">↓</span></a>
+    </div>
+  </div>
+</header>
+
+<main class="app" id="app">
+  <div class="app-fond" aria-hidden="true"></div>
+
+  <section class="manege" aria-label="Toutes les attractions">
+    <div class="barre">
+      <div class="parcs" id="parcs" role="tablist" aria-label="Parc">
+        <button role="tab" data-parc="tout" aria-selected="true"><span class="long">Les deux parcs</span><span class="court">Tout</span></button>
+        <button role="tab" data-parc="dlp" aria-selected="false"><span class="long">Parc Disneyland</span><span class="court">Disneyland</span></button>
+        <button role="tab" data-parc="daw" aria-selected="false">Adventure World</button>
+      </div>
+      <label class="recherche">
+        <span aria-hidden="true">🔍</span>
+        <input id="recherche" type="search" placeholder="Chercher" autocomplete="off" aria-label="Chercher une attraction">
+      </label>
+    </div>
+    <div class="filtres" id="filtres" aria-label="Filtres"></div>
+
+    <div class="scene" id="scene">
+      <div class="sol" aria-hidden="true"></div>
+      <div class="anneau" id="anneau"></div>
+      <p class="vide-filtre" id="videFiltre" hidden>Aucune attraction ne correspond.<br><button class="lien" id="effacerFiltres">Tout afficher</button></p>
+      <div class="zone-retirer" id="zoneRetirer" data-cible="retirer" hidden>Lâche ici pour retirer du programme</div>
+      <div class="aide" id="aide">
+        <span class="aide-main" aria-hidden="true">👆</span>
+        <span>Glisse pour faire tourner le manège<br><b>Maintiens une carte</b> ou tire-la vers le bas pour l'attraper</span>
+      </div>
+    </div>
+
+    <div class="panneau-monde">
+      <button class="fleche" id="prec" aria-label="Attraction précédente">‹</button>
+      <div class="panneau-texte">
+        <p class="monde" id="monde">&nbsp;</p>
+        <p class="compteur" id="compteur">&nbsp;</p>
+      </div>
+      <button class="fleche" id="suiv" aria-label="Attraction suivante">›</button>
+    </div>
+  </section>
+
+  <aside class="programme" id="programme" aria-label="Notre programme">
+    <button class="poignee" id="poignee" aria-label="Ouvrir ou fermer le programme" aria-expanded="false"><span></span></button>
+    <div class="prog-tete">
+      <h2>Notre programme</h2>
+      <p class="progression" id="progression"></p>
+    </div>
+    <div class="onglets" id="onglets" role="tablist" aria-label="Jours"></div>
+    <div class="jour-tete" id="jourTete"></div>
+    <div class="liste-cadre" id="listeCadre">
+      <ol class="liste" id="liste" data-cible="liste"></ol>
+    </div>
+    <div class="prog-actions">
+      <button class="btn-doux" id="btnPerso">＋ Une activité</button>
+      <button class="btn-or petit" id="btnPartager">💌 Envoyer notre liste</button>
+    </div>
+  </aside>
+</main>
+
+<footer class="pied">
+  <p class="pied-coeur">Kim &amp; Enzo · Disneyland Paris</p>
+  <details class="credits">
+    <summary>Crédits des photos</summary>
+    <p>Les photos viennent de Wikimedia Commons (licences libres, auteurs ci-dessous) et de Disneyland Paris. Fond du haut : feu d'artifice au château ; fond du programme : <i>Coco</i>, © Disney/Pixar. Liste des attractions à jour en novembre 2026.</p>
+    <ul id="listeCredits"></ul>
+  </details>
+  <button class="lien" id="btnRecommencer">Tout recommencer</button>
+</footer>
+
+<div class="fiche-voile" id="fiche" hidden>
+  <article class="fiche" role="dialog" aria-modal="true" aria-labelledby="ficheNom">
+    <button class="fermer" data-fermer aria-label="Fermer">×</button>
+    <div class="fiche-image" id="ficheImage"></div>
+    <div class="fiche-corps">
+      <p class="fiche-lieu" id="ficheLieu"></p>
+      <h3 id="ficheNom"></h3>
+      <div class="fiche-tags" id="ficheTags"></div>
+      <p class="fiche-desc" id="ficheDesc"></p>
+      <div class="envies" id="ficheEnvies"></div>
+      <div class="fiche-ajout" id="ficheAjout"></div>
+      <div class="fiche-photo" id="fichePhoto"></div>
+      <div class="fiche-nav">
+        <button class="btn-doux" id="fichePrec">‹ Précédente</button>
+        <button class="btn-doux" id="ficheSuiv">Suivante ›</button>
+      </div>
+    </div>
+  </article>
+</div>
+
+<div class="modale-voile" id="modale" hidden>
+  <div class="modale" role="dialog" aria-modal="true" id="modaleBoite"></div>
+</div>
+
+<div class="fantome" id="fantome" hidden aria-hidden="true"></div>
+<div class="toast" id="toast" role="status" hidden></div>
+<input type="file" id="champPhoto" accept="image/*" hidden>
+
+<script src="data.js?v=1"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>
