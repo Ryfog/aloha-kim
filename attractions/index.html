@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Manrope:wght@500;600;700;800&family=Parisienne&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=1">
+<link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 
@@ -25,7 +25,7 @@
     <p class="surtitre">Disneyland Paris</p>
     <h1><em>Notre</em> Disneyland</h1>
     <p class="signature">Kim &amp; Enzo</p>
-    <p class="intro">56 attractions, spectacles et rencontres sur les deux parcs. On fait tourner le manège, on attrape celles qui nous font envie et on les range dans notre programme.</p>
+    <p class="intro">56 attractions, spectacles et rencontres sur les deux parcs. On se promène sur le plan enchanté, on attrape celles qui nous font envie et on dessine le chemin de nos journées.</p>
     <div class="hero-actions">
       <label class="puce-date" id="puceDate">
         <span aria-hidden="true">📅</span>
@@ -39,6 +39,7 @@
 
 <main class="app" id="app">
   <div class="app-fond" aria-hidden="true"></div>
+  <canvas class="ciel" id="ciel" aria-hidden="true"></canvas>
 
   <section class="manege" aria-label="Toutes les attractions">
     <div class="barre">
@@ -54,9 +55,33 @@
     </div>
     <div class="filtres" id="filtres" aria-label="Filtres"></div>
 
-    <div class="scene" id="scene">
+    <div class="scene" id="scene" data-vue="plan">
+      <div class="vues" id="vues" role="tablist" aria-label="Affichage">
+        <button role="tab" data-vue="plan" aria-selected="true">🗺️ Plan</button>
+        <button role="tab" data-vue="manege" aria-selected="false">🎠 Manège</button>
+      </div>
       <div class="sol" aria-hidden="true"></div>
       <div class="anneau" id="anneau"></div>
+
+      <div class="carte3d" id="carte3d" aria-label="Plan des parcs">
+        <div class="plan" id="plan">
+          <img class="plan-sol" src="img/plan.webp" alt="" draggable="false">
+          <svg class="plan-trajet" id="trajet" viewBox="0 0 2700 1200" aria-hidden="true"></svg>
+          <div id="planObjets"></div>
+        </div>
+        <div class="plan-outils">
+          <button data-outil="plus" aria-label="Zoomer">＋</button>
+          <button data-outil="moins" aria-label="Dézoomer">−</button>
+          <button data-outil="tourner" aria-label="Faire pivoter le plan">⟳</button>
+          <button data-outil="relief" aria-label="Vue en relief ou à plat" class="txt">2D</button>
+          <button data-outil="centrer" aria-label="Recentrer">⌖</button>
+        </div>
+        <div class="apercu" id="apercu" hidden></div>
+        <div class="aide aide-plan" id="aidePlan">
+          <span class="aide-main" aria-hidden="true">✨</span>
+          <span>Glisse pour te promener · pince pour zoomer<br><b>Touche une épingle</b> pour voir l'attraction</span>
+        </div>
+      </div>
       <p class="vide-filtre" id="videFiltre" hidden>Aucune attraction ne correspond.<br><button class="lien" id="effacerFiltres">Tout afficher</button></p>
       <div class="zone-retirer" id="zoneRetirer" data-cible="retirer" hidden>Lâche ici pour retirer du programme</div>
       <div class="aide" id="aide">
@@ -97,7 +122,7 @@
   <p class="pied-coeur">Kim &amp; Enzo · Disneyland Paris</p>
   <details class="credits">
     <summary>Crédits des photos</summary>
-    <p>Les photos viennent de Wikimedia Commons (licences libres, auteurs ci-dessous) et de Disneyland Paris. Fond du haut : feu d'artifice au château ; fond du programme : <i>Coco</i>, © Disney/Pixar. Liste des attractions à jour en novembre 2026.</p>
+    <p>Photos : Wikimedia Commons (licences libres, auteurs ci-dessous), Disneyland Paris et celles ajoutées par Enzo. Le Parc Disneyland est placé d'après le plan officiel ; Disney Adventure World est un plan illustré, pas à l'échelle. Liste des attractions à jour en novembre 2026.</p>
     <ul id="listeCredits"></ul>
   </details>
   <button class="lien" id="btnRecommencer">Tout recommencer</button>
@@ -131,7 +156,8 @@
 <div class="toast" id="toast" role="status" hidden></div>
 <input type="file" id="champPhoto" accept="image/*" hidden>
 
-<script src="data.js?v=1"></script>
-<script src="app.js?v=1"></script>
+<script src="data.js?v=2"></script>
+<script src="decor.js?v=2"></script>
+<script src="app.js?v=2"></script>
 </body>
 </html>

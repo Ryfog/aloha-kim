@@ -70,7 +70,16 @@ window.ATTRACTIONS = [
 "incontournable"
 ],
 "desc": "Le spectacle du soir sur le château : projections, feux d'artifice, drones et fontaines. À ne surtout pas rater.",
-"emoji": "🏰"
+"photo": {
+"src": "img/talesofmagic.webp",
+"pos": "50% 40%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 788
+}
 },
 {
 "id": "btm",
@@ -142,7 +151,16 @@ window.ATTRACTIONS = [
 "niveau": 1,
 "tags": [],
 "desc": "Le fort en bois de Frontierland à visiter à pied, ambiance western.",
-"emoji": "🤠"
+"photo": {
+"src": "img/legends.webp",
+"pos": "50% 50%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 649,
+"h": 472
+}
 },
 {
 "id": "roilion",
@@ -154,7 +172,16 @@ window.ATTRACTIONS = [
 "spectacle"
 ],
 "desc": "Le spectacle du Roi Lion : danseurs, acrobates, percussions et toutes les chansons du film.",
-"emoji": "🦁"
+"photo": {
+"src": "img/roilion.webp",
+"pos": "45% 50%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 506
+}
 },
 {
 "id": "pirates",
@@ -243,7 +270,16 @@ window.ATTRACTIONS = [
 "niveau": 1,
 "tags": [],
 "desc": "Une petite ruelle d'Agrabah où l'on traverse les scènes d'Aladdin.",
-"emoji": "🧞"
+"photo": {
+"src": "img/aladdin.webp",
+"pos": "50% 40%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 640,
+"h": 381
+}
 },
 {
 "id": "chateau",
@@ -352,7 +388,16 @@ window.ATTRACTIONS = [
 "niveau": 1,
 "tags": [],
 "desc": "Les tasses du Chapelier fou. Plus on tourne le volant, plus ça tourne !",
-"emoji": "☕"
+"photo": {
+"src": "img/teacups.webp",
+"pos": "50% 55%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 506
+}
 },
 {
 "id": "dumbo",
@@ -362,7 +407,16 @@ window.ATTRACTIONS = [
 "niveau": 1,
 "tags": [],
 "desc": "On s'envole sur le dos de Dumbo au-dessus de Fantasyland.",
-"emoji": "🐘"
+"photo": {
+"src": "img/dumbo.webp",
+"pos": "42% 50%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 446
+}
 },
 {
 "id": "casey",
@@ -450,7 +504,16 @@ window.ATTRACTIONS = [
 "rencontre"
 ],
 "desc": "Rencontrer Mickey dans sa loge de magicien et repartir avec une photo.",
-"emoji": "🐭"
+"photo": {
+"src": "img/meetmickey.webp",
+"pos": "50% 50%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 506
+}
 },
 {
 "id": "princesses",
@@ -504,7 +567,16 @@ window.ATTRACTIONS = [
 "tags": [],
 "desc": "Un simulateur de vol dans l'univers Star Wars, avec des dizaines de voyages différents.",
 "taille": "1,02 m",
-"emoji": "🛸"
+"photo": {
+"src": "img/startours.webp",
+"pos": "42% 40%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 506
+}
 },
 {
 "id": "buzz",
@@ -516,7 +588,16 @@ window.ATTRACTIONS = [
 "duel"
 ],
 "desc": "Un jeu de tir au laser avec Buzz l'Éclair. Celui qui perd paie les churros.",
-"emoji": "🎯"
+"photo": {
+"src": "img/buzz.webp",
+"pos": "50% 40%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 675
+}
 },
 {
 "id": "orbitron",
@@ -547,7 +628,16 @@ window.ATTRACTIONS = [
 "duel"
 ],
 "desc": "On conduit sa propre voiture futuriste sur un circuit.",
-"emoji": "🏎️"
+"photo": {
+"src": "img/autopia.webp",
+"pos": "50% 60%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 506
+}
 },
 {
 "id": "nautilus",
@@ -578,7 +668,16 @@ window.ATTRACTIONS = [
 "spectacle"
 ],
 "desc": "Un film en 3D au cœur des grandes chansons Disney, à la poursuite de Donald.",
-"emoji": "🎶"
+"photo": {
+"src": "img/philharmagique.webp",
+"pos": "35% 40%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 507
+}
 },
 {
 "id": "tower",
@@ -592,7 +691,16 @@ window.ATTRACTIONS = [
 ],
 "desc": "L'ascenseur maudit d'un vieil hôtel d'Hollywood, qui tombe dans le vide… plusieurs fois.",
 "taille": "1,02 m",
-"emoji": "🛗"
+"photo": {
+"src": "img/tower.webp",
+"pos": "45% 40%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 473
+}
 },
 {
 "id": "tapis",
@@ -602,7 +710,16 @@ window.ATTRACTIONS = [
 "niveau": 1,
 "tags": [],
 "desc": "Des tapis volants qui tournent autour de la lampe géante du génie d'Aladdin.",
-"emoji": "🪔"
+"photo": {
+"src": "img/tapis.webp",
+"pos": "50% 50%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 506
+}
 },
 {
 "id": "magicien",
@@ -614,7 +731,16 @@ window.ATTRACTIONS = [
 "spectacle"
 ],
 "desc": "Le grand spectacle de l'Animagique Theater : Mickey apprenti magicien et les plus belles chansons Disney.",
-"emoji": "🎩"
+"photo": {
+"src": "img/magicien.webp",
+"pos": "50% 40%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 714,
+"h": 900
+}
 },
 {
 "id": "together",
@@ -626,7 +752,16 @@ window.ATTRACTIONS = [
 "spectacle"
 ],
 "desc": "Un spectacle musical avec des musiciens en live, autour des films Pixar.",
-"emoji": "🎸"
+"photo": {
+"src": "img/together.webp",
+"pos": "50% 50%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 696,
+"h": 441
+}
 },
 {
 "id": "stitch",
@@ -638,7 +773,16 @@ window.ATTRACTIONS = [
 "spectacle"
 ],
 "desc": "Stitch parle en direct avec le public depuis son vaisseau spatial. Très drôle.",
-"emoji": "👽"
+"photo": {
+"src": "img/stitch.webp",
+"pos": "45% 50%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 640,
+"h": 478
+}
 },
 {
 "id": "animation",
@@ -648,7 +792,16 @@ window.ATTRACTIONS = [
 "niveau": 1,
 "tags": [],
 "desc": "L'espace dédié à l'animation Disney, sous le grand chapeau de Mickey apprenti sorcier.",
-"emoji": "✏️"
+"photo": {
+"src": "img/animation.webp",
+"pos": "62% 50%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 675
+}
 },
 {
 "id": "raiponce",
@@ -683,7 +836,16 @@ window.ATTRACTIONS = [
 "nouveau"
 ],
 "desc": "Raiponce et Flynn Rider qui chantent sur Adventure Way.",
-"emoji": "🏮"
+"photo": {
+"src": "img/raiponceshow.webp",
+"pos": "50% 40%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 506
+}
 },
 {
 "id": "cascade",
@@ -697,7 +859,16 @@ window.ATTRACTIONS = [
 "incontournable"
 ],
 "desc": "Le nouveau spectacle du soir sur le lac : fontaines, feux d'artifice et des centaines de drones.",
-"emoji": "⛲"
+"photo": {
+"src": "img/cascade.webp",
+"pos": "50% 55%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 550,
+"h": 640
+}
 },
 {
 "id": "crush",
@@ -727,7 +898,16 @@ window.ATTRACTIONS = [
 "niveau": 1,
 "tags": [],
 "desc": "Les voitures de Radiator Springs qui tournent et se frôlent.",
-"emoji": "🚗"
+"photo": {
+"src": "img/carsrallye.webp",
+"pos": "45% 50%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 800,
+"h": 450
+}
 },
 {
 "id": "carsroadtrip",
@@ -840,13 +1020,13 @@ window.ATTRACTIONS = [
 "taille": "1,20 m",
 "photo": {
 "src": "img/flightforce.webp",
-"pos": "50% 50%",
-"auteur": "Higher Further Faster",
-"licence": "CC BY-SA 4.0",
-"page": "https://commons.wikimedia.org/wiki/File:Disneyland_Paris%27_Avengers_Quinjet.png",
+"pos": "35% 50%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
 "lieu": null,
-"l": 820,
-"h": 462
+"l": 900,
+"h": 456
 }
 },
 {
@@ -859,7 +1039,16 @@ window.ATTRACTIONS = [
 "duel"
 ],
 "desc": "On lance des toiles avec les mains pour aider Spider-Man à attraper des robots. Score à battre !",
-"emoji": "🕸️"
+"photo": {
+"src": "img/spiderman.webp",
+"pos": "55% 50%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 484
+}
 },
 {
 "id": "herotraining",
@@ -893,7 +1082,16 @@ window.ATTRACTIONS = [
 "incontournable"
 ],
 "desc": "En bateau jusqu'au palais de glace d'Elsa, puis retour à Arendelle, avec deux chutes. Nouveauté 2026 !",
-"emoji": "❄️"
+"photo": {
+"src": "img/frozen.webp",
+"pos": "45% 50%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 590
+}
 },
 {
 "id": "arendelleshow",
@@ -906,7 +1104,16 @@ window.ATTRACTIONS = [
 "nouveau"
 ],
 "desc": "Le spectacle sur l'eau dans la baie d'Arendelle, avec Elsa, Anna et leurs amis.",
-"emoji": "⛵"
+"photo": {
+"src": "img/arendelleshow.webp",
+"pos": "50% 50%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 675
+}
 },
 {
 "id": "rencontreroyale",
@@ -919,6 +1126,15 @@ window.ATTRACTIONS = [
 "nouveau"
 ],
 "desc": "Être reçus par Elsa et Anna dans leur château d'Arendelle.",
-"emoji": "👑"
+"photo": {
+"src": "img/rencontreroyale.webp",
+"pos": "50% 45%",
+"auteur": "Photo ajoutée par Enzo",
+"licence": "",
+"page": null,
+"lieu": null,
+"l": 900,
+"h": 600
+}
 }
 ];

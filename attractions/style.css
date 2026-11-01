@@ -75,9 +75,10 @@ img { display: block; }
 /* ─── L'application ───────────────────────────────── */
 .app { position: relative; height: 100svh; min-height: 560px; overflow: hidden; isolation: isolate; }
 .app-fond {
-  position: absolute; inset: 0; z-index: -1;
-  background: linear-gradient(180deg, rgba(11,8,32,.92), rgba(21,16,47,.8) 40%, rgba(11,8,32,.94)), url(img/rue-floue.webp) center / cover;
+  position: absolute; inset: 0; z-index: -2;
+  background: radial-gradient(120% 60% at 50% 100%, #3a1d5c 0%, rgba(58,29,92,0) 60%), radial-gradient(80% 50% at 15% 0%, rgba(80,40,140,.35), transparent 70%), linear-gradient(180deg, #05040f 0%, #0d0a2a 45%, #1d1242 100%);
 }
+.ciel { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
 .manege { position: absolute; inset: 0 0 var(--replie) 0; display: flex; flex-direction: column; }
 .barre { display: flex; gap: 8px; padding: 12px 16px 0; align-items: center; }
 .parcs { display: flex; background: rgba(255,255,255,.07); border-radius: 999px; padding: 3px; flex: 1; min-width: 0; }
@@ -344,4 +345,106 @@ body.glisse .liste-cadre { background: rgba(245,199,107,.04); }
 }
 @media (prefers-reduced-motion: reduce) {
   .aide-main, .hero-contenu { animation: none; }
+}
+
+/* ─── Choix de l'affichage : plan ou manège ───────── */
+.vues {
+  position: absolute; top: 10px; left: 16px; z-index: 8; display: flex; padding: 3px; border-radius: 999px;
+  background: rgba(11,8,32,.78); border: 1px solid rgba(245,199,107,.35);
+}
+.vues button { border: 0; background: none; padding: .5em .9em; border-radius: 999px; font-weight: 800; font-size: .8rem; color: var(--doux); }
+.vues button[aria-selected="true"] { background: linear-gradient(180deg, var(--or-2), var(--or)); color: #2b1a05; }
+.scene[data-vue="plan"] { cursor: default; perspective: none; }
+.scene[data-vue="plan"] .anneau, .scene[data-vue="plan"] .sol, .scene[data-vue="plan"] #aide, .scene[data-vue="plan"] .vide-filtre { display: none !important; }
+.scene[data-vue="manege"] .carte3d { display: none; }
+
+/* ─── Le plan enchanté ───────────────────────────── */
+.carte3d { position: absolute; inset: 0; perspective: 1050px; perspective-origin: 50% 18%; overflow: hidden; touch-action: none; cursor: grab; }
+.carte3d.glisse-plan { cursor: grabbing; }
+.plan { position: absolute; left: 50%; top: 50%; width: 2700px; height: 1200px; transform-origin: 0 0; transform-style: preserve-3d; --r: 0; --t: 0; --k: 1; --kl: 1; --ep: 3; }
+.plan-sol {
+  position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; -webkit-user-drag: none;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent), linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent);
+  -webkit-mask-composite: source-in; mask-image: linear-gradient(to right, transparent, #000 5%, #000 95%, transparent), linear-gradient(to bottom, transparent, #000 7%, #000 93%, transparent); mask-composite: intersect;
+}
+.plan-trajet { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.plan-trajet .t-lueur { fill: none; stroke: #ffd36b; stroke-opacity: .28; stroke-width: calc(var(--ep) * 4px); stroke-linecap: round; stroke-linejoin: round; }
+.plan-trajet .t-trait { fill: none; stroke: #fff1c4; stroke-width: calc(var(--ep) * 1.3px); stroke-linecap: round; stroke-dasharray: calc(var(--ep) * 4px) calc(var(--ep) * 4px); animation: marche 1.2s linear infinite; }
+@keyframes marche { to { stroke-dashoffset: calc(var(--ep) * -16px); } }
+#planObjets { position: absolute; inset: 0; transform-style: preserve-3d; }
+.lieu-nom {
+  position: absolute; transform: translate(-50%, -50%) rotateZ(calc(var(--r) * -1deg)) scale(var(--kl)); white-space: nowrap; pointer-events: none;
+  font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 40px; color: #ffe2a3; letter-spacing: .02em;
+  text-shadow: 0 3px 0 rgba(30,12,40,.9), 0 0 24px rgba(0,0,0,.9);
+}
+.lieu-nom.parc { font-style: normal; font-weight: 700; font-size: 58px; color: #fff; letter-spacing: .01em; text-align: center; }
+.lieu-nom.parc::after { content: ''; display: block; height: 3px; margin: 6px auto 0; width: 60%; background: linear-gradient(90deg, transparent, var(--or), transparent); }
+.decor, .epingle { position: absolute; width: 0; height: 0; transform-style: preserve-3d; }
+.decor { pointer-events: none; }
+.decor .ombre-sol { position: absolute; left: 0; top: 0; width: var(--l); height: calc(var(--l) * .32); transform: translate(-50%, -55%); border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.6), transparent); }
+.decor .debout { position: absolute; left: 0; bottom: 0; transform-origin: 50% 100%; transform: translateX(-50%) rotateZ(calc(var(--r) * -1deg)) rotateX(calc(var(--t) * -1deg)) scale(.82); }
+.decor svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.epingle .halo-sol {
+  position: absolute; left: -26px; top: -11px; width: 52px; height: 22px; border-radius: 50%; transform: scale(var(--k));
+  background: radial-gradient(closest-side, var(--c), transparent); opacity: .95;
+}
+.epingle .debout {
+  position: absolute; left: 0; bottom: 0; display: flex; flex-direction: column; align-items: center; cursor: pointer; outline: none;
+  transform-origin: 50% 100%; transform: translateX(-50%) rotateZ(calc(var(--r) * -1deg)) rotateX(calc(var(--t) * -1deg)) scale(var(--k));
+}
+.epingle .bulle {
+  position: relative; width: 64px; height: 64px; border-radius: 50%; padding: 3px; flex: none;
+  background: linear-gradient(160deg, #fff3cf, var(--c)); box-shadow: 0 8px 16px rgba(0,0,0,.55);
+  transition: transform .25s cubic-bezier(.3,1.6,.5,1); animation: pousse .7s cubic-bezier(.3,1.5,.5,1) var(--d) backwards;
+}
+@keyframes pousse { from { transform: translateY(30px) scale(0); } }
+.epingle .bulle img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 2px solid #1a1236; display: block; }
+.epingle .tige { width: 4px; height: 30px; border-radius: 2px; background: linear-gradient(#fff3cf, rgba(255,226,163,.15)); }
+.epingle .etiquette {
+  display: none; margin-bottom: 7px; padding: 5px 11px; border-radius: 11px; white-space: nowrap;
+  background: rgba(11,8,32,.9); border: 1px solid rgba(245,199,107,.45); color: #fff; font-weight: 800; font-size: 15px;
+}
+.epingle.choisie .etiquette, .epingle .debout:hover .etiquette { display: block; }
+.carte3d.loin .lieu-nom:not(.parc) { display: none; }
+.carte3d.tourne .lieu-nom.parc { display: none; }
+.epingle .numero {
+  position: absolute; top: -8px; right: -10px; min-width: 26px; height: 26px; padding: 0 6px; border-radius: 13px; display: none; place-items: center;
+  background: var(--or); color: #2b1a05; font-weight: 800; font-size: 15px; border: 2px solid #1a1236;
+}
+.epingle.au-jour .numero { display: grid; }
+.epingle.au-jour .bulle { background: linear-gradient(160deg, #fff3cf, #f5c76b); box-shadow: 0 0 0 3px rgba(245,199,107,.45), 0 8px 16px rgba(0,0,0,.55); }
+.epingle.ailleurs .bulle { background: linear-gradient(160deg, #d6ffe2, #3fbf74); }
+.epingle.eteinte { opacity: .22; }
+.epingle.eteinte .debout { pointer-events: none; }
+.epingle.choisie .bulle { transform: scale(1.3); box-shadow: 0 0 0 5px rgba(255,226,163,.55), 0 0 40px rgba(255,211,107,.9); }
+.carte3d.loin .epingle .bulle { width: 30px; height: 30px; padding: 0; background: var(--c); border: 3px solid #fff3cf; }
+.carte3d.loin .epingle .bulle img { display: none; }
+.carte3d.loin .epingle .tige { height: 14px; }
+.carte3d.loin .epingle.au-jour .bulle { background: var(--or); }
+.plan-lanternes { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.plan-outils { position: absolute; right: 12px; top: 10px; z-index: 8; display: flex; flex-direction: column; gap: 6px; }
+.plan-outils button {
+  width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(245,199,107,.35); background: rgba(11,8,32,.78);
+  font-size: 1.15rem; color: #ffe2a3; display: grid; place-items: center;
+}
+.plan-outils button.txt { font-size: .74rem; font-weight: 800; }
+.apercu {
+  position: absolute; left: 12px; right: 12px; bottom: 10px; z-index: 9; margin: 0 auto; max-width: 520px;
+  display: flex; gap: 12px; align-items: center; padding: 10px 12px 10px 10px; border-radius: 20px;
+  background: linear-gradient(160deg, rgba(48,32,96,.97), rgba(20,14,46,.97)); border: 1px solid rgba(245,199,107,.5);
+  box-shadow: 0 18px 44px rgba(0,0,0,.55); animation: glisseHaut .3s cubic-bezier(.2,.8,.2,1) both;
+}
+.apercu img { width: 88px; height: 88px; border-radius: 14px; object-fit: cover; flex: none; cursor: pointer; }
+.ap-texte { flex: 1; min-width: 0; }
+.ap-texte small { display: block; font-size: .64rem; letter-spacing: .14em; text-transform: uppercase; color: var(--or-2); font-weight: 800; }
+.ap-texte b { display: block; font-family: 'Fraunces', serif; font-weight: 600; font-size: 1.08rem; line-height: 1.15; margin: 2px 26px 6px 0; }
+.ap-actions { display: flex; flex-wrap: wrap; gap: 5px; }
+.ap-actions button { padding: .45em .65em; border-radius: 10px; font-size: .74rem; font-weight: 800; border: 1px solid rgba(245,199,107,.45); background: rgba(245,199,107,.1); }
+.ap-actions button.ici { background: var(--or); color: #2b1a05; }
+.ap-actions button.voir { border-color: rgba(255,255,255,.2); background: rgba(255,255,255,.08); }
+.ap-fermer { position: absolute; top: 6px; right: 8px; width: 28px; height: 28px; border-radius: 50%; border: 0; background: rgba(255,255,255,.08); font-size: 1.1rem; line-height: 1; }
+.aide-plan { bottom: 12px; }
+@media (min-width: 960px) {
+  .vues { left: 24px; }
+  .apercu { bottom: 16px; }
 }

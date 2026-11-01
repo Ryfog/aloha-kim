@@ -163,6 +163,7 @@ $('#parcs').addEventListener('click', e => {
   parc = b.dataset.parc;
   for (const x of document.querySelectorAll('[data-parc]')) x.setAttribute('aria-selected', String(x === b));
   refiltrer(true);
+  if (vue === 'plan' && planPret) { deselectionner(); voler(vueCadre(cadreCourant(), cam.t || TILT), 1100); }
 });
 let rechT = 0;
 $('#recherche').addEventListener('input', e => {
@@ -185,7 +186,7 @@ function refiltrer(auDebut = false) {
   vitesse = 0; cible = null;
   for (const el of elems.values()) el.remove();
   elems.clear();
-  calculAnneau(); rendreAnneau();
+  calculAnneau(); rendreAnneau(); majEpingles();
 }
 
 // ─── Le manège 3D ──────────────────────────────────────────────────────────
@@ -258,8 +259,9 @@ function majCarte(el, a) {
   btn.setAttribute('aria-label', o ? 'Déjà au programme' : `Ajouter à ${jourParId(etat.onglet)?.nom || 'notre programme'}`);
 }
 function majCartes() { for (const [id, el] of elems) majCarte(el, PAR_ID.get(id)); }
-function oublierCarte(id) { const el = elems.get(id); if (el) { el.remove(); elems.delete(id); } rendreAnneau(); }
+function oublierCarte(id) { const el = elems.get(id); if (el) { el.remove(); elems.delete(id); } rendreAnneau(); if (planPret) majPhotoEpingle(id); }
 function majPanneau(id) {
+  if (vue === 'plan') { majPanneauPlan(); return; }
   const N = liste.length;
   if (!id) { $('#monde').textContent = '—'; $('#compteur').textContent = '0 attraction'; return; }
   const a = PAR_ID.get(id);
@@ -286,13 +288,13 @@ function allerA(id) {
   vitesse = 0; cible = i + N * Math.round((pos - i) / N); lancer();
 }
 function decaler(n) { vitesse = 0; cible = (cible ?? Math.round(pos)) + n; lancer(); }
-$('#prec').addEventListener('click', () => { decaler(-1); cacherAide(); });
-$('#suiv').addEventListener('click', () => { decaler(1); cacherAide(); });
+$('#prec').addEventListener('click', () => { if (vue === 'plan') naviguerPlan(-1); else { decaler(-1); cacherAide(); } });
+$('#suiv').addEventListener('click', () => { if (vue === 'plan') naviguerPlan(1); else { decaler(1); cacherAide(); } });
 
 // glisser sur le manège : tourner, ou attraper une carte
 const glisse = { etat: null };
 scene.addEventListener('pointerdown', e => {
-  if (e.button > 0 || drag) return;
+  if (e.button > 0 || drag || vue === 'plan') return;
   if (e.target.closest('.ajout-rapide, .zone-retirer, .lien')) return;
   const carte = e.target.closest('.carte');
   Object.assign(glisse, { etat: 'indecis', source: 'anneau', x0: e.clientX, y0: e.clientY, pos0: pos, id: carte ? carte.dataset.id : null, pointer: e.pointerId, hist: [[e.clientX, performance.now()]] });
@@ -350,6 +352,7 @@ anneau.addEventListener('click', e => {
   cacherAide();
 });
 scene.addEventListener('wheel', e => {
+  if (vue === 'plan') return;
   if (Math.abs(e.deltaX) <= Math.abs(e.deltaY) && !e.shiftKey) return; // la molette verticale fait défiler la page
   e.preventDefault();
   const d = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
@@ -361,9 +364,10 @@ document.addEventListener('keydown', e => {
   if (!$('#fiche').hidden || !$('#modale').hidden || ['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON', 'A'].includes(document.activeElement?.tagName)) return;
   const r = scene.getBoundingClientRect();
   if (r.bottom < 0 || r.top > innerHeight) return;
-  if (e.key === 'ArrowLeft') { decaler(-1); e.preventDefault(); }
-  else if (e.key === 'ArrowRight') { decaler(1); e.preventDefault(); }
-  else if (e.key === 'Enter' && liste.length) { ouvrirFiche(liste[mod(Math.round(pos), liste.length)].id); }
+  if (e.key === 'ArrowLeft') { if (vue === 'plan') naviguerPlan(-1); else decaler(-1); e.preventDefault(); }
+  else if (e.key === 'ArrowRight') { if (vue === 'plan') naviguerPlan(1); else decaler(1); e.preventDefault(); }
+  else if (e.key === 'Enter' && vue === 'plan' && choisie) ouvrirFiche(choisie);
+  else if (e.key === 'Enter' && vue !== 'plan' && liste.length) { ouvrirFiche(liste[mod(Math.round(pos), liste.length)].id); }
 });
 function cacherAide() {
   const a = $('#aide');
@@ -501,6 +505,7 @@ function rendreProgramme() {
       </li>`;
     }).join('');
   }
+  majEpingles();
   const tout = normaux.flatMap(x => x.items), faits = tout.filter(i => i.fait).length;
   $('#progression').textContent = tout.length ? `${tout.length} au programme · ${faits} faite${faits > 1 ? 's' : ''}` : 'Rien pour l\'instant';
 }
@@ -796,6 +801,313 @@ $('#listeCredits').innerHTML = A.filter(a => a.photo).map(a => {
   return `<li><b>${esc(a.nom)}</b> — ${p.page ? `<a href="${p.page}" target="_blank" rel="noopener">${esc(p.auteur)}</a>` : esc(p.auteur)}${p.licence ? ' · ' + esc(p.licence) : ''}${p.lieu ? ' · prise à ' + esc(p.lieu) : ''}</li>`;
 }).join('');
 
+// ─── Le plan enchanté (semi-3D) ────────────────────────────────────────────
+const PW = 2700, PH = 1200, OX = 1356, TILT = 52, Z_MAX = 1.8, RAD = Math.PI / 180;
+const XY = {};
+const placerXY = (ox, o) => { for (const [id, x, y] of o) XY[id] = [x + ox, y]; };
+placerXY(OX, [
+  ['railroad', 680, 765], ['vehicles', 640, 668], ['parade', 760, 600], ['talesofmagic', 640, 450], ['btm', 372, 655], ['phantom', 540, 705],
+  ['riverboat', 480, 570], ['legends', 580, 500], ['roilion', 103, 485], ['pirates', 520, 150], ['indiana', 298, 195], ['adventureisle', 430, 232],
+  ['robinson', 450, 320], ['aladdin', 553, 370], ['chateau', 705, 392], ['peterpan', 600, 122], ['smallworld', 965, 205], ['blancheneige', 630, 280],
+  ['pinocchio', 655, 225], ['teacups', 790, 155], ['dumbo', 680, 150], ['casey', 857, 70], ['contes', 920, 100], ['alice', 745, 118],
+  ['carrousel', 750, 225], ['meetmickey', 640, 92], ['princesses', 585, 300], ['hyperspace', 1040, 560], ['startours', 1113, 365], ['buzz', 898, 423],
+  ['orbitron', 935, 480], ['autopia', 950, 650], ['nautilus', 1030, 590], ['philharmagique', 1170, 368],
+]);
+placerXY(0, [
+  ['tower', 420, 540], ['tapis', 620, 505], ['magicien', 480, 655], ['together', 360, 610], ['stitch', 600, 710], ['animation', 560, 640],
+  ['raiponce', 505, 370], ['raiponceshow', 560, 445], ['cascade', 720, 330], ['crush', 930, 520], ['carsrallye', 1010, 615], ['carsroadtrip', 880, 400],
+  ['ratatouille', 1080, 720], ['rcracer', 1160, 300], ['parachute', 1060, 270], ['slinky', 1195, 410], ['flightforce', 230, 300], ['spiderman', 320, 360],
+  ['herotraining', 370, 250], ['frozen', 800, 185], ['arendelleshow', 650, 235], ['rencontreroyale', 560, 168],
+]);
+const LIEUX = [
+  ['Main Street, U.S.A.', OX + 705, 722], ['Frontierland', OX + 215, 455], ['Adventureland', OX + 330, 108], ['Fantasyland', OX + 1015, 140], ['Discoveryland', OX + 1150, 650],
+  ['World Premiere', 672, 800], ['Adventure Way', 430, 425], ['World of Frozen', 960, 110], ['Avengers Campus', 250, 138], ['Worlds of Pixar', 1135, 565],
+  ['Parc Disneyland', OX + 705, 885, 'parc'], ['Disney Adventure World', 672, 965, 'parc'], ['Disney Village', 1720, 975],
+];
+const DECORS = [['chateau', OX + 705, 352], ['btm', OX + 372, 600], ['manoir', OX + 528, 655], ['space', OX + 1045, 515], ['tour', 420, 480], ['chapeau', 560, 595], ['glace', 730, 105], ['arendelle', 560, 135], ['avengers', 240, 240]];
+const CADRES = { tout: { x: 30, y: -30, w: 2640, h: 1080 }, dlp: { x: OX + 30, y: 0, w: 1300, h: 820 }, daw: { x: 60, y: 0, w: 1260, h: 920 } };
+const carte = $('#carte3d'), planEl = $('#plan'), objets = $('#planObjets'), trajetEl = $('#trajet'), ap = $('#apercu');
+const cam = { cx: PW / 2, cy: PH / 2, z: .3, r: 0, t: 0 };
+let vue = lire('kimDisney.vue', 'plan') === 'manege' ? 'manege' : 'plan';
+let apOuvert = 0, planPret = false, choisie = null, volAnim = 0, inertieAnim = 0, dernierTap = 0;
+const borne = (v, a, b) => Math.max(a, Math.min(b, v));
+const cadreCourant = () => (CADRES[parc] ? parc : 'tout');
+function ajuster(cadre, t = TILT, r = 0) {
+  const w = carte.clientWidth || 360, h = carte.clientHeight || 500;
+  const tourne = Math.abs(Math.round(r / 90)) % 2 === 1;
+  const fw = tourne ? cadre.h : cadre.w, fh = tourne ? cadre.w : cadre.h;
+  let z = Math.min(w / fw, (h * 0.9) / (fh * Math.max(0.5, Math.cos(t * RAD)))) * 0.94;
+  if (h > w * 1.15 && !tourne && cadre !== CADRES.tout) z = Math.min(z * 1.3, (h * 0.9) / (fh * Math.max(0.5, Math.cos(t * RAD))));
+  return { cx: cadre.x + cadre.w / 2, cy: cadre.y + cadre.h / 2 + (t && !tourne ? cadre.h * 0.04 : 0), z };
+}
+// sur un téléphone en hauteur, la vue des deux parcs est tournée d'un quart de tour : elle est deux fois plus grande
+function vueCadre(nom, t = TILT) {
+  const portrait = carte.clientHeight > carte.clientWidth * 1.15;
+  const r = nom === 'tout' && portrait ? -90 : 0;
+  return { ...ajuster(CADRES[nom] || CADRES.tout, t, r), r, t };
+}
+const zMin = () => vueCadre('tout').z * 0.75;
+const decalY = () => carte.clientHeight * (carte.clientHeight > carte.clientWidth * 1.15 ? 0.02 : 0.07);
+function rendrePlan() {
+  const { cx, cy, z, r, t } = cam;
+  planEl.style.transform = `translate3d(0, ${decalY().toFixed(1)}px, 0) rotateX(${t.toFixed(2)}deg) scale3d(${z.toFixed(4)}, ${z.toFixed(4)}, ${z.toFixed(4)}) rotateZ(${r.toFixed(2)}deg) translate(${(-cx).toFixed(1)}px, ${(-cy).toFixed(1)}px)`;
+  const s = borne(118 * z, 12, 58);
+  planEl.style.setProperty('--r', r.toFixed(2));
+  planEl.style.setProperty('--t', t.toFixed(2));
+  planEl.style.setProperty('--k', (s / (64 * z)).toFixed(3));
+  planEl.style.setProperty('--kl', borne(0.42 / z, 1, 2.3).toFixed(3));
+  planEl.style.setProperty('--ep', (2.6 / Math.sqrt(z)).toFixed(2));
+  carte.classList.toggle('loin', s < 27);
+  carte.classList.toggle('pres', z > 0.85);
+  carte.classList.toggle('tourne', Math.abs(((r % 180) + 180) % 180 - 90) < 30);
+}
+function borner() {
+  cam.z = borne(cam.z, zMin(), Z_MAX);
+  cam.cx = borne(cam.cx, 0, PW); cam.cy = borne(cam.cy, -60, PH);
+}
+function versPlan(dx, dy, z = cam.z, r = cam.r, t = cam.t) {
+  const ux = dx / z, uy = dy / (z * Math.max(0.3, Math.cos(t * RAD)));
+  const c = Math.cos(r * RAD), s = Math.sin(r * RAD);
+  return [ux * c + uy * s, -ux * s + uy * c];
+}
+function ecranFocus() { const b = carte.getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2 + decalY()]; }
+function pointPlan(sx, sy, c = cam) { const [fx, fy] = ecranFocus(); const [px, py] = versPlan(sx - fx, sy - fy, c.z, c.r, c.t); return [c.cx + px, c.cy + py]; }
+function arreterVol() { cancelAnimationFrame(volAnim); cancelAnimationFrame(inertieAnim); volAnim = inertieAnim = 0; }
+function voler(dest, ms = 900) {
+  arreterVol();
+  const de = { ...cam }, t0 = performance.now();
+  if (dest.r !== undefined) { let d = ((dest.r - de.r) % 360 + 540) % 360 - 180; dest = { ...dest, r: de.r + d }; }
+  const pas = now => {
+    const u = Math.min(1, (now - t0) / ms), e = u < 0.5 ? 4 * u * u * u : 1 - Math.pow(-2 * u + 2, 3) / 2;
+    for (const k of ['cx', 'cy', 'r', 't']) if (dest[k] !== undefined) cam[k] = de[k] + (dest[k] - de[k]) * e;
+    if (dest.z !== undefined) cam.z = de.z * Math.pow(dest.z / de.z, e);
+    rendrePlan();
+    volAnim = u < 1 ? requestAnimationFrame(pas) : 0;
+  };
+  volAnim = requestAnimationFrame(pas);
+}
+function zoomEn(sx, sy, f, anime = true) {
+  const P = pointPlan(sx, sy), z = borne(cam.z * f, zMin(), Z_MAX);
+  const [fx, fy] = ecranFocus(), [px, py] = versPlan(sx - fx, sy - fy, z, cam.r, cam.t);
+  const dest = { z, cx: borne(P[0] - px, 0, PW), cy: borne(P[1] - py, -60, PH) };
+  if (anime) voler(dest, 380); else { Object.assign(cam, dest); rendrePlan(); }
+}
+function zoomDetail() { return Math.min(1.4, Math.max(vueCadre('dlp').z * 2.2, 0.62)); }
+
+function photoDe(a) { return photos[a.id] || (a.photo && a.photo.src) || ''; }
+function construirePlan() {
+  let h = '';
+  for (const [nom, x, y, cls] of LIEUX) h += `<div class="lieu-nom ${cls || ''}" style="left:${x}px;top:${y}px">${esc(nom)}</div>`;
+  for (const [cle, x, y] of DECORS) {
+    const d = window.DECOR && window.DECOR[cle]; if (!d) continue;
+    h += `<div class="decor" style="left:${x}px;top:${y}px;--l:${d.l}px"><div class="ombre-sol"></div><div class="debout" style="width:${d.l}px;height:${d.h}px">${d.svg}</div></div>`;
+  }
+  A.forEach((a, i) => {
+    const p = XY[a.id]; if (!p) return;
+    const c = (COULEURS[a.monde] || [])[1] || '#f5c76b';
+    h += `<div class="epingle" data-id="${a.id}" style="left:${p[0]}px;top:${p[1]}px;--c:${c};--d:${(0.35 + i * 0.022).toFixed(3)}s">
+      <div class="halo-sol"></div>
+      <div class="debout" role="button" tabindex="0" aria-label="${esc(a.nom)}"><div class="etiquette">${esc(a.nom)}</div>
+      <div class="bulle"><img src="${photoDe(a)}" alt="" style="object-position:${a.photo ? a.photo.pos : '50% 50%'}" draggable="false" loading="lazy"><span class="numero"></span></div><div class="tige"></div></div></div>`;
+  });
+  objets.innerHTML = h;
+}
+function majPhotoEpingle(id) {
+  const img = objets.querySelector(`.epingle[data-id="${CSS.escape(id)}"] img`);
+  const a = PAR_ID.get(id); if (img && a) img.src = photoDe(a);
+}
+function cheminLisse(pts) {
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+    const c1 = [p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6], c2 = [p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6];
+    d += ` C${c1[0].toFixed(1)},${c1[1].toFixed(1)} ${c2[0].toFixed(1)},${c2[1].toFixed(1)} ${p2[0]},${p2[1]}`;
+  }
+  return d;
+}
+function majEpingles() {
+  if (!planPret) return;
+  const j = jourParId(etat.onglet);
+  const ordre = new Map();
+  if (j) j.items.forEach((it, k) => { if (XY[it.id]) ordre.set(it.id, k + 1); });
+  const visibles = new Set(liste.map(a => a.id));
+  for (const el of objets.querySelectorAll('.epingle')) {
+    const id = el.dataset.id, n = ordre.get(id);
+    el.classList.toggle('au-jour', Boolean(n));
+    el.classList.toggle('ailleurs', Boolean(!n && ouEst(id)));
+    el.classList.toggle('eteinte', !visibles.has(id));
+    el.classList.toggle('choisie', id === choisie);
+    el.querySelector('.numero').textContent = n || '';
+  }
+  const pts = [...ordre.keys()].map(id => XY[id]);
+  trajetEl.innerHTML = pts.length > 1 ? `<path class="t-lueur" d="${cheminLisse(pts)}"/><path class="t-trait" d="${cheminLisse(pts)}"/>` : '';
+  if (choisie && !ap.hidden) afficherApercu(PAR_ID.get(choisie));
+  majPanneauPlan();
+}
+function majPanneauPlan() {
+  if (vue !== 'plan') return;
+  const N = liste.length, i = liste.findIndex(a => a.id === choisie);
+  if (choisie) {
+    const a = PAR_ID.get(choisie);
+    $('#monde').textContent = a.monde;
+    $('#compteur').textContent = i >= 0 ? `${i + 1} / ${N} · ${a.parc === 'dlp' ? 'PARC DISNEYLAND' : 'ADVENTURE WORLD'}` : (a.parc === 'dlp' ? 'PARC DISNEYLAND' : 'ADVENTURE WORLD');
+  } else {
+    $('#monde').textContent = parc === 'dlp' ? 'Parc Disneyland' : parc === 'daw' ? 'Disney Adventure World' : 'Disneyland Paris';
+    $('#compteur').textContent = `${N} ATTRACTION${N > 1 ? 'S' : ''}`;
+  }
+}
+function afficherApercu(a) {
+  const o = ouEst(a.id), src = photoDe(a);
+  ap.innerHTML = `<button class="ap-fermer" data-ap="fermer" aria-label="Fermer">×</button>
+    ${src ? `<img src="${src}" alt="" data-ap="fiche" style="object-position:${a.photo ? a.photo.pos : '50% 50%'}">` : ''}
+    <div class="ap-texte"><small>${esc(a.monde)}</small><b>${esc(a.nom)}</b>
+      <div class="ap-actions">${etat.jours.map(j => `<button data-jour="${esc(j.id)}" class="${o && o.jour === j ? 'ici' : ''}">${o && o.jour === j ? '✓' : '＋'} ${esc(j.nom)}</button>`).join('')}<button class="voir" data-ap="fiche">Voir ›</button></div>
+    </div>`;
+  if (ap.hidden) apOuvert = performance.now();
+  ap.hidden = false;
+}
+function choisir(id, aller = true) {
+  const a = PAR_ID.get(id); if (!a || !XY[id]) return;
+  choisie = id; majEpingles(); afficherApercu(a);
+  if (aller) { const [x, y] = XY[id]; voler({ cx: x, cy: y - 20, z: Math.max(cam.z, zoomDetail()) }, 850); }
+}
+function deselectionner() { choisie = null; ap.hidden = true; majEpingles(); }
+function naviguerPlan(n) {
+  if (!liste.length) return;
+  const i = liste.findIndex(a => a.id === choisie);
+  choisir(liste[mod((i < 0 ? (n > 0 ? -1 : 0) : i) + n, liste.length)].id);
+}
+ap.addEventListener('click', e => {
+  const j = e.target.closest('[data-jour]'), b = e.target.closest('[data-ap]');
+  if (!choisie || performance.now() - apOuvert < 450) return;
+  if (j) {
+    const o = ouEst(choisie);
+    if (o && o.jour.id === j.dataset.jour) retirer(choisie);
+    else { placer(choisie, j.dataset.jour); toast(`${PAR_ID.get(choisie).nom} → ${jourParId(j.dataset.jour).nom} ✓`); }
+  } else if (b && b.dataset.ap === 'fiche') ouvrirFiche(choisie);
+  else if (b && b.dataset.ap === 'fermer') deselectionner();
+});
+document.querySelector('.plan-outils').addEventListener('click', e => {
+  const b = e.target.closest('[data-outil]'); if (!b) return;
+  const [fx, fy] = ecranFocus();
+  cacherAidePlan();
+  switch (b.dataset.outil) {
+    case 'plus': zoomEn(fx, fy, 1.6); break;
+    case 'moins': zoomEn(fx, fy, 1 / 1.6); break;
+    case 'tourner': voler({ r: cam.r + 45 }, 700); break;
+    case 'relief': { const t = cam.t > 10 ? 0 : TILT; voler({ t }, 700); b.textContent = t ? '2D' : '3D'; break; }
+    case 'centrer': voler(vueCadre(cadreCourant(), cam.t), 900); break;
+  }
+});
+// gestes : glisser, pincer / tourner à deux doigts, molette, double appui, appui long sur une épingle
+const pointeurs = new Map();
+let geste = null;
+carte.addEventListener('pointerdown', e => {
+  if (e.button > 0 || e.target.closest('.plan-outils, .apercu, .vues')) return;
+  if (drag) return;
+  try { carte.setPointerCapture(e.pointerId); } catch {}
+  pointeurs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  arreterVol();
+  cacherAidePlan();
+  if (pointeurs.size === 1) {
+    const ep = e.target.closest('.epingle');
+    geste = { type: 'pan', x0: e.clientX, y0: e.clientY, cam0: { ...cam }, id: ep ? ep.dataset.id : null, bouge: false, hist: [[e.clientX, e.clientY, performance.now()]] };
+    if (geste.id) {
+      const g = geste;
+      g.minuteur = setTimeout(() => { if (geste === g && !g.bouge) { g.type = 'porte'; attraper(g.id, g.x0, g.y0, 'plan'); } }, 450);
+    }
+  } else if (pointeurs.size === 2) {
+    if (geste) clearTimeout(geste.minuteur);
+    const [a, b] = [...pointeurs.values()];
+    const m0 = [(a.x + b.x) / 2, (a.y + b.y) / 2];
+    geste = { type: 'pince', d0: Math.hypot(b.x - a.x, b.y - a.y) || 1, a0: Math.atan2(b.y - a.y, b.x - a.x), cam0: { ...cam }, P0: pointPlan(m0[0], m0[1]) };
+  }
+});
+carte.addEventListener('pointermove', e => {
+  if (!pointeurs.has(e.pointerId) || !geste) return;
+  pointeurs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  if (geste.type === 'porte') { bougerFantome(e.clientX, e.clientY); return; }
+  if (geste.type === 'pince' && pointeurs.size >= 2) {
+    const [a, b] = [...pointeurs.values()];
+    cam.z = borne(geste.cam0.z * Math.hypot(b.x - a.x, b.y - a.y) / geste.d0, zMin(), Z_MAX);
+    cam.r = geste.cam0.r + (Math.atan2(b.y - a.y, b.x - a.x) - geste.a0) / RAD;
+    const m = [(a.x + b.x) / 2, (a.y + b.y) / 2], [fx, fy] = ecranFocus(), [px, py] = versPlan(m[0] - fx, m[1] - fy);
+    cam.cx = geste.P0[0] - px; cam.cy = geste.P0[1] - py; borner(); rendrePlan();
+    return;
+  }
+  if (geste.type === 'pan') {
+    const dx = e.clientX - geste.x0, dy = e.clientY - geste.y0;
+    if (!geste.bouge && Math.hypot(dx, dy) < 7) return;
+    if (!geste.bouge) { geste.bouge = true; clearTimeout(geste.minuteur); carte.classList.add('glisse-plan'); }
+    const [px, py] = versPlan(dx, dy, geste.cam0.z, geste.cam0.r, geste.cam0.t);
+    cam.cx = geste.cam0.cx - px; cam.cy = geste.cam0.cy - py; borner(); rendrePlan();
+    geste.hist.push([e.clientX, e.clientY, performance.now()]);
+    if (geste.hist.length > 6) geste.hist.shift();
+  }
+});
+function finPlan(e) {
+  if (!pointeurs.has(e.pointerId)) return;
+  pointeurs.delete(e.pointerId);
+  if (!geste) return;
+  if (geste.type === 'porte') { if (!pointeurs.size) { lacher(e.type === 'pointerup'); glisse.etat = null; geste = null; } return; }
+  if (geste.type === 'pince') {
+    if (pointeurs.size === 1) { const [p] = pointeurs.values(); geste = { type: 'pan', x0: p.x, y0: p.y, cam0: { ...cam }, bouge: true, hist: [[p.x, p.y, performance.now()]] }; }
+    else if (!pointeurs.size) geste = null;
+    return;
+  }
+  clearTimeout(geste.minuteur); carte.classList.remove('glisse-plan');
+  if (!geste.bouge && e.type === 'pointerup') {
+    const maintenant = performance.now();
+    if (geste.id) { if (choisie === geste.id) ouvrirFiche(geste.id); else choisir(geste.id); }
+    else if (maintenant - dernierTap < 320) zoomEn(e.clientX, e.clientY, 1.8);
+    else if (choisie) deselectionner();
+    dernierTap = geste.id ? 0 : maintenant;
+  } else if (geste.bouge) {
+    const h = geste.hist, [x1, y1, t1] = h[0], [x2, y2, t2] = h[h.length - 1];
+    if (t2 > t1 && performance.now() - t2 < 80) {
+      let vx = (x2 - x1) / (t2 - t1) * 16, vy = (y2 - y1) / (t2 - t1) * 16;
+      const pas = () => {
+        vx *= 0.92; vy *= 0.92;
+        const [px, py] = versPlan(vx, vy); cam.cx -= px; cam.cy -= py; borner(); rendrePlan();
+        inertieAnim = Math.hypot(vx, vy) > 0.4 ? requestAnimationFrame(pas) : 0;
+      };
+      inertieAnim = requestAnimationFrame(pas);
+    }
+  }
+  geste = null;
+}
+carte.addEventListener('pointerup', finPlan);
+carte.addEventListener('pointercancel', finPlan);
+carte.addEventListener('wheel', e => {
+  e.preventDefault(); e.stopPropagation(); arreterVol(); cacherAidePlan();
+  zoomEn(e.clientX, e.clientY, Math.exp(-e.deltaY * (e.ctrlKey ? 0.01 : 0.0016)), false);
+}, { passive: false });
+carte.addEventListener('keydown', e => {
+  const d = e.target.closest && e.target.closest('.epingle');
+  if (d && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); choisir(d.dataset.id); }
+});
+function cacherAidePlan() {
+  const a = $('#aidePlan');
+  if (!a || a.classList.contains('cachee')) return;
+  a.classList.add('cachee'); ecrire('kimDisney.aidePlan', 1); setTimeout(() => { a.hidden = true; }, 600);
+}
+if (lire('kimDisney.aidePlan', 0)) $('#aidePlan').hidden = true;
+function initPlan() {
+  construirePlan(); planPret = true; majEpingles();
+  const fin = vueCadre(cadreCourant());
+  Object.assign(cam, { ...vueCadre(cadreCourant(), 0), t: 0 }); cam.r = fin.r - 20; cam.z *= 0.8;
+  rendrePlan();
+  setTimeout(() => voler(fin, 2200), 250);
+}
+function changerVue(v) {
+  vue = v; scene.dataset.vue = v; ecrire('kimDisney.vue', v);
+  for (const b of document.querySelectorAll('#vues [data-vue]')) b.setAttribute('aria-selected', String(b.dataset.vue === v));
+  if (v === 'plan') { if (!planPret) initPlan(); else { rendrePlan(); majEpingles(); } }
+  else { ap.hidden = true; dimensions(); }
+}
+$('#vues').addEventListener('click', e => { const b = e.target.closest('[data-vue]'); if (b && b.dataset.vue !== vue) changerVue(b.dataset.vue); });
+new ResizeObserver(() => { if (vue === 'plan' && planPret) { borner(); rendrePlan(); } }).observe(carte);
+
 // ─── Lanternes du haut ─────────────────────────────────────────────────────
 (function lanternes() {
   const cv = $('#lanternes'), ctx = cv.getContext('2d');
@@ -845,10 +1157,57 @@ $('#listeCredits').innerHTML = A.filter(a => a.photo).map(a => {
   requestAnimationFrame(image);
 })();
 
+// ─── Ciel étoilé derrière le plan et le manège (étoiles qui scintillent, quelques lanternes) ───
+(function ciel() {
+  const cv = $('#ciel'); if (!cv) return;
+  const ctx = cv.getContext('2d'); if (!ctx) return;
+  const calme = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const halo = document.createElement('canvas'); halo.width = halo.height = 48;
+  const hc = halo.getContext('2d'), g = hc.createRadialGradient(24, 24, 0, 24, 24, 24);
+  g.addColorStop(0, 'rgba(255,214,140,.85)'); g.addColorStop(.35, 'rgba(255,170,90,.3)'); g.addColorStop(1, 'rgba(255,140,60,0)');
+  hc.fillStyle = g; hc.fillRect(0, 0, 48, 48);
+  let w = 0, h = 0, E = [], L = [], fondEtoiles = null, visible = false, t = 0, saute = false;
+  function taille() {
+    w = cv.clientWidth; h = cv.clientHeight; if (!w || !h) return;
+    cv.width = w; cv.height = h;
+    E = Array.from({ length: Math.round(w * h / 5200) }, () => ({ x: Math.random() * w, y: Math.random() * h * 0.85, r: Math.random() < .12 ? 1.4 : .7, ph: Math.random() * 6.3, v: .6 + Math.random() * 1.6 }));
+    fondEtoiles = document.createElement('canvas'); fondEtoiles.width = w; fondEtoiles.height = h;
+    const f = fondEtoiles.getContext('2d');
+    for (let k = 0; k < w * h / 2600; k++) { f.fillStyle = `rgba(255,255,255,${(.08 + Math.random() * .22).toFixed(2)})`; f.fillRect(Math.random() * w, Math.random() * h * .9, 1, 1); }
+    L = Array.from({ length: w < 600 ? 5 : 9 }, () => nouvelle(true));
+  }
+  function nouvelle(partout) { const s = 4 + Math.random() * 6; return { x: Math.random() * w, y: partout ? Math.random() * h : h + 20, s, v: .15 + s * .03, ph: Math.random() * 6.3 }; }
+  function image() {
+    if (!visible) return;
+    requestAnimationFrame(image);
+    if ((saute = !saute)) return; // 30 images/s suffisent
+    t += .033;
+    ctx.clearRect(0, 0, w, h);
+    if (fondEtoiles) ctx.drawImage(fondEtoiles, 0, 0);
+    for (const e of E) {
+      ctx.globalAlpha = .35 + .65 * Math.abs(Math.sin(t * e.v + e.ph));
+      ctx.fillStyle = '#fff'; ctx.fillRect(e.x, e.y, e.r * 1.6, e.r * 1.6);
+    }
+    for (const l of L) {
+      l.y -= l.v; l.x += Math.sin(t * .8 + l.ph) * .25;
+      if (l.y < -20) Object.assign(l, nouvelle(false));
+      ctx.globalAlpha = Math.min(1, (h - l.y) / 160) * .85;
+      ctx.drawImage(halo, l.x - l.s * 2.4, l.y - l.s * 2.4, l.s * 4.8, l.s * 4.8);
+      ctx.fillStyle = '#ffd38a'; ctx.fillRect(l.x - l.s * .4, l.y - l.s * .55, l.s * .8, l.s * 1.1);
+    }
+    ctx.globalAlpha = 1;
+  }
+  taille();
+  new ResizeObserver(taille).observe(cv);
+  if (calme) { visible = true; image(); visible = false; return; }
+  new IntersectionObserver(([en]) => { const v = en.isIntersecting; if (v && !visible) { visible = true; requestAnimationFrame(image); } else visible = v; }).observe(cv);
+})();
+
 // ─── Démarrage ─────────────────────────────────────────────────────────────
 new ResizeObserver(() => dimensions()).observe(scene);
 refiltrer(true);
 pos = Math.max(0, liste.findIndex(a => a.id === 'raiponce')); // le manège s'ouvre sur Raiponce
+changerVue(vue);
 dimensions();
 rendreProgramme();
 majDate();
