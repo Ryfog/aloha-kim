@@ -136,6 +136,7 @@ details[open] summary::after { content: "−"; }
   <p class="pied">
     Horaires du bac : Département de la Gironde (hiver, du 2 nov. 2026 au 31 mars 2027). Ils peuvent changer avec la météo : vérifie sur place.<br>
     Aires : © les contributeurs d'OpenStreetMap. Temps de route calculés à l'avance (OSRM), Waze donne le temps réel.<br>
+    <span id="version"></span><br>
     <button type="button" id="raz">Remettre le trajet à zéro</button>
   </p>
 </main>
@@ -259,7 +260,7 @@ details[open] summary::after { content: "−"; }
     if (etat.arrives) {
       el.innerHTML = `<p class="etiquette">Arrivés</p><p class="gros">Bienvenue au Airbnb ✨</p>
         <p class="info">Arrivés à ${fH(new Date(etat.arrives))}. Bravo pour la route ! Disneyland est à ${D.disney.min} min (${Math.round(D.disney.km)} km). Profitez bien tous les deux 🏰</p>
-        <div class="boutons"><a class="btn btn-waze" href="${waze(D.disney.lat, D.disney.lon)}">🧭 Waze vers le parking de Disneyland</a></div>`;
+        <div class="boutons"><a class="btn btn-ligne" href="${waze(D.disney.lat, D.disney.lon)}">🏰 Demain matin : Waze vers Disneyland</a></div>`;
       return;
     }
 
@@ -353,7 +354,7 @@ details[open] summary::after { content: "−"; }
     });
     L.push(`<li class="etape${fini(etat.arrives)}"><div class="ligne1"><b>🏠 Le Airbnb</b><span class="heure">${fH(new Date(plan.arrivee))}</span></div>
       <p class="detail">${adresse() ? esc(adresse()) : esc(D.arrivee.nom)} · ${fDuree(D.totalMin - precMin)} après la dernière pause. Disneyland à ${D.disney.min} min (${Math.round(D.disney.km)} km).</p>
-      <div class="actions"><a class="btn btn-waze petit" href="${lienArrivee()}">🧭 Waze Airbnb</a><a class="btn btn-ligne petit" href="${waze(D.disney.lat, D.disney.lon)}">🏰 Waze Disneyland</a></div></li>`);
+      <div class="actions"><a class="btn btn-waze petit" href="${lienArrivee()}">🧭 Waze vers le Airbnb</a></div></li>`);
     $('#etapes').innerHTML = L.join('');
   }
 
@@ -431,6 +432,8 @@ details[open] summary::after { content: "−"; }
   $('#planB').innerHTML = `Le bac suivant n'est qu'à <b>15 h 30</b>. Ne l'attends pas : passe par Bordeaux (rocade, puis A10). C'est ${D.planB.km} km et environ ${fDuree(D.planB.min)} de route depuis Saint-Laurent, soit à peu près la même heure d'arrivée. Les aires de cette page restent valables dès que tu es sur l'A10. Si Waze te propose le bac, choisis l'autre itinéraire.`;
   $('#planBWaze').href = lienArrivee();
 
+  $('#version').textContent = 'Version 3 · arrivée : Airbnb' + (adresse() ? ' (adresse enregistrée ✓)' : ' (adresse pas encore enregistrée)');
+  window.addEventListener('hashchange', () => { $('#version').textContent = 'Version 3 · arrivée : Airbnb' + (adresse() ? ' (adresse enregistrée ✓)' : ''); });
   rendre();
   setInterval(rendre, 20000);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) rendre(); });
